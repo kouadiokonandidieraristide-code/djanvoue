@@ -1,8 +1,10 @@
-const CACHE_NAME = 'djanvoue-v1';
+const CACHE_NAME = 'djanvoue-v2';
 const ASSETS = [
   '/',
   '/index.html',
-  '/manifest.json'
+  '/manifest.json',
+  '/icon-192x192.png',
+  '/icon-512x512.png'
 ];
 
 self.addEventListener('install', (e) => {
@@ -11,6 +13,18 @@ self.addEventListener('install', (e) => {
       return cache.addAll(ASSETS);
     })
   );
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))
+      );
+    })
+  );
+  self.clients.claim();
 });
 
 self.addEventListener('fetch', (e) => {
