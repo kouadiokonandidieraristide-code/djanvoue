@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
+  <link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#1565C0"/>
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -201,7 +203,11 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
 .t-bonus{background:#fffde7;color:#f57f17;}
 .t-rechargement{background:#e3f2fd;color:var(--bleu);}
 </style>
-</head>
+</head><script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js');
+}
+</script>
 <body>
 
 <!-- SPLASH -->
