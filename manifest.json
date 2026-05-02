@@ -1,11 +1,11 @@
 {
   "name": "DJANVOUÊ",
-  "short_name": "Djanvouê",
+  "short_name": "Djanvoue",
   "description": "Par Flash Express Moronou - Bongouanou",
-  "start_url": "/",
+  "start_url": "/djanvoue.vercel.app",
   "display": "standalone",
   "background_color": "#1565C0",
-  "theme_color": "#1565C0",
+  "theme_color": "#e38c31",
   "orientation": "portrait",
   "icons": [
     {
@@ -18,5 +18,14 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "lang": "fr",
+  "display_override": [
+    "browser",
+    "fullscreen",
+    "minimal-ui",
+    "window-controls-overlay",
+    "standalone"
+  ],
+  "id": "DJANVOUÊ"
 }
