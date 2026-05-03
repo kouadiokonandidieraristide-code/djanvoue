@@ -1,16 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#1565C0">
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DJANVOUÊ — Flash Express Moronou</title>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
-    }
-  </script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DJANVOUÊ — Flash Express Moronou</title>
 <style>
 :root{--vert:#2E7D32;--jaune:#FFD600;--bleu:#1565C0;--rouge:#c62828;--gris:#f5f5f5;--orange:#E65100;}
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif;}
@@ -24,7 +17,7 @@ body{background:#f0f4f8;min-height:100vh;}
 @keyframes popIn{from{transform:scale(0);}to{transform:scale(1);}}
 @keyframes bounce{from{transform:translateY(0);}to{transform:translateY(-10px);}}
 @keyframes pulse{0%{transform:scale(1);}100%{transform:scale(1.08);}}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+@keyframes spin{to{transform:rotate(360deg);}}
 
 /* HEADER */
 header{background:var(--bleu);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
@@ -65,24 +58,18 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
 .btn-wa{background:#25D366;color:#fff;}
 .btn-orange{background:var(--orange);color:#fff;}
 
-/* ========== PUB DIAPORAMA AMÉLIORÉ ========== */
-.pub-wrap{position:relative;border-radius:16px;overflow:hidden;margin-bottom:8px;height:155px;background:#0d47a1;box-shadow:0 4px 16px rgba(0,0,0,.18);}
-.pub-track{display:flex;height:100%;transition:transform .55s cubic-bezier(.4,0,.2,1);}
-.pub-slide{min-width:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:16px;text-align:center;position:relative;overflow:hidden;}
-.pub-slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 8s ease;}
-.pub-slide:hover img{transform:scale(1.05);}
-.pub-slide-overlay{position:relative;z-index:2;background:rgba(0,0,0,.52);border-radius:12px;padding:9px 16px;backdrop-filter:blur(2px);}
-.pub-slide-overlay h4{color:#fff;font-size:.97rem;font-weight:800;}
-.pub-slide-overlay p{color:rgba(255,255,255,.9);font-size:.73rem;margin-top:2px;}
-.pub-slide-overlay .badge{background:var(--jaune);color:#333;padding:2px 12px;border-radius:20px;font-size:.7rem;font-weight:700;margin-top:6px;display:inline-block;}
-/* Numéro slide */
-.pub-counter{position:absolute;top:10px;right:12px;z-index:3;background:rgba(0,0,0,.4);color:#fff;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:10px;}
-/* Dots */
+/* PUB DIAPORAMA */
+.pub-wrap{position:relative;border-radius:14px;overflow:hidden;margin-bottom:6px;height:130px;background:var(--bleu);}
+.pub-track{display:flex;height:100%;transition:transform .5s ease;}
+.pub-slide{min-width:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:16px;text-align:center;position:relative;}
+.pub-slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.pub-slide-overlay{position:relative;z-index:2;background:rgba(0,0,0,.45);border-radius:10px;padding:8px 14px;}
+.pub-slide-overlay h4{color:#fff;font-size:.95rem;font-weight:800;}
+.pub-slide-overlay p{color:rgba(255,255,255,.9);font-size:.72rem;margin-top:2px;}
+.pub-slide-overlay .badge{background:var(--jaune);color:#333;padding:2px 10px;border-radius:20px;font-size:.7rem;font-weight:700;margin-top:5px;display:inline-block;}
 .pub-dots{display:flex;justify-content:center;gap:5px;margin-bottom:10px;}
 .pub-dot{width:7px;height:7px;border-radius:50%;background:#ccc;cursor:pointer;transition:.3s;}
-.pub-dot.active{background:var(--bleu);width:20px;border-radius:4px;}
-/* Barre de progression pub */
-.pub-progress{position:absolute;bottom:0;left:0;height:3px;background:var(--jaune);transition:width .1s linear;z-index:4;}
+.pub-dot.active{background:var(--bleu);width:18px;border-radius:4px;}
 
 /* WELCOME */
 .welcome{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#e3f2fd,#fff);border-radius:12px;padding:12px 14px;margin-bottom:12px;border-left:4px solid var(--bleu);}
@@ -125,7 +112,7 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
 
 /* SUCCES */
 .succes{display:none;text-align:center;padding:18px;background:#e8f5e9;border-radius:12px;margin-top:10px;}
-.succes.show{display:block;animation:fadeIn .4s ease;}
+.succes.show{display:block;}
 .succes .icon{font-size:2.8rem;}
 .succes p{margin-top:8px;color:var(--vert);font-weight:600;font-size:.9rem;}
 
@@ -155,26 +142,22 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
 .tarif-card .t-val{font-size:1.1rem;font-weight:700;color:var(--bleu);}
 .tarif-card .t-lbl{font-size:.72rem;color:#555;}
 
-/* ========== PUB PARTENAIRE AMÉLIORÉE ========== */
-.pub-upload{border:2.5px dashed #aaa;border-radius:14px;padding:24px;text-align:center;cursor:pointer;background:#fafafa;margin-bottom:10px;transition:.3s;}
+/* PUB PARTENAIRE */
+.pub-upload{border:2.5px dashed #aaa;border-radius:12px;padding:20px;text-align:center;cursor:pointer;background:#fafafa;margin-bottom:10px;transition:.2s;}
 .pub-upload:hover{border-color:var(--bleu);background:#e3f2fd;}
-.pub-upload .icon{font-size:3rem;}
-.pub-upload p{font-size:.82rem;color:#777;margin-top:6px;}
-.pub-preview-wrap{position:relative;margin-bottom:12px;display:none;border-radius:14px;overflow:hidden;}
-.pub-preview-wrap img{width:100%;height:180px;object-fit:cover;border-radius:14px;display:block;}
-.pub-preview-wrap .chg-btn{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:20px;padding:5px 12px;font-size:.75rem;cursor:pointer;}
+.pub-upload .icon{font-size:2.5rem;}
+.pub-upload p{font-size:.8rem;color:#777;margin-top:6px;}
+.pub-preview{width:100%;height:160px;object-fit:cover;border-radius:10px;margin-bottom:10px;display:none;}
 .pub-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
-.pub-opt{border:2px solid #ddd;border-radius:12px;padding:12px 6px;text-align:center;cursor:pointer;transition:.25s;}
-.pub-opt:hover{border-color:#aaa;}
-.pub-opt.selected{border-color:var(--jaune);background:#fffde7;transform:scale(1.03);}
-.pub-opt .p-val{font-size:.95rem;font-weight:700;color:var(--bleu);}
-.pub-opt .p-lbl{font-size:.68rem;color:#555;margin-top:2px;}
-.pub-opt .p-ico{font-size:1.3rem;margin-bottom:4px;}
+.pub-opt{border:2px solid #ddd;border-radius:10px;padding:10px;text-align:center;cursor:pointer;transition:.2s;}
+.pub-opt.selected{border-color:var(--jaune);background:#fffde7;}
+.pub-opt .p-val{font-size:.9rem;font-weight:700;color:var(--bleu);}
+.pub-opt .p-lbl{font-size:.7rem;color:#555;}
 
 /* TIMER VALIDATION */
-.timer-box{background:#fff3e0;border:2px solid var(--orange);border-radius:14px;padding:18px;text-align:center;display:none;}
-.timer-box.show{display:block;animation:fadeIn .4s ease;}
-.timer-circle{width:88px;height:88px;border-radius:50%;background:var(--orange);color:#fff;font-size:1.5rem;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:0 4px 12px rgba(230,81,0,.3);}
+.timer-box{background:#fff3e0;border:2px solid var(--orange);border-radius:12px;padding:16px;text-align:center;display:none;}
+.timer-box.show{display:block;}
+.timer-circle{width:80px;height:80px;border-radius:50%;background:var(--orange);color:#fff;font-size:1.4rem;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;}
 .timer-box p{font-size:.82rem;color:#555;}
 
 /* GRILLE PRODUITS VENDEUR */
@@ -194,21 +177,11 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
 .step{flex:1;height:4px;border-radius:2px;background:#ddd;}
 .step.done{background:var(--bleu);}
 
-/* ========== ADMIN PUBS AMÉLIORÉ ========== */
-.pub-attente-card{background:#fff8e1;border:2px solid var(--orange);border-radius:14px;padding:14px;margin-bottom:12px;animation:fadeIn .3s ease;}
-.pub-attente-card .pub-img-wrap{position:relative;border-radius:10px;overflow:hidden;height:140px;margin-bottom:10px;}
-.pub-attente-card .pub-img-wrap img{width:100%;height:100%;object-fit:cover;}
-.pub-attente-card .pub-img-wrap .pub-badge{position:absolute;top:8px;left:8px;background:var(--orange);color:#fff;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:20px;}
-.pub-attente-card .info{font-size:.82rem;color:#444;margin-bottom:10px;line-height:1.6;}
+/* ADMIN PUBS EN ATTENTE */
+.pub-attente-card{background:#fff8e1;border:2px solid var(--orange);border-radius:10px;padding:12px;margin-bottom:10px;}
+.pub-attente-card img{width:100%;height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px;}
+.pub-attente-card .info{font-size:.8rem;color:#555;margin-bottom:8px;}
 .pub-attente-card .btns{display:flex;gap:8px;}
-
-/* Carousel admin pubs validées */
-.pubs-actives-carousel{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px;}
-.pubs-actives-carousel::-webkit-scrollbar{height:4px;}
-.pubs-actives-carousel::-webkit-scrollbar-thumb{background:#ddd;border-radius:2px;}
-.pub-active-card{min-width:120px;border-radius:10px;overflow:hidden;position:relative;flex-shrink:0;}
-.pub-active-card img{width:120px;height:80px;object-fit:cover;display:block;}
-.pub-active-card .label{font-size:.68rem;font-weight:700;padding:4px 6px;background:var(--vert);color:#fff;text-align:center;}
 
 /* CANVAS */
 #sigCanvas{border:2px dashed #aaa;border-radius:8px;background:#fafafa;touch-action:none;width:100%;height:140px;}
@@ -300,8 +273,6 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
         <div class="pub-slide-overlay"><h4>🏪 Vous êtes commerçant ?</h4><p>Rejoignez le réseau Djanvouê</p><span class="badge">Inscription gratuite</span></div>
       </div>
     </div>
-    <div class="pub-counter" id="pubCounter">1 / 3</div>
-    <div class="pub-progress" id="pubProgress" style="width:0%"></div>
   </div>
   <div class="pub-dots" id="pubDots">
     <div class="pub-dot active" onclick="goSlide(0)"></div>
@@ -394,11 +365,13 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
       <div class="row total"><span>Frais livraison</span><span id="t-frais">300 FCFA</span></div>
     </div>
 
+    <!-- OTP -->
     <div class="otp-box" id="otp-box">
       <div class="otp-code" id="otp-val">----</div>
       <p>🔐 Code de validation — donnez-le au livreur à la réception</p>
     </div>
 
+    <!-- WAVE -->
     <div class="wave-box" id="wave-box">
       <h4>💛 Payer via Wave</h4>
       <div class="wave-montant"><span id="wave-val">300</span> <small>FCFA</small></div>
@@ -435,14 +408,14 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
     <label>Destination</label><input type="text" id="tx-dest" placeholder="Ex: Lycée Moderne Bongouanou"/>
     <label>Tarif estimé</label>
     <div class="tarif-grid">
-      <div class="tarif-card selected" id="tf-75" onclick="setTarif(75,'Court')"><div class="t-val">75 FCFA</div><div class="t-lbl">Trajet court</div></div>
-      <div class="tarif-card" id="tf-150" onclick="setTarif(150,'Moyen')"><div class="t-val">150 FCFA</div><div class="t-lbl">Trajet moyen</div></div>
-      <div class="tarif-card" id="tf-300" onclick="setTarif(300,'Long')"><div class="t-val">300 FCFA</div><div class="t-lbl">Longue distance</div></div>
+      <div class="tarif-card selected" id="tf-500" onclick="setTarif(500,'Court')"><div class="t-val">500 FCFA</div><div class="t-lbl">Trajet court</div></div>
+      <div class="tarif-card" id="tf-1000" onclick="setTarif(1000,'Moyen')"><div class="t-val">1 000 FCFA</div><div class="t-lbl">Trajet moyen</div></div>
+      <div class="tarif-card" id="tf-1500" onclick="setTarif(1500,'Long')"><div class="t-val">1 500 FCFA</div><div class="t-lbl">Longue distance</div></div>
       <div class="tarif-card" id="tf-0" onclick="setTarif(0,'Négocier')"><div class="t-val">?</div><div class="t-lbl">À négocier</div></div>
     </div>
     <div class="wave-box" id="wave-taxi">
       <h4>💛 Payer le taxi via Wave</h4>
-      <div class="wave-montant"><span id="wave-taxi-val">(500</span> <small>FCFA</small></div>
+      <div class="wave-montant"><span id="wave-taxi-val">75</span> <small>FCFA</small></div>
       <div id="wave-taxi-qr"></div>
       <a id="wave-taxi-lien" href="#" target="_blank" class="btn btn-wave" style="text-decoration:none;display:block;margin-top:8px;">💛 Payer via Wave</a>
     </div>
@@ -467,11 +440,14 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
   </div>
 
   <div id="v-content" style="display:none;">
+    <!-- TIRELIRE -->
     <div class="tirelire">
       <div class="lbl">💰 Ma Tirelire Djanvouê</div>
       <div class="solde" id="v-solde">0 FCFA</div>
       <div style="font-size:.72rem;opacity:.7;margin-top:3px;" id="v-boutique-lbl">—</div>
     </div>
+
+    <!-- BONUS -->
     <div class="card">
       <h3>🎯 Bonus Fidélité</h3>
       <div style="display:flex;justify-content:space-between;font-size:.83rem;margin-bottom:4px;">
@@ -481,6 +457,8 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
       <div class="prog-bar"><div class="prog-fill" id="v-bonus-bar" style="width:0%"></div></div>
       <div id="v-bonus-msg" style="font-size:.76rem;font-style:italic;color:#555;">Encore 10 courses pour votre bonus</div>
     </div>
+
+    <!-- GRILLE PRODUITS -->
     <div class="card">
       <h3>🍽️ Sélectionner un produit</h3>
       <div class="produits-grid" id="v-produits">
@@ -493,6 +471,8 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
       </div>
       <div id="v-produit-sel" style="font-size:.82rem;color:var(--vert);font-weight:600;margin-bottom:8px;display:none;">✅ Produit sélectionné : <span id="v-prod-nom"></span></div>
     </div>
+
+    <!-- COMMANDE -->
     <div class="card">
       <h3>📦 Envoyer une commande client</h3>
       <label>Nom du client</label><input type="text" id="v-client" placeholder="Ex: Kouamé"/>
@@ -507,6 +487,8 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
         <button class="btn btn-bleu" style="margin-top:10px;" onclick="resetVendeur()">← Nouvelle commande</button>
       </div>
     </div>
+
+    <!-- RECHARGEMENT -->
     <div class="card">
       <h3>🔄 Recharger ma Tirelire</h3>
       <p style="font-size:.8rem;color:#555;margin-bottom:10px;">Via Wave ou Orange Money — contactez Didireverb.</p>
@@ -514,12 +496,15 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
       <input type="number" id="v-recharge" placeholder="Ex: 5000"/>
       <button class="btn btn-wave" onclick="demanderRecharge()" style="text-decoration:none;display:block;">💛 Demander le rechargement</button>
     </div>
+
+    <!-- QR -->
     <div class="card">
       <h3>🔲 Mon QR Code Partenaire</h3>
       <input type="text" id="v-qr-nom" placeholder="Nom boutique pour le QR"/>
       <button class="btn btn-bleu" onclick="genQR()">⬇️ Générer mon QR Code</button>
       <div id="v-qr-zone" style="margin-top:12px;text-align:center;"></div>
     </div>
+
     <button class="btn btn-rouge" onclick="decoVendeur()">🔒 Déconnexion</button>
   </div>
 </div>
@@ -528,7 +513,6 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
 <div class="page" id="page-partenaire">
   <div class="steps"><div class="step done" id="s1"></div><div class="step" id="s2"></div><div class="step" id="s3"></div><div class="step" id="s4"></div></div>
 
-  <!-- ÉTAPE 1 : INFOS -->
   <div id="e1">
     <div class="card">
       <h3>🤝 Devenir Partenaire Djanvouê</h3>
@@ -543,84 +527,26 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
     </div>
   </div>
 
-  <!-- ÉTAPE 2 : PUB AMÉLIORÉE -->
+  <!-- ÉTAPE 2 : PUB -->
   <div id="e2" style="display:none;">
     <div class="card">
       <h3>📢 Djanvouê Ads — Votre Publicité</h3>
-      <p style="font-size:.8rem;color:#555;margin-bottom:12px;">Uploadez votre affiche et choisissez la durée. Didireverb valide sous 15 minutes.</p>
+      <p style="font-size:.8rem;color:#555;margin-bottom:10px;">Uploadez votre photo et choisissez la durée. Didireverb validera sous 15 minutes.</p>
 
-      <!-- Zone upload -->
+      <!-- Upload photo -->
       <div class="pub-upload" id="pub-upload-zone" onclick="document.getElementById('pub-photo-input').click()">
         <div class="icon">📸</div>
-        <p>Appuyez pour choisir votre affiche pub</p>
-        <p style="font-size:.7rem;color:#aaa;margin-top:4px;">JPG, PNG — max 5 Mo</p>
+        <p>Appuyez pour choisir votre affiche</p>
       </div>
       <input type="file" id="pub-photo-input" accept="image/*" style="display:none;" onchange="previewPub(this)"/>
-
-      <!-- Prévisualisation avec bouton changer -->
-      <div class="pub-preview-wrap" id="pub-preview-wrap">
-        <img id="pub-preview" alt="Aperçu pub"/>
-        <button class="chg-btn" onclick="document.getElementById('pub-photo-input').click()">✏️ Changer</button>
-      </div>
+      <img id="pub-preview" class="pub-preview" alt="Aperçu"/>
 
       <!-- Durée -->
-      <label style="margin-bottom:8px;">⏱️ Durée de diffusion</label>
+      <label>Durée de diffusion</label>
       <div class="pub-options">
-        <div class="pub-opt selected" id="po-24h" onclick="setPub(500,'24 heures',24)">
-          <option valeur="">-- Choisir ta localité --</option>
-<option valeur="agnikro">Agnikro</option>
-<option valeur="habitat">Habitat</option>
-<option valeur="28_janvier">28 Janvier</option>
-<option valeur="mairie">Mairie</option>
-<option valeur="grande_mosquee">Grande Mosquée</option>
-<option valeur="drapeau">Drapeau</option>
-<option valeur="carrefour_pasteur">Carrefour Pasteur</option>
-
-<option valeur="kangandi">Kangandi</option>
-<option valeur="kinikro">Kinikro</option>
-<option valeur="emahus">Emahus</option>
-<option valeur="koffikro">Koffikro</option>
-<option valeur="assaoufoue">Assaoufoué</option>
-<option valeur="ehui_kro">Ehui Kro</option>
-<option valeur="creuse">Creusé</option>
-<option valeur="desert">Désert</option>
-<option valeur="zanfouenou">Zanfouenou</option>
-<option valeur="bocassi">Bocassi</option>
-<option valeur="nzoekokore">Nzoekokore</option>
-<option valeur="nanan_assouakro">Nanan Assouakro</option>
-
-<option valeur="arrah">Arrah</option>
-<option valeur="kotobi">Kotobi</option>
-<option valeur="abongoua">Abongoua</option>
-<option valeur="akpahousou">Akpahousou</option>
-<option valeur="mbatto">Mbatto</option>
-<option valeur="ande">Andé</option><option valeur="arrah">Arrah</option>
-<option valeur="kotobi">Kotobi</option>
-<option valeur="abongoua">Abongoua</option>
-<option valeur="akpahousou">Akpahousou</option>
-<option valeur="mbatto">Mbatto</option>
-<option valeur="ande">Andé</option>
-<option valeur="kangandi">Kangandi</option>
-<option valeur="kinikro">Kinikro</option>
-<option valeur="nzoekokore">Nzoekokore</option>
-          <div class="p-ico">🌙</div><div class="p-val">500 F</div><div class="p-lbl">24 heures</div>
-        </div>
-        <div class="pub-opt" id="po-3j" onclick="setPub(1200,'3 jours',72)">
-          <div class="p-ico">📅</div><div class="p-val">1 200 F</div><div class="p-lbl">3 jours</div>
-        </div>
-        <div class="pub-opt" id="po-1s" onclick="setPub(2500,'1 semaine',168)">
-          <div class="p-ico">🏆</div><div class="p-val">2 500 F</div><div class="p-lbl">1 semaine</div>
-        </div>
-      </div>
-
-      <!-- Récap pub -->
-      <div id="pub-recap" style="display:none;background:#f0f7ff;border-radius:10px;padding:12px;margin-bottom:12px;font-size:.82rem;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-          <span>📢 Durée</span><span id="recap-duree" style="font-weight:700;color:var(--bleu);">—</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;">
-          <span>💰 Montant</span><span id="recap-montant" style="font-weight:700;color:var(--vert);">—</span>
-        </div>
+        <div class="pub-opt selected" id="po-24h" onclick="setPub(500,'24h',24)"><div class="p-val">500F</div><div class="p-lbl">24 heures</div></div>
+        <div class="pub-opt" id="po-3j" onclick="setPub(1200,'3 jours',72)"><div class="p-val">1 200F</div><div class="p-lbl">3 jours</div></div>
+        <div class="pub-opt" id="po-1s" onclick="setPub(2500,'1 semaine',168)"><div class="p-val">2 500F</div><div class="p-lbl">1 semaine</div></div>
       </div>
 
       <!-- Wave pub -->
@@ -636,7 +562,7 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
         <button class="btn btn-bleu" style="flex:1;" onclick="soumettrePub()">📤 Soumettre ma pub</button>
       </div>
 
-      <!-- Timer 15 min -->
+      <!-- TIMER 15 min -->
       <div class="timer-box" id="timer-box">
         <div class="timer-circle" id="timer-val">15:00</div>
         <p>⏳ Votre pub est en cours de validation par Didireverb.<br>Délai maximum : <strong>15 minutes</strong>.</p>
@@ -711,16 +637,10 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
       <button class="btn btn-rouge" style="margin-top:10px;font-size:.8rem;" onclick="resetStats()">🗑️ Réinitialiser</button>
     </div>
 
-    <!-- PUBS EN ATTENTE — AMÉLIORÉ -->
+    <!-- PUBS EN ATTENTE -->
     <div class="card">
       <h3>🔔 Pubs en attente de validation</h3>
       <div id="pubs-attente-list"><p style="font-size:.8rem;color:#aaa;">Aucune pub en attente.</p></div>
-    </div>
-
-    <!-- PUBS ACTIVES — CAROUSEL -->
-    <div class="card" id="pubs-actives-section" style="display:none;">
-      <h3>✅ Pubs actives en rotation</h3>
-      <div class="pubs-actives-carousel" id="pubs-actives-list"></div>
     </div>
 
     <!-- SIMULATEUR -->
@@ -778,141 +698,129 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
 </div>
 
 <script>
-// ====== WAVE ======
-const _w={_i:atob('TV9jaV9QUTZYZXRRYK5yTWg='),_t:'2250703240589'};
-const wLink=m=>`https://pay.wave.com/m/${_w._i}/c/ci/?amount=${m}`;
-const wQR=(m,id)=>{const url=wLink(m);document.getElementById(id).innerHTML=`<img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(url)}&color=1A73E8" style="border-radius:8px;width:100%;height:100%;"/>`;}
+// ====== WAVE (masqué base64) ======
+const _w = { _i: atob('TV9jaV9QUTZYZXRRYK5yTWg='), _t: '2250703240589' };
+const wLink = m => `https://pay.wave.com/m/${_w._i}/c/ci/?amount=${m}`;
+const wQR = (m,id) => {
+  const url = wLink(m);
+  document.getElementById(id).innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(url)}&color=1A73E8" style="border-radius:8px;width:100%;height:100%;"/>`;
+};
 
 // ====== DB ======
-const loadDB=()=>{try{return JSON.parse(localStorage.getItem('djanvoue_db'))||{};}catch(e){return{};}};
-const defDB=()=>({commandes:0,ca:0,bonus:0,zoneStats:{},codes:[],caps:{},pubs:[],histo:[]});
-let DB={...defDB(),...loadDB()};
-const saveDB=()=>localStorage.setItem('djanvoue_db',JSON.stringify(DB));
+const loadDB = () => { try { return JSON.parse(localStorage.getItem('djanvoue_db')) || {}; } catch(e) { return {}; } };
+const defDB = () => ({ commandes:0, ca:0, bonus:0, zoneStats:{}, codes:[], caps:{}, pubs:[], histo:[] });
+let DB = { ...defDB(), ...loadDB() };
+const saveDB = () => localStorage.setItem('djanvoue_db', JSON.stringify(DB));
 
 // ====== STATE ======
-const S={mode:'LIVRAISON',zone:'Kangandy',frais:300,typeC:'Repas',typeV:'Repas',tarif:75,pub:{montant:500,duree:'24 heures',heures:24},vCode:'',vCmd:0,vCumul:0,vTirelire:0,vProduit:'',simMode:'LIVRAISON',otp:'',pubImg:''};
+const S = {
+  mode:'LIVRAISON', zone:'Kangandy', frais:300,
+  typeC:'Repas', typeV:'Repas',
+  tarif:75, pub:{montant:500,duree:'24h',heures:24},
+  vCode:'', vCmd:0, vCumul:0, vTirelire:0, vProduit:'',
+  simMode:'LIVRAISON', otp:'', pubImg:''
+};
 
 // ====== SPLASH ======
-setTimeout(()=>document.getElementById('splash').classList.add('hide'),3200);
+setTimeout(()=>document.getElementById('splash').classList.add('hide'), 3200);
 
-// ====== DIAPORAMA PUB AMÉLIORÉ ======
-let slideN=0, pubTimer=null, pubProg=0, pubProgTimer=null;
-const SLIDE_DURATION=5000;
-
-const allSlides=()=>document.querySelectorAll('#pubTrack .pub-slide');
-const allDots=()=>document.querySelectorAll('#pubDots .pub-dot');
-
-function goSlide(n){
-  const total=allSlides().length;
-  slideN=n;
-  document.getElementById('pubTrack').style.transform=`translateX(-${n*100}%)`;
-  allDots().forEach((d,i)=>d.classList.toggle('active',i===n));
-  document.getElementById('pubCounter').textContent=`${n+1} / ${total}`;
-  resetPubProgress();
+// ====== DIAPORAMA PUB ======
+let slideN = 0;
+const allSlides = () => document.querySelectorAll('#pubTrack .pub-slide');
+const allDots = () => document.querySelectorAll('#pubDots .pub-dot');
+function goSlide(n) {
+  slideN = n;
+  document.getElementById('pubTrack').style.transform = `translateX(-${n*100}%)`;
+  allDots().forEach((d,i) => d.classList.toggle('active', i===n));
 }
-
-function resetPubProgress(){
-  clearInterval(pubProgTimer);
-  pubProg=0;
-  const bar=document.getElementById('pubProgress');
-  bar.style.transition='none';
-  bar.style.width='0%';
-  setTimeout(()=>{
-    bar.style.transition=`width ${SLIDE_DURATION}ms linear`;
-    bar.style.width='100%';
-  },50);
-  pubProgTimer=setInterval(()=>{
-    pubProg+=100;
-    if(pubProg>=SLIDE_DURATION){
-      clearInterval(pubProgTimer);
-      goSlide((slideN+1)%allSlides().length);
-    }
-  },100);
-}
-
-function addPubSlide(img,titre,desc){
-  const track=document.getElementById('pubTrack');
-  const dots=document.getElementById('pubDots');
-  const n=track.children.length;
-  const slide=document.createElement('div');
-  slide.className='pub-slide';
-  slide.innerHTML=`<img src="${img}" alt="pub"/><div class="pub-slide-overlay"><h4>${titre}</h4><p>${desc}</p><span class="badge">✅ Partenaire Officiel</span></div>`;
+function addPubSlide(img, titre, desc) {
+  const track = document.getElementById('pubTrack');
+  const dots = document.getElementById('pubDots');
+  const slide = document.createElement('div');
+  slide.className = 'pub-slide';
+  slide.innerHTML = `<img src="${img}" alt="pub"/><div class="pub-slide-overlay"><h4>${titre}</h4><p>${desc}</p><span class="badge">Partenaire Officiel</span></div>`;
   track.appendChild(slide);
-  const dot=document.createElement('div');
-  dot.className='pub-dot';
-  dot.onclick=()=>goSlide(n);
+  const dot = document.createElement('div');
+  dot.className = 'pub-dot';
+  dot.onclick = () => goSlide(track.children.length - 1);
   dots.appendChild(dot);
 }
+setInterval(()=>goSlide((slideN+1) % allSlides().length), 4500);
 
-// ====== HEURE ======
-function majHeure(){
-  const now=new Date(),h=now.getHours(),m=now.getMinutes();
-  document.getElementById('heureBadge').textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-  const ouvert=h>=8&&h<18;
-  const b=document.getElementById('bureau-badge');
-  if(b){
-    b.textContent=ouvert?'🟢 Bureau ouvert — 8h à 18h':'🔴 Bureau fermé — Rouvre à 8h';
-    b.className='horaire '+(ouvert?'ouvert':'ferme');
-    document.getElementById('bureau-msg').textContent=ouvert?'Signalez un litige ci-dessous.':'Bureau fermé. Revenez à 8h.';
-    document.getElementById('btn-litige').disabled=!ouvert;
+// ====== HEURE & RÉSEAU ======
+function majHeure() {
+  const now = new Date(), h = now.getHours(), m = now.getMinutes();
+  document.getElementById('heureBadge').textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+  const ouvert = h>=8 && h<18;
+  const b = document.getElementById('bureau-badge');
+  if(b) {
+    b.textContent = ouvert ? '🟢 Bureau ouvert — 8h à 18h' : '🔴 Bureau fermé — Rouvre à 8h';
+    b.className = 'horaire ' + (ouvert ? 'ouvert' : 'ferme');
+    document.getElementById('bureau-msg').textContent = ouvert ? 'Signalez un litige ci-dessous.' : 'Bureau fermé. Revenez à 8h.';
+    document.getElementById('btn-litige').disabled = !ouvert;
   }
 }
-setInterval(majHeure,1000);majHeure();
+setInterval(majHeure, 1000); majHeure();
 
-function majReseau(){const ok=navigator.onLine;const b=document.getElementById('heureBadge');b.style.background=ok?'var(--jaune)':'var(--rouge)';b.style.color=ok?'#333':'#fff';}
-window.addEventListener('online',()=>{majReseau();envoyerDiff();});
-window.addEventListener('offline',majReseau);
+function majReseau() {
+  const ok = navigator.onLine;
+  const b = document.getElementById('heureBadge');
+  b.style.background = ok ? 'var(--jaune)' : 'var(--rouge)';
+  b.style.color = ok ? '#333' : '#fff';
+}
+window.addEventListener('online', () => { majReseau(); envoyerDiff(); });
+window.addEventListener('offline', majReseau);
 majReseau();
 
 // ====== NAV ======
-function showPage(id,btn){
+function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
-  if(btn)btn.classList.add('active');
+  if(btn) btn.classList.add('active');
 }
 
 // ====== CLIENT ======
-function setMode(m){
-  S.mode=m;S.frais=m==='LIVRAISON'?300:0;
+function setMode(m) {
+  S.mode=m; S.frais=m==='LIVRAISON'?300:0;
   document.getElementById('mode-liv').classList.toggle('selected',m==='LIVRAISON');
   document.getElementById('mode-pied').classList.toggle('selected',m==='A_PIED');
-  document.getElementById('card-zone').style.display=m==='LIVRAISON'?'block':'none';
+  document.getElementById('card-zone').style.display = m==='LIVRAISON'?'block':'none';
   majTicket();
-  const acc=['Djanvouê !','Mon Ami,','Frère du Moronou,'];
-  const sal=acc[Math.floor(Math.random()*acc.length)];
-  document.getElementById('accroche').textContent=m==='LIVRAISON'?`${sal} Que veux-tu recevoir ?`:`${sal} Tu viens chercher toi-même ?`;
+  const acc = ['Djanvouê !','Mon Ami,','Frère du Moronou,'];
+  const sal = acc[Math.floor(Math.random()*acc.length)];
+  document.getElementById('accroche').textContent = m==='LIVRAISON' ? `${sal} Que veux-tu recevoir ?` : `${sal} Tu viens chercher toi-même ?`;
 }
-function setZone(el,z,f){
-  document.querySelectorAll('#card-zone .chip').forEach(c=>c.classList.remove('sel-bleu'));
-  el.classList.add('sel-bleu');S.zone=z;S.frais=f;
-  document.getElementById('zone-info').textContent=z==='Autre'?'📍 Zone à définir — tarif à négocier':`📍 ${z} — ${f} FCFA`;
+function setZone(el,z,f) {
+  document.querySelectorAll('.zone-chip,.chip').forEach(c=>{ if(c.closest('#card-zone')) c.classList.remove('sel-bleu'); });
+  el.classList.add('sel-bleu'); S.zone=z; S.frais=f;
+  document.getElementById('zone-info').textContent = z==='Autre'?'📍 Zone à définir — tarif à négocier':`📍 ${z} — ${f} FCFA`;
   majTicket();
 }
-function setType(el,type,qui){
-  const grp=qui==='c'?'#page-client .chip':'#v-content .chip';
+function setType(el,type,qui) {
+  const grp = qui==='c' ? '#page-client .chip' : '#v-content .chip';
   document.querySelectorAll(grp).forEach(c=>c.classList.remove('sel-vert'));
   el.classList.add('sel-vert');
-  if(qui==='c')S.typeC=type;else S.typeV=type;
-  if(qui==='c')majTicket();
+  if(qui==='c') S.typeC=type; else S.typeV=type;
+  if(qui==='c') majTicket();
 }
-function majTicket(){
-  document.getElementById('t-mode').textContent=S.mode==='LIVRAISON'?'🛵 Livraison':'🚶 À pied';
-  document.getElementById('t-zone').textContent=S.mode==='LIVRAISON'?S.zone:'—';
-  document.getElementById('t-type').textContent=S.typeC;
-  document.getElementById('t-frais').textContent=S.frais+' FCFA';
+function majTicket() {
+  document.getElementById('t-mode').textContent = S.mode==='LIVRAISON'?'🛵 Livraison':'🚶 À pied';
+  document.getElementById('t-zone').textContent = S.mode==='LIVRAISON'?S.zone:'—';
+  document.getElementById('t-type').textContent = S.typeC;
+  document.getElementById('t-frais').textContent = S.frais+' FCFA';
 }
-function validerLoc(){
-  const q=document.getElementById('c-qrt').value,r=document.getElementById('c-rep').value.trim();
-  const qm=document.getElementById('qrt-msg'),rm=document.getElementById('rep-msg');
-  qm.textContent=q==='Autre'?"⚠️ Nous arrivons bientôt dans ce quartier !":q?"✅ Quartier reconnu":"";
-  qm.style.color=q==='Autre'?'var(--orange)':'var(--vert)';
-  rm.textContent=r.length>0&&r.length<5?"Précise un repère (min. 5 caractères)":r.length>=5?"✅ Repère validé":"";
-  rm.style.color=r.length>=5?'var(--vert)':'var(--rouge)';
+function validerLoc() {
+  const q=document.getElementById('c-qrt').value, r=document.getElementById('c-rep').value.trim();
+  const qm=document.getElementById('qrt-msg'), rm=document.getElementById('rep-msg');
+  qm.textContent = q==='Autre'?"⚠️ Nous arrivons bientôt dans ce quartier !":q?"✅ Quartier reconnu":"";
+  qm.style.color = q==='Autre'?'var(--orange)':'var(--vert)';
+  rm.textContent = r.length>0&&r.length<5?"Précise un repère (min. 5 caractères)":r.length>=5?"✅ Repère validé":"";
+  rm.style.color = r.length>=5?'var(--vert)':'var(--rouge)';
 }
-const genOTP=()=>String(Math.floor(1000+Math.random()*9000));
+const genOTP = () => String(Math.floor(1000+Math.random()*9000));
 
-function validerCommande(){
+function validerCommande() {
   const nom=document.getElementById('c-nom').value.trim();
   const tel=document.getElementById('c-tel').value.trim();
   const rep=document.getElementById('c-rep').value.trim();
@@ -931,7 +839,7 @@ function validerCommande(){
   document.getElementById('btn-valider').style.display='none';
   document.getElementById('btns-send').style.display='flex';
 }
-function envoyerClient(canal){
+function envoyerClient(canal) {
   const nom=document.getElementById('c-nom').value.trim();
   const tel=document.getElementById('c-tel').value.trim();
   const qrt=document.getElementById('c-qrt').value;
@@ -941,20 +849,23 @@ function envoyerClient(canal){
   const msg=`⚡ DJANVOUÊ — Nouvelle commande\n👤 ${nom} (${tel})\n📍 ${adr}\n📦 ${S.typeC} : ${desc}\n🚀 ${S.mode==='LIVRAISON'?'Livraison — '+S.frais+' FCFA':'Retrait à pied — Gratuit'}\n🔐 OTP : ${S.otp}`;
   if(!navigator.onLine){saveDiff({nom,tel,adr,desc});return;}
   canal==='WA'?window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(msg)}`):window.location.href=`tel:+${_w._t}`;
-  DB.commandes++;DB.ca+=S.frais+75;
+  DB.commandes++; DB.ca+=S.frais+75;
   DB.zoneStats[S.zone]=(DB.zoneStats[S.zone]||0)+1;
   addHisto('COMMISSION',`Livraison ${S.typeC} — ${S.zone}`,75);
-  saveDB();document.getElementById('ok-client').classList.add('show');
+  saveDB(); document.getElementById('ok-client').classList.add('show');
   demarrerSpam();
 }
-function demarrerSpam(){
+function demarrerSpam() {
   let s=60;
   const msg=document.getElementById('spam-msg');
   document.querySelectorAll('#btns-send button').forEach(b=>b.disabled=true);
   msg.style.display='block';
-  const t=setInterval(()=>{s--;document.getElementById('spam-cd').textContent=s;if(s<=0){clearInterval(t);document.querySelectorAll('#btns-send button').forEach(b=>b.disabled=false);msg.style.display='none';}},1000);
+  const t=setInterval(()=>{
+    s--; document.getElementById('spam-cd').textContent=s;
+    if(s<=0){clearInterval(t);document.querySelectorAll('#btns-send button').forEach(b=>b.disabled=false);msg.style.display='none';}
+  },1000);
 }
-function resetClient(){
+function resetClient() {
   document.getElementById('ok-client').classList.remove('show');
   document.getElementById('otp-box').classList.remove('show');
   document.getElementById('wave-box').classList.remove('show');
@@ -963,23 +874,41 @@ function resetClient(){
   ['c-nom','c-rep','c-desc'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('c-qrt').value='';
 }
-function saveDiff(cmd){const att=JSON.parse(localStorage.getItem('djanvoue_att')||'[]');att.push({...cmd,ts:Date.now()});localStorage.setItem('djanvoue_att',JSON.stringify(att));alert("Djanvouê, ta commande est gardée ! Elle partira dès que le réseau revient. ⚡");}
-function envoyerDiff(){const att=JSON.parse(localStorage.getItem('djanvoue_att')||'[]');if(!att.length)return;att.forEach(c=>{const msg=`⚡ DJANVOUÊ (différée)\n👤 ${c.nom} (${c.tel})\n📍 ${c.adr}\n📦 ${c.desc}`;window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(msg)}`);});localStorage.removeItem('djanvoue_att');}
+
+// ====== HORS LIGNE ======
+function saveDiff(cmd){
+  const att=JSON.parse(localStorage.getItem('djanvoue_att')||'[]');
+  att.push({...cmd,ts:Date.now()}); localStorage.setItem('djanvoue_att',JSON.stringify(att));
+  alert("Djanvouê, ta commande est gardée ! Elle partira dès que le réseau revient. ⚡");
+}
+function envoyerDiff(){
+  const att=JSON.parse(localStorage.getItem('djanvoue_att')||'[]');
+  if(!att.length)return;
+  att.forEach(c=>{const msg=`⚡ DJANVOUÊ (différée)\n👤 ${c.nom} (${c.tel})\n📍 ${c.adr}\n📦 ${c.desc}`;window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(msg)}`);});
+  localStorage.removeItem('djanvoue_att');
+}
 
 // ====== TAXI ======
-function setTarif(m,lbl){
-  S.tarif=m;
-  ['75','150','300','0'].forEach(v=>document.getElementById('tf-'+v)?.classList.remove('selected'));
+function setTarif(m, lbl) {
+  S.tarif=500;
+  ['500','1000','1500','0'].forEach(v=>document.getElementById('tf-'+v)?.classList.remove('selected'));
   document.getElementById('tf-'+m)?.classList.add('selected');
-  if(m>0){document.getElementById('wave-taxi').classList.add('show');document.getElementById('wave-taxi-val').textContent=m;document.getElementById('wave-taxi-lien').href=wLink(m);wQR(m,'wave-taxi-qr');}
-  else{document.getElementById('wave-taxi').classList.remove('show');}
+  if(m>0){
+    document.getElementById('wave-taxi').classList.add('show');
+    document.getElementById('wave-taxi-val').textContent=m;
+    document.getElementById('wave-taxi-lien').href=wLink(m);
+    wQR(m,'wave-taxi-qr');
+  } else { document.getElementById('wave-taxi').classList.remove('show'); }
 }
 function appelerTaxi(){
-  const nom=document.getElementById('tx-nom').value.trim(),tel=document.getElementById('tx-tel').value.trim(),dep=document.getElementById('tx-dep').value.trim(),dest=document.getElementById('tx-dest').value.trim();
+  const nom=document.getElementById('tx-nom').value.trim();
+  const tel=document.getElementById('tx-tel').value.trim();
+  const dep=document.getElementById('tx-dep').value.trim();
+  const dest=document.getElementById('tx-dest').value.trim();
   if(!nom||!tel||!dep||!dest){alert('Remplissez tous les champs.');return;}
   const msg=`🚕 DJANVOUÊ TAXI\n👤 ${nom} (${tel})\n🟢 Départ : ${dep}\n🔴 Destination : ${dest}\n💰 Tarif : ${S.tarif>0?S.tarif+' FCFA':'À négocier'}`;
   window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(msg)}`);
-  DB.commandes++;DB.ca+=S.tarif+75;addHisto('COMMISSION',`Taxi — ${dep} → ${dest}`,75);saveDB();
+  DB.commandes++; DB.ca+=S.tarif+75; addHisto('COMMISSION',`Taxi — ${dep} → ${dest}`,75); saveDB();
   document.getElementById('ok-taxi').classList.add('show');
 }
 function resetTaxi(){document.getElementById('ok-taxi').classList.remove('show');document.getElementById('wave-taxi').classList.remove('show');['tx-nom','tx-tel','tx-dep','tx-dest'].forEach(id=>document.getElementById(id).value='');}
@@ -988,35 +917,87 @@ function resetTaxi(){document.getElementById('ok-taxi').classList.remove('show')
 function authVendeur(){
   const code=document.getElementById('v-code').value.trim();
   const found=(DB.codes||[]).find(c=>c.code===code);
-  if(found){S.vCode=code;document.getElementById('v-lock').style.display='none';document.getElementById('v-content').style.display='block';document.getElementById('v-err').style.display='none';document.getElementById('v-boutique-lbl').textContent=found.nom;loadVendeurData(code);}
-  else{document.getElementById('v-err').style.display='block';}
+  if(found){
+    S.vCode=code;
+    document.getElementById('v-lock').style.display='none';
+    document.getElementById('v-content').style.display='block';
+    document.getElementById('v-err').style.display='none';
+    document.getElementById('v-boutique-lbl').textContent=found.nom;
+    loadVendeurData(code);
+  } else { document.getElementById('v-err').style.display='block'; }
 }
 function decoVendeur(){document.getElementById('v-lock').style.display='block';document.getElementById('v-content').style.display='none';document.getElementById('v-code').value='';}
-function loadVendeurData(code){const d=JSON.parse(localStorage.getItem('vd_'+code)||'{"cnt":0,"cumul":0,"tirelire":0}');S.vCmd=d.cnt;S.vCumul=d.cumul;S.vTirelire=d.tirelire;showBonus();}
+function loadVendeurData(code){
+  const d=JSON.parse(localStorage.getItem('vd_'+code)||'{"cnt":0,"cumul":0,"tirelire":0}');
+  S.vCmd=d.cnt; S.vCumul=d.cumul; S.vTirelire=d.tirelire; showBonus();
+}
 function saveVendeurData(){localStorage.setItem('vd_'+S.vCode,JSON.stringify({cnt:S.vCmd,cumul:S.vCumul,tirelire:S.vTirelire}));}
-function selProduit(el,nom,prix){document.querySelectorAll('.produit-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');S.vProduit=`${nom} — ${prix} FCFA`;document.getElementById('v-produit-sel').style.display='block';document.getElementById('v-prod-nom').textContent=S.vProduit;const desc=document.getElementById('v-desc');if(!desc.value)desc.value=S.vProduit;}
-function ajouterProduitCustom(){const nom=prompt('Nom du produit :');const prix=prompt('Prix (FCFA) :');if(nom&&prix)selProduit({classList:{add:()=>{},remove:()=>{}}},nom,prix);}
+function selProduit(el, nom, prix){
+  document.querySelectorAll('.produit-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected'); S.vProduit=`${nom} — ${prix} FCFA`;
+  document.getElementById('v-produit-sel').style.display='block';
+  document.getElementById('v-prod-nom').textContent=S.vProduit;
+  const desc=document.getElementById('v-desc');
+  if(!desc.value) desc.value=S.vProduit;
+}
+function ajouterProduitCustom(){
+  const nom=prompt('Nom du produit :'); const prix=prompt('Prix (FCFA) :');
+  if(nom&&prix) selProduit({classList:{add:()=>{},remove:()=>{}}},nom,prix);
+}
 function envoyerVendeur(){
-  const client=document.getElementById('v-client').value.trim(),ctel=document.getElementById('v-ctel').value.trim(),adr=document.getElementById('v-adresse').value.trim(),desc=document.getElementById('v-desc').value.trim();
+  const client=document.getElementById('v-client').value.trim();
+  const ctel=document.getElementById('v-ctel').value.trim();
+  const adr=document.getElementById('v-adresse').value.trim();
+  const desc=document.getElementById('v-desc').value.trim();
   const boutique=(DB.codes||[]).find(c=>c.code===S.vCode)?.nom||'Partenaire';
   if(!client||!desc){alert('Remplissez les champs obligatoires.');return;}
   const otp=genOTP();
   const msg=`⚡ DJANVOUÊ — Commande Vendeur\n🏪 ${boutique}\n👤 Client : ${client} (${ctel})\n📍 ${adr}\n📦 ${desc}\n🔐 OTP : ${otp}`;
   window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(msg)}`);
-  S.vCmd++;S.vCumul+=300;gererBonus();
-  DB.commandes++;DB.ca+=375;addHisto('COMMISSION',`Commande vendeur — ${boutique}`,50);saveDB();
+  S.vCmd++; S.vCumul+=300; gererBonus();
+  DB.commandes++; DB.ca+=375; addHisto('COMMISSION',`Commande vendeur — ${boutique}`,50); saveDB();
   document.getElementById('ok-vendeur').classList.add('show');
 }
-function demanderLivreur(){const boutique=(DB.codes||[]).find(c=>c.code===S.vCode)?.nom||'Partenaire';const msg=`🛵 DJANVOUÊ — Besoin d'un livreur\n🏪 ${boutique}\n💰 50 FCFA de commission`;window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(msg)}`);}
-function demanderRecharge(){const mt=document.getElementById('v-recharge').value;if(!mt){alert('Entrez un montant.');return;}const boutique=(DB.codes||[]).find(c=>c.code===S.vCode)?.nom||'Partenaire';const msg=`🔄 DJANVOUÊ — Demande de rechargement\n🏪 ${boutique}\n💰 Montant : ${mt} FCFA\nVia Wave ou Orange Money`;window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(msg)}`);addHisto('RECHARGEMENT',`Demande rechargement — ${boutique}`,parseInt(mt));saveDB();}
-function gererBonus(){if(S.vCmd>0&&S.vCmd%10===0){const b=S.vCumul*.10;S.vTirelire+=b;S.vCumul=0;DB.bonus+=b;addHisto('BONUS',`Bonus fidélité — ${(DB.codes||[]).find(c=>c.code===S.vCode)?.nom||'Vendeur'}`,b);saveDB();document.getElementById('v-bonus-msg').textContent=`🎉 Bonus de ${b} FCFA ajouté à votre tirelire !`;}else{document.getElementById('v-bonus-msg').textContent=`Encore ${10-(S.vCmd%10)} courses pour votre bonus`;}showBonus();saveVendeurData();}
-function showBonus(){const c=S.vCmd,p=(c%10)/10;document.getElementById('v-bonus-cnt').textContent=`${c%10||(c>0?10:0)}/10`;document.getElementById('v-bonus-bar').style.width=(p===0&&c>0?100:p*100)+'%';document.getElementById('v-solde').textContent=S.vTirelire+' FCFA';}
+function demanderLivreur(){
+  const boutique=(DB.codes||[]).find(c=>c.code===S.vCode)?.nom||'Partenaire';
+  const msg=`🛵 DJANVOUÊ — Besoin d'un livreur\n🏪 ${boutique}\n💰 50 FCFA de commission`;
+  window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(msg)}`);
+}
+function demanderRecharge(){
+  const mt=document.getElementById('v-recharge').value;
+  if(!mt){alert('Entrez un montant.');return;}
+  const boutique=(DB.codes||[]).find(c=>c.code===S.vCode)?.nom||'Partenaire';
+  const msg=`🔄 DJANVOUÊ — Demande de rechargement\n🏪 ${boutique}\n💰 Montant : ${mt} FCFA\nVia Wave ou Orange Money`;
+  window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(msg)}`);
+  addHisto('RECHARGEMENT',`Demande rechargement — ${boutique}`,parseInt(mt)); saveDB();
+}
+function gererBonus(){
+  if(S.vCmd>0&&S.vCmd%10===0){
+    const b=S.vCumul*.10; S.vTirelire+=b; S.vCumul=0;
+    DB.bonus+=b; addHisto('BONUS',`Bonus fidélité — ${(DB.codes||[]).find(c=>c.code===S.vCode)?.nom||'Vendeur'}`,b); saveDB();
+    document.getElementById('v-bonus-msg').textContent=`🎉 Bonus de ${b} FCFA ajouté à votre tirelire !`;
+  } else { document.getElementById('v-bonus-msg').textContent=`Encore ${10-(S.vCmd%10)} courses pour votre bonus`; }
+  showBonus(); saveVendeurData();
+}
+function showBonus(){
+  const c=S.vCmd, p=(c%10)/10;
+  document.getElementById('v-bonus-cnt').textContent=`${c%10||(c>0?10:0)}/10`;
+  document.getElementById('v-bonus-bar').style.width=(p===0&&c>0?100:p*100)+'%';
+  document.getElementById('v-solde').textContent=S.vTirelire+' FCFA';
+}
 function resetVendeur(){document.getElementById('ok-vendeur').classList.remove('show');['v-client','v-ctel','v-adresse','v-desc'].forEach(id=>document.getElementById(id).value='');}
-function genQR(){const nom=document.getElementById('v-qr-nom').value.trim()||'Partenaire';const url=`https://wa.me/${_w._t}?text=Commande+depuis+${encodeURIComponent(nom)}`;document.getElementById('v-qr-zone').innerHTML=`<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url)}" style="border-radius:8px;border:2px solid var(--bleu);"/><br><small style="color:#777;font-size:.75rem;">QR de ${nom}</small>`;}
+function genQR(){
+  const nom=document.getElementById('v-qr-nom').value.trim()||'Partenaire';
+  const url=`https://wa.me/${_w._t}?text=Commande+depuis+${encodeURIComponent(nom)}`;
+  document.getElementById('v-qr-zone').innerHTML=`<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url)}" style="border-radius:8px;border:2px solid var(--bleu);"/><br><small style="color:#777;font-size:.75rem;">QR de ${nom}</small>`;
+}
 
 // ====== PARTENAIRE ======
-function goE(n){[1,2,3].forEach(i=>{document.getElementById('e'+i).style.display=i===n?'block':'none';});[1,2,3].forEach(i=>{if(i<=n)document.getElementById('s'+i).classList.add('done');});if(n===3)initCanvas();}
-
+function goE(n){
+  [1,2,3].forEach(i=>{document.getElementById('e'+i).style.display=i===n?'block':'none';});
+  [1,2,3].forEach(i=>{ if(i<=n) document.getElementById('s'+i).classList.add('done'); });
+  if(n===3) initCanvas();
+}
 function setPub(m,d,h){
   S.pub={montant:m,duree:d,heures:h};
   ['po-24h','po-3j','po-1s'].forEach(id=>document.getElementById(id).classList.remove('selected'));
@@ -1025,53 +1006,59 @@ function setPub(m,d,h){
   document.getElementById('wave-pub-val').textContent=m;
   document.getElementById('wave-pub-lien').href=wLink(m);
   wQR(m,'wave-pub-qr');
-  // Mise à jour du récap
-  document.getElementById('pub-recap').style.display='block';
-  document.getElementById('recap-duree').textContent=d;
-  document.getElementById('recap-montant').textContent=m+' FCFA';
 }
-
 function previewPub(input){
-  const file=input.files[0];if(!file)return;
+  const file=input.files[0]; if(!file)return;
   const reader=new FileReader();
   reader.onload=e=>{
     S.pubImg=e.target.result;
-    document.getElementById('pub-preview').src=S.pubImg;
-    document.getElementById('pub-preview-wrap').style.display='block';
+    const prev=document.getElementById('pub-preview');
+    prev.src=S.pubImg; prev.style.display='block';
     document.getElementById('pub-upload-zone').style.display='none';
   };
   reader.readAsDataURL(file);
 }
-
 function soumettrePub(){
   const nom=document.getElementById('p-nom').value.trim()||'Partenaire';
   if(!S.pubImg){alert('Veuillez choisir une photo pour votre pub.');return;}
+  // Notification WhatsApp à Didireverb
   const msg=`🔔 DJANVOUÊ — Pub en attente de validation\n🏪 ${nom}\n⏱️ Durée : ${S.pub.duree} — ${S.pub.montant} FCFA\n✅ Répondre OUI pour valider`;
   window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(msg)}`);
-  DB.pubs=DB.pubs||[];
-  DB.pubs.push({id:Date.now(),nom,img:S.pubImg,duree:S.pub.duree,montant:S.pub.montant,heures:S.pub.heures,statut:'EN_ATTENTE',ts:Date.now()});
+  // Enregistrer la pub en attente
+  DB.pubs = DB.pubs || [];
+  DB.pubs.push({ id:Date.now(), nom, img:S.pubImg, duree:S.pub.duree, montant:S.pub.montant, heures:S.pub.heures, statut:'EN_ATTENTE', ts:Date.now() });
   saveDB();
+  // Démarrer le timer 15 min
   demarrerTimer15();
 }
-
 let timerPub=null;
 function demarrerTimer15(){
   document.getElementById('timer-box').classList.add('show');
-  let s=900;
+  let s=900; // 15 minutes
   timerPub=setInterval(()=>{
     s--;
-    const m=Math.floor(s/60),sec=s%60;
+    const m=Math.floor(s/60), sec=s%60;
     document.getElementById('timer-val').textContent=`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
     document.getElementById('timer-prog').style.width=(s/900*100)+'%';
-    if(s<=0){clearInterval(timerPub);document.getElementById('timer-val').textContent='⏰';document.getElementById('timer-box').querySelector('p').textContent="Délai écoulé. Contactez Didireverb si la pub n'est pas encore active.";}
+    if(s<=0){clearInterval(timerPub);document.getElementById('timer-val').textContent='⏰';document.getElementById('timer-box').querySelector('p').textContent='Délai écoulé. Contactez Didireverb si la pub n\'est pas encore active.';}
   },1000);
   goE(3);
 }
-
-function initCanvas(){const c=document.getElementById('sigCanvas');const ctx=c.getContext('2d');c.width=c.offsetWidth;c.height=140;let drawing=false;const gp=e=>{const r=c.getBoundingClientRect();const s=e.touches?e.touches[0]:e;return{x:s.clientX-r.left,y:s.clientY-r.top};};c.onmousedown=c.ontouchstart=e=>{drawing=true;const p=gp(e);ctx.beginPath();ctx.moveTo(p.x,p.y);e.preventDefault();};c.onmousemove=c.ontouchmove=e=>{if(!drawing)return;const p=gp(e);ctx.lineTo(p.x,p.y);ctx.strokeStyle='#1565C0';ctx.lineWidth=2;ctx.stroke();e.preventDefault();};c.onmouseup=c.ontouchend=()=>drawing=false;}
+function initCanvas(){
+  const c=document.getElementById('sigCanvas');
+  const ctx=c.getContext('2d'); c.width=c.offsetWidth; c.height=140;
+  let drawing=false;
+  const gp=e=>{const r=c.getBoundingClientRect();const s=e.touches?e.touches[0]:e;return{x:s.clientX-r.left,y:s.clientY-r.top};};
+  c.onmousedown=c.ontouchstart=e=>{drawing=true;const p=gp(e);ctx.beginPath();ctx.moveTo(p.x,p.y);e.preventDefault();};
+  c.onmousemove=c.ontouchmove=e=>{if(!drawing)return;const p=gp(e);ctx.lineTo(p.x,p.y);ctx.strokeStyle='#1565C0';ctx.lineWidth=2;ctx.stroke();e.preventDefault();};
+  c.onmouseup=c.ontouchend=()=>drawing=false;
+}
 function effacerSig(){const c=document.getElementById('sigCanvas');c.getContext('2d').clearRect(0,0,c.width,c.height);}
 function validerContrat(){
-  const nom=document.getElementById('p-nom').value.trim(),tel=document.getElementById('p-tel').value.trim(),zone=document.getElementById('p-zone').value,activite=document.getElementById('p-activite').value;
+  const nom=document.getElementById('p-nom').value.trim();
+  const tel=document.getElementById('p-tel').value.trim();
+  const zone=document.getElementById('p-zone').value;
+  const activite=document.getElementById('p-activite').value;
   const msg=`🤝 ACCORD DJANVOUÊ\n🏪 ${nom}\n📞 ${tel}\n📍 ${zone} — ${activite}\n📢 Pub : ${S.pub.duree} — ${S.pub.montant} FCFA`;
   document.getElementById('lien-confirm').href=`https://wa.me/${_w._t}?text=${encodeURIComponent(msg)}`;
   document.getElementById('ok-partenaire').classList.add('show');
@@ -1081,7 +1068,9 @@ function validerContrat(){
 function envoyerLitige(){
   const h=new Date().getHours();
   if(h<8||h>=18){alert('Bureau fermé. Réessayez entre 8h et 18h.');return;}
-  const nom=document.getElementById('l-nom').value.trim(),otp=document.getElementById('l-otp').value.trim(),desc=document.getElementById('l-desc').value.trim();
+  const nom=document.getElementById('l-nom').value.trim();
+  const otp=document.getElementById('l-otp').value.trim();
+  const desc=document.getElementById('l-desc').value.trim();
   if(!nom||!desc){alert('Remplissez votre nom et la description.');return;}
   const msg=`⚖️ LITIGE DJANVOUÊ\n👤 ${nom}\n🔢 OTP : ${otp||'Non précisé'}\n📝 ${desc}`;
   window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(msg)}`);
@@ -1093,7 +1082,12 @@ function showCapBureau(){
   const actifs=zones.filter(z=>caps[z.k]&&caps[z.k].trim());
   const list=document.getElementById('cap-list');
   document.getElementById('cap-ph').style.display=actifs.length?'none':'block';
-  list.innerHTML=actifs.map(z=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:11px;background:var(--gris);border-radius:10px;margin-bottom:8px;"><div><div style="font-weight:700;font-size:.88rem;">Capitaine ${z.l}</div><div style="font-size:.73rem;color:#777;">📍 Zone ${z.l}</div></div><div style="display:flex;gap:6px;"><a href="https://wa.me/225${caps[z.k].replace(/\D/g,'')}" style="padding:7px 10px;border-radius:8px;font-size:.73rem;font-weight:700;text-decoration:none;background:#25D366;color:#fff;">💬</a><a href="tel:+225${caps[z.k].replace(/\D/g,'')}" style="padding:7px 10px;border-radius:8px;font-size:.73rem;font-weight:700;text-decoration:none;background:var(--bleu);color:#fff;">📞</a></div></div>`).join('');
+  list.innerHTML=actifs.map(z=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:11px;background:var(--gris);border-radius:10px;margin-bottom:8px;">
+    <div><div style="font-weight:700;font-size:.88rem;">Capitaine ${z.l}</div><div style="font-size:.73rem;color:#777;">📍 Zone ${z.l}</div></div>
+    <div style="display:flex;gap:6px;">
+      <a href="https://wa.me/225${caps[z.k].replace(/\D/g,'')}" style="padding:7px 10px;border-radius:8px;font-size:.73rem;font-weight:700;text-decoration:none;background:#25D366;color:#fff;">💬</a>
+      <a href="tel:+225${caps[z.k].replace(/\D/g,'')}" style="padding:7px 10px;border-radius:8px;font-size:.73rem;font-weight:700;text-decoration:none;background:var(--bleu);color:#fff;">📞</a>
+    </div></div>`).join('');
 }
 
 // ====== ADMIN ======
@@ -1102,111 +1096,131 @@ async function loginAdmin(){
   const pwd=document.getElementById('adm-pwd').value;
   const stored=localStorage.getItem('djanvoue_ah')||await hashPwd('DDR2024');
   if(!localStorage.getItem('djanvoue_ah'))localStorage.setItem('djanvoue_ah',stored);
-  if(await hashPwd(pwd)===stored){document.getElementById('adm-login').style.display='none';document.getElementById('adm-content').style.display='block';document.getElementById('adm-err').style.display='none';majStats();showCodes();loadCaps();showHisto();showPubsAttente();showPubsActives();}
-  else{document.getElementById('adm-err').style.display='block';}
+  if(await hashPwd(pwd)===stored){
+    document.getElementById('adm-login').style.display='none';
+    document.getElementById('adm-content').style.display='block';
+    document.getElementById('adm-err').style.display='none';
+    majStats(); showCodes(); loadCaps(); showHisto(); showPubsAttente();
+  } else { document.getElementById('adm-err').style.display='block'; }
 }
 function logoutAdmin(){document.getElementById('adm-login').style.display='block';document.getElementById('adm-content').style.display='none';document.getElementById('adm-pwd').value='';}
 function majStats(){
-  DB=loadDB();if(!DB.commandes)DB={...defDB(),...DB};
+  DB=loadDB(); if(!DB.commandes) DB={...defDB(),...DB};
   document.getElementById('s-ca').textContent=DB.ca||0;
   document.getElementById('s-benef').textContent=(DB.ca||0)-(DB.bonus||0);
   document.getElementById('s-cmd').textContent=DB.commandes||0;
-  let zMax='—',mx=0;for(const[z,v] of Object.entries(DB.zoneStats||{})){if(v>mx){mx=v;zMax=z;}}
+  let zMax='—',mx=0;
+  for(const[z,v] of Object.entries(DB.zoneStats||{})){if(v>mx){mx=v;zMax=z;}}
   document.getElementById('s-zone').textContent=zMax;
 }
 function resetStats(){if(!confirm('Réinitialiser toutes les statistiques ?'))return;DB.commandes=0;DB.ca=0;DB.bonus=0;DB.zoneStats={};DB.histo=[];saveDB();majStats();showHisto();}
 
-// Pubs en attente — AMÉLIORÉ
+// Pubs en attente
 function showPubsAttente(){
   const pubs=(DB.pubs||[]).filter(p=>p.statut==='EN_ATTENTE');
   const el=document.getElementById('pubs-attente-list');
   if(!pubs.length){el.innerHTML='<p style="font-size:.8rem;color:#aaa;">Aucune pub en attente.</p>';return;}
   el.innerHTML=pubs.map((p,i)=>`
     <div class="pub-attente-card">
-      <div class="pub-img-wrap">
-        <img src="${p.img}" alt="pub"/>
-        <span class="pub-badge">⏳ En attente</span>
-      </div>
-      <div class="info">
-        🏪 <strong>${p.nom}</strong><br>
-        ⏱️ Durée : ${p.duree} &nbsp;·&nbsp; 💰 ${p.montant} FCFA<br>
-        🕐 Soumise il y a ${Math.round((Date.now()-p.ts)/60000)} min
-      </div>
+      <img src="${p.img}" alt="pub"/>
+      <div class="info">🏪 <strong>${p.nom}</strong> · ${p.duree} · ${p.montant} FCFA<br>⏱️ Soumise il y a ${Math.round((Date.now()-p.ts)/60000)} min</div>
       <div class="btns">
-        <button class="btn btn-vert" style="flex:1;padding:10px;font-size:.85rem;" onclick="validerPub(${i})">✅ Valider</button>
-        <button class="btn btn-rouge" style="flex:1;padding:10px;font-size:.85rem;" onclick="refuserPub(${i})">❌ Refuser</button>
+        <button class="btn btn-vert" style="flex:1;padding:9px;font-size:.82rem;" onclick="validerPub(${i})">✅ Valider</button>
+        <button class="btn btn-rouge" style="flex:1;padding:9px;font-size:.82rem;" onclick="refuserPub(${i})">❌ Refuser</button>
       </div>
     </div>`).join('');
 }
-
-// Pubs actives — carousel admin
-function showPubsActives(){
-  const pubs=(DB.pubs||[]).filter(p=>p.statut==='ACTIVE'&&p.expiration>Date.now());
-  const section=document.getElementById('pubs-actives-section');
-  const el=document.getElementById('pubs-actives-list');
-  if(!pubs.length){section.style.display='none';return;}
-  section.style.display='block';
-  el.innerHTML=pubs.map(p=>`
-    <div class="pub-active-card">
-      <img src="${p.img}" alt="${p.nom}"/>
-      <div class="label">🏪 ${p.nom}</div>
-    </div>`).join('');
-}
-
 function validerPub(i){
   const pubs=DB.pubs.filter(p=>p.statut==='EN_ATTENTE');
-  const pub=pubs[i];if(!pub)return;
+  const pub=pubs[i]; if(!pub)return;
   const idx=DB.pubs.findIndex(p=>p.id===pub.id);
   DB.pubs[idx].statut='ACTIVE';
   DB.pubs[idx].expiration=Date.now()+(pub.heures*3600000);
   saveDB();
-  addPubSlide(pub.img,`🏪 ${pub.nom}`,`Pub officielle Djanvouê · ${pub.duree}`);
-  showPubsAttente();showPubsActives();
+  // Ajouter au diaporama
+  addPubSlide(pub.img, `🏪 ${pub.nom}`, `Pub officielle Djanvouê · ${pub.duree}`);
+  showPubsAttente();
   alert(`✅ Pub de ${pub.nom} validée et ajoutée au diaporama !`);
 }
 function refuserPub(i){
   const pubs=DB.pubs.filter(p=>p.statut==='EN_ATTENTE');
-  const pub=pubs[i];if(!pub)return;
+  const pub=pubs[i]; if(!pub)return;
   const idx=DB.pubs.findIndex(p=>p.id===pub.id);
-  DB.pubs[idx].statut='REFUSE';saveDB();showPubsAttente();
+  DB.pubs[idx].statut='REFUSE'; saveDB(); showPubsAttente();
   alert(`❌ Pub de ${pub.nom} refusée.`);
 }
 
 // Historique
-function addHisto(type,details,montant){if(!DB.histo)DB.histo=[];DB.histo.unshift({type,details,montant,date:new Date().toLocaleDateString('fr-FR')});if(DB.histo.length>50)DB.histo=DB.histo.slice(0,50);}
+function addHisto(type, details, montant){
+  if(!DB.histo)DB.histo=[];
+  DB.histo.unshift({type,details,montant,date:new Date().toLocaleDateString('fr-FR')});
+  if(DB.histo.length>50)DB.histo=DB.histo.slice(0,50);
+}
 function showHisto(){
   const el=document.getElementById('histo-list');
   if(!DB.histo||!DB.histo.length){el.innerHTML='<p style="font-size:.8rem;color:#aaa;">Aucune transaction.</p>';return;}
-  el.innerHTML=DB.histo.slice(0,20).map(h=>`<div class="histo-item"><div><div style="font-weight:600;">${h.details}</div><div style="font-size:.72rem;color:#aaa;">${h.date}</div></div><div style="display:flex;align-items:center;gap:6px;"><span style="font-weight:700;color:var(--vert);">+${h.montant} F</span><span class="type t-${h.type.toLowerCase()}">${h.type}</span></div></div>`).join('');
+  el.innerHTML=DB.histo.slice(0,20).map(h=>`
+    <div class="histo-item">
+      <div><div style="font-weight:600;">${h.details}</div><div style="font-size:.72rem;color:#aaa;">${h.date}</div></div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span style="font-weight:700;color:var(--vert);">+${h.montant} F</span>
+        <span class="type t-${h.type.toLowerCase()}">${h.type}</span>
+      </div>
+    </div>`).join('');
 }
 
 // Codes vendeurs
-function showCodes(){document.getElementById('codes-liste').innerHTML=(DB.codes||[]).map((c,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:var(--gris);border-radius:8px;margin-bottom:6px;"><span style="font-size:.83rem;">🏪 ${c.nom} — <strong>${c.code}</strong></span><button onclick="delCode(${i})" style="background:var(--rouge);color:#fff;border:none;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.73rem;">✕</button></div>`).join('')||'<p style="font-size:.8rem;color:#aaa;">Aucun code.</p>';}
-function ajouterCode(){const nom=document.getElementById('new-nom').value.trim(),code=document.getElementById('new-code').value.trim();if(!nom||code.length!==4){alert('Nom et code à 4 chiffres requis.');return;}if(!DB.codes)DB.codes=[];if(DB.codes.find(c=>c.code===code)){alert('Ce code existe déjà.');return;}DB.codes.push({nom,code});saveDB();showCodes();document.getElementById('new-nom').value='';document.getElementById('new-code').value='';}
+function showCodes(){
+  document.getElementById('codes-liste').innerHTML=(DB.codes||[]).map((c,i)=>
+    `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:var(--gris);border-radius:8px;margin-bottom:6px;">
+      <span style="font-size:.83rem;">🏪 ${c.nom} — <strong>${c.code}</strong></span>
+      <button onclick="delCode(${i})" style="background:var(--rouge);color:#fff;border:none;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.73rem;">✕</button>
+    </div>`).join('')||'<p style="font-size:.8rem;color:#aaa;">Aucun code.</p>';
+}
+function ajouterCode(){
+  const nom=document.getElementById('new-nom').value.trim();
+  const code=document.getElementById('new-code').value.trim();
+  if(!nom||code.length!==4){alert('Nom et code à 4 chiffres requis.');return;}
+  if(!DB.codes)DB.codes=[];
+  if(DB.codes.find(c=>c.code===code)){alert('Ce code existe déjà.');return;}
+  DB.codes.push({nom,code}); saveDB(); showCodes();
+  document.getElementById('new-nom').value=''; document.getElementById('new-code').value='';
+}
 function delCode(i){if(!confirm('Supprimer ce code ?'))return;DB.codes.splice(i,1);saveDB();showCodes();}
 
 // Capitaines
-function loadCaps(){const c=DB.caps||{};['k','a','j'].forEach((k)=>{const el=document.getElementById('cap-'+k);if(el&&c[k])el.value=c[k];});}
-function saveCapitaines(){DB.caps={k:document.getElementById('cap-k').value.trim(),a:document.getElementById('cap-a').value.trim(),j:document.getElementById('cap-j').value.trim()};saveDB();showCapBureau();}
+function loadCaps(){const c=DB.caps||{};['k','a','j'].forEach((k,i)=>{const el=document.getElementById('cap-'+k);if(el&&c[k])el.value=c[k];});}
+function saveCapitaines(){
+  DB.caps={k:document.getElementById('cap-k').value.trim(),a:document.getElementById('cap-a').value.trim(),j:document.getElementById('cap-j').value.trim()};
+  saveDB(); showCapBureau();
+}
 
 // Simulateur
 let simM='LIVRAISON';
 function setSimMode(m){simM=m;document.getElementById('sim-liv').classList.toggle('selected',m==='LIVRAISON');document.getElementById('sim-pied').classList.toggle('selected',m==='A_PIED');simuler();}
-function simuler(){const mt=parseFloat(document.getElementById('sim-mt').value)||0;let fl=0,cv=0,gd=0,gl=0;if(simM==='LIVRAISON'){fl=300;gl=300;cv=mt*.05;gd=cv+75;}else{cv=150;gd=200;}document.getElementById('sim-c').textContent=(mt+fl)+' FCFA';document.getElementById('sim-v').textContent=Math.round(mt-cv)+' FCFA';document.getElementById('sim-l').textContent=gl+' FCFA';document.getElementById('sim-d').textContent=Math.round(gd)+' FCFA';}
-function calcBonus(){const c=parseInt(document.getElementById('adm-cnt').value)||0,cum=parseFloat(document.getElementById('adm-cum').value)||0;document.getElementById('adm-bonus-res').textContent=c>0&&c%10===0?`🎉 Bonus : ${cum*.10} FCFA à créditer.`:`Encore ${10-(c%10)} commandes pour le bonus.`;}
+function simuler(){
+  const mt=parseFloat(document.getElementById('sim-mt').value)||0;
+  let fl=0,cv=0,gd=0,gl=0;
+  if(simM==='LIVRAISON'){fl=300;gl=300;cv=mt*.05;gd=cv+75;}
+  else{cv=150;gd=200;}
+  document.getElementById('sim-c').textContent=(mt+fl)+' FCFA';
+  document.getElementById('sim-v').textContent=Math.round(mt-cv)+' FCFA';
+  document.getElementById('sim-l').textContent=gl+' FCFA';
+  document.getElementById('sim-d').textContent=Math.round(gd)+' FCFA';
+}
+function calcBonus(){
+  const c=parseInt(document.getElementById('adm-cnt').value)||0;
+  const cum=parseFloat(document.getElementById('adm-cum').value)||0;
+  document.getElementById('adm-bonus-res').textContent=c>0&&c%10===0?`🎉 Bonus : ${cum*.10} FCFA à créditer.`:`Encore ${10-(c%10)} commandes pour le bonus.`;
+}
 
 // ====== INIT ======
 showCapBureau();
+// Init pub Wave par défaut
 wQR(500,'wave-pub-qr');
 document.getElementById('wave-pub-lien').href=wLink(500);
-// Init récap pub
-document.getElementById('recap-duree').textContent='24 heures';
-document.getElementById('recap-montant').textContent='500 FCFA';
-document.getElementById('pub-recap').style.display='block';
-// Charger pubs actives dans le diaporama
+// Charger pubs actives existantes
 (DB.pubs||[]).filter(p=>p.statut==='ACTIVE'&&p.expiration>Date.now()).forEach(p=>{addPubSlide(p.img,`🏪 ${p.nom}`,`Pub officielle · ${p.duree}`);});
-// Démarrer diaporama
-resetPubProgress();
 // Hash admin par défaut
 hashPwd('DDR2024').then(h=>{if(!localStorage.getItem('djanvoue_ah'))localStorage.setItem('djanvoue_ah',h);});
 </script>
