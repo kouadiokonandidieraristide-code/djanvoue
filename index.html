@@ -8,8 +8,6 @@
 :root{--vert:#2E7D32;--jaune:#FFD600;--bleu:#1565C0;--rouge:#c62828;--gris:#f5f5f5;--orange:#E65100;}
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif;}
 body{background:#f0f4f8;min-height:100vh;}
-
-/* SPLASH */
 #splash{position:fixed;inset:0;background:var(--bleu);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;transition:opacity .8s;}
 #splash.hide{opacity:0;pointer-events:none;}
 #splash h1{font-size:2.6rem;font-weight:900;color:#fff;letter-spacing:6px;margin-top:16px;}
@@ -17,36 +15,23 @@ body{background:#f0f4f8;min-height:100vh;}
 @keyframes popIn{from{transform:scale(0);}to{transform:scale(1);}}
 @keyframes bounce{from{transform:translateY(0);}to{transform:translateY(-10px);}}
 @keyframes pulse{0%{transform:scale(1);}100%{transform:scale(1.08);}}
-@keyframes spin{to{transform:rotate(360deg);}}
-
-/* HEADER */
 header{background:var(--bleu);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .hlogo{display:flex;align-items:center;gap:10px;}
 .hlogo svg{width:38px;height:38px;}
 .htitle h1{font-size:1rem;font-weight:900;letter-spacing:2px;}
 .htitle p{font-size:.62rem;opacity:.8;}
-#heureBadge{font-size:.72rem;background:var(--jaune);color:#333;padding:3px 8px;border-radius:20px;font-weight:700;transition:.3s;}
-
-/* NAV */
+#heureBadge{font-size:.72rem;background:var(--jaune);color:#333;padding:3px 8px;border-radius:20px;font-weight:700;}
 nav{display:flex;overflow-x:auto;background:#fff;border-bottom:2px solid var(--jaune);position:sticky;top:58px;z-index:99;}
 nav button{flex:1;min-width:65px;padding:9px 2px;border:none;background:none;font-size:.65rem;font-weight:600;color:#555;cursor:pointer;border-bottom:3px solid transparent;transition:.2s;}
 nav button.active{color:var(--bleu);border-bottom-color:var(--bleu);}
-
-/* PAGES */
 .page{display:none;padding:14px;max-width:480px;margin:auto;}
 .page.active{display:block;}
-
-/* CARDS */
 .card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);}
 .card h3{color:var(--bleu);margin-bottom:10px;font-size:.92rem;}
-
-/* FORMS */
 input,textarea,select{width:100%;padding:10px;border:1.5px solid #ddd;border-radius:8px;margin-bottom:10px;font-size:.88rem;outline:none;transition:.2s;}
 input:focus,textarea:focus,select:focus{border-color:var(--bleu);}
 textarea{resize:vertical;min-height:65px;}
 label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
-
-/* BUTTONS */
 .btn{display:block;width:100%;padding:13px;border:none;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;margin-top:6px;transition:.2s;text-align:center;}
 .btn:active{opacity:.82;}
 .btn:disabled{opacity:.4;cursor:not-allowed;}
@@ -57,8 +42,6 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
 .btn-wave{background:#1A73E8;color:#fff;}
 .btn-wa{background:#25D366;color:#fff;}
 .btn-orange{background:var(--orange);color:#fff;}
-
-/* PUB DIAPORAMA */
 .pub-wrap{position:relative;border-radius:14px;overflow:hidden;margin-bottom:6px;height:130px;background:var(--bleu);}
 .pub-track{display:flex;height:100%;transition:transform .5s ease;}
 .pub-slide{min-width:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:16px;text-align:center;position:relative;}
@@ -70,68 +53,46 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
 .pub-dots{display:flex;justify-content:center;gap:5px;margin-bottom:10px;}
 .pub-dot{width:7px;height:7px;border-radius:50%;background:#ccc;cursor:pointer;transition:.3s;}
 .pub-dot.active{background:var(--bleu);width:18px;border-radius:4px;}
-
-/* WELCOME */
 .welcome{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#e3f2fd,#fff);border-radius:12px;padding:12px 14px;margin-bottom:12px;border-left:4px solid var(--bleu);}
 .welcome svg{width:54px;flex-shrink:0;}
 .welcome h3{font-size:.9rem;color:var(--bleu);font-weight:700;}
 .welcome p{font-size:.75rem;color:#555;margin-top:2px;}
-
-/* MODES */
 .modes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
 .mode-card{border:2px solid #ddd;border-radius:10px;padding:12px;text-align:center;cursor:pointer;background:#fff;transition:.2s;}
 .mode-card.selected{border-color:var(--vert);background:#e8f5e9;}
 .mode-card .icon{font-size:1.7rem;}
 .mode-card .label{font-size:.78rem;font-weight:700;color:#333;margin-top:3px;}
 .mode-card .prix{font-size:.72rem;color:var(--vert);}
-
-/* CHIPS */
 .chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px;}
 .chip{padding:7px 12px;border:2px solid #ddd;border-radius:20px;font-size:.8rem;cursor:pointer;background:#fff;transition:.2s;}
 .chip.sel-bleu{border-color:var(--bleu);background:#e3f2fd;color:var(--bleu);font-weight:700;}
 .chip.sel-vert{border-color:var(--vert);background:#e8f5e9;color:var(--vert);font-weight:700;}
-
-/* TICKET */
 .ticket{background:#f9f9f9;border:2px dashed var(--bleu);border-radius:10px;padding:13px;font-size:.82rem;line-height:1.9;margin-bottom:10px;}
 .ticket .row{display:flex;justify-content:space-between;}
 .ticket .total{font-weight:700;font-size:.95rem;color:var(--bleu);border-top:1px solid #eee;padding-top:6px;margin-top:5px;}
-
-/* OTP */
 .otp-box{background:#fffde7;border:2px solid var(--jaune);border-radius:12px;padding:14px;text-align:center;display:none;}
 .otp-box.show{display:block;}
 .otp-code{font-size:2.8rem;font-weight:900;color:var(--bleu);letter-spacing:10px;}
 .otp-box p{font-size:.75rem;color:#555;margin-top:4px;}
-
-/* WAVE */
 .wave-box{background:#f0f7ff;border:2px solid #1A73E8;border-radius:12px;padding:14px;text-align:center;margin-bottom:10px;display:none;}
 .wave-box.show{display:block;}
 .wave-box h4{color:#1A73E8;font-size:.88rem;margin-bottom:6px;}
 .wave-montant{font-size:1.6rem;font-weight:900;color:#1A73E8;}
 #wave-qr-c,#wave-taxi-qr,#wave-pub-qr{width:130px;height:130px;margin:8px auto;}
 #wave-qr-c img,#wave-taxi-qr img,#wave-pub-qr img{width:100%;height:100%;border-radius:8px;}
-
-/* SUCCES */
 .succes{display:none;text-align:center;padding:18px;background:#e8f5e9;border-radius:12px;margin-top:10px;}
 .succes.show{display:block;}
 .succes .icon{font-size:2.8rem;}
 .succes p{margin-top:8px;color:var(--vert);font-weight:600;font-size:.9rem;}
-
-/* PROGRESS */
 .prog-bar{height:13px;background:#e0e0e0;border-radius:8px;overflow:hidden;margin:7px 0;}
 .prog-fill{height:100%;background:var(--jaune);border-radius:8px;transition:width .4s;}
-
-/* TIRELIRE */
 .tirelire{background:linear-gradient(135deg,var(--vert),#1b5e20);border-radius:14px;padding:18px;text-align:center;color:#fff;margin-bottom:12px;}
 .tirelire .solde{font-size:2rem;font-weight:900;}
 .tirelire .lbl{font-size:.78rem;opacity:.85;}
-
-/* STATS */
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .stat-box{background:var(--gris);border-radius:10px;padding:12px;text-align:center;}
 .stat-box .val{font-size:1.2rem;font-weight:700;color:var(--bleu);}
 .stat-box .lbl{font-size:.7rem;color:#777;margin-top:2px;}
-
-/* TAXI */
 #page-taxi .taxi-hero{background:var(--jaune);border-radius:14px;padding:24px;text-align:center;margin-bottom:12px;}
 #page-taxi .taxi-hero .icon{font-size:4.5rem;animation:pulse 1s infinite alternate;}
 #page-taxi .taxi-hero h2{font-size:1.6rem;font-weight:900;color:#333;margin-top:8px;}
@@ -141,8 +102,19 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
 .tarif-card.selected{border-color:var(--bleu);background:#e3f2fd;}
 .tarif-card .t-val{font-size:1.1rem;font-weight:700;color:var(--bleu);}
 .tarif-card .t-lbl{font-size:.72rem;color:#555;}
-
-/* PUB PARTENAIRE */
+/* CHAUFFEURS */
+.chauffeur-card{border:2px solid #ddd;border-radius:12px;padding:12px;margin-bottom:10px;background:#fff;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s;}
+.chauffeur-card:hover{border-color:var(--bleu);background:#e3f2fd;}
+.chauffeur-card.selected{border-color:var(--vert);background:#e8f5e9;}
+.chauf-avatar{width:48px;height:48px;border-radius:50%;background:var(--bleu);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;}
+.chauf-info .nom{font-weight:700;font-size:.9rem;}
+.chauf-info .zone{font-size:.75rem;color:#777;}
+.chauf-info .vehicule{font-size:.75rem;color:var(--vert);font-weight:600;}
+.chauf-wa{margin-left:auto;background:#25D366;color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:.8rem;font-weight:700;cursor:pointer;}
+.badge-dispo{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.68rem;font-weight:700;background:#e8f5e9;color:var(--vert);margin-top:2px;}
+/* INSCRIPTION CHAUFFEUR */
+.chauf-form{background:#fff3e0;border:2px solid var(--orange);border-radius:12px;padding:16px;margin-bottom:12px;}
+.chauf-form h3{color:var(--orange);margin-bottom:10px;font-size:.9rem;}
 .pub-upload{border:2.5px dashed #aaa;border-radius:12px;padding:20px;text-align:center;cursor:pointer;background:#fafafa;margin-bottom:10px;transition:.2s;}
 .pub-upload:hover{border-color:var(--bleu);background:#e3f2fd;}
 .pub-upload .icon{font-size:2.5rem;}
@@ -153,53 +125,37 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
 .pub-opt.selected{border-color:var(--jaune);background:#fffde7;}
 .pub-opt .p-val{font-size:.9rem;font-weight:700;color:var(--bleu);}
 .pub-opt .p-lbl{font-size:.7rem;color:#555;}
-
-/* TIMER VALIDATION */
 .timer-box{background:#fff3e0;border:2px solid var(--orange);border-radius:12px;padding:16px;text-align:center;display:none;}
 .timer-box.show{display:block;}
 .timer-circle{width:80px;height:80px;border-radius:50%;background:var(--orange);color:#fff;font-size:1.4rem;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;}
 .timer-box p{font-size:.82rem;color:#555;}
-
-/* GRILLE PRODUITS VENDEUR */
 .produits-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
 .produit-card{border:2px solid #ddd;border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:.2s;background:#fff;}
 .produit-card.selected{border-color:var(--vert);background:#e8f5e9;}
 .produit-card .p-nom{font-weight:700;font-size:.85rem;}
 .produit-card .p-prix{font-size:.78rem;color:var(--vert);margin-top:2px;}
-
-/* HORAIRE */
 .horaire{display:inline-block;padding:5px 12px;border-radius:20px;font-size:.8rem;font-weight:700;margin-bottom:10px;}
 .ouvert{background:#e8f5e9;color:var(--vert);}
 .ferme{background:#ffebee;color:var(--rouge);}
-
-/* STEPS */
 .steps{display:flex;gap:5px;margin-bottom:14px;}
 .step{flex:1;height:4px;border-radius:2px;background:#ddd;}
 .step.done{background:var(--bleu);}
-
-/* ADMIN PUBS EN ATTENTE */
 .pub-attente-card{background:#fff8e1;border:2px solid var(--orange);border-radius:10px;padding:12px;margin-bottom:10px;}
 .pub-attente-card img{width:100%;height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px;}
 .pub-attente-card .info{font-size:.8rem;color:#555;margin-bottom:8px;}
 .pub-attente-card .btns{display:flex;gap:8px;}
-
-/* CANVAS */
 #sigCanvas{border:2px dashed #aaa;border-radius:8px;background:#fafafa;touch-action:none;width:100%;height:140px;}
-
-/* CAPTAIN */
 .cap-admin-row{display:flex;gap:8px;margin-bottom:8px;align-items:center;}
 .cap-admin-row input{margin-bottom:0;}
 .cap-admin-row span{font-size:.8rem;min-width:80px;font-weight:600;}
-
-/* SPAM */
 .spam-msg{font-size:.78rem;color:var(--rouge);text-align:center;margin-top:6px;display:none;}
-
-/* HISTORIQUE */
 .histo-item{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f0f0f0;font-size:.82rem;}
 .histo-item .type{padding:3px 8px;border-radius:12px;font-size:.7rem;font-weight:700;}
 .t-commission{background:#e8f5e9;color:var(--vert);}
 .t-bonus{background:#fffde7;color:#f57f17;}
 .t-rechargement{background:#e3f2fd;color:var(--bleu);}
+.loading-spin{display:inline-block;width:20px;height:20px;border:3px solid #ddd;border-top-color:var(--bleu);border-radius:50%;animation:spin 1s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
@@ -232,7 +188,6 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
   </svg>
 </div>
 
-<!-- HEADER -->
 <header>
   <div class="hlogo">
     <svg viewBox="0 0 140 140">
@@ -259,8 +214,6 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
 
 <!-- ===== CLIENT ===== -->
 <div class="page active" id="page-client">
-
-  <!-- DIAPORAMA PUB -->
   <div class="pub-wrap">
     <div class="pub-track" id="pubTrack">
       <div class="pub-slide" style="background:linear-gradient(135deg,#1565C0,#0d47a1);">
@@ -279,8 +232,6 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
     <div class="pub-dot" onclick="goSlide(1)"></div>
     <div class="pub-dot" onclick="goSlide(2)"></div>
   </div>
-
-  <!-- WELCOME -->
   <div class="welcome">
     <svg viewBox="0 0 100 120">
       <ellipse cx="50" cy="78" rx="21" ry="28" fill="#E65100"/>
@@ -299,8 +250,6 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
       <p>Livraison rapide partout à Bongouanou ⚡</p>
     </div>
   </div>
-
-  <!-- MODE -->
   <div class="card">
     <h3>🚀 Mode de réception</h3>
     <div class="modes">
@@ -312,8 +261,6 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
       </div>
     </div>
   </div>
-
-  <!-- ZONE -->
   <div class="card" id="card-zone">
     <h3>📍 Zone de livraison</h3>
     <div class="chips">
@@ -326,8 +273,6 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
     </div>
     <div id="zone-info" style="font-size:.8rem;color:var(--bleu);font-weight:600;">📍 Kangandy — 300 FCFA</div>
   </div>
-
-  <!-- TYPE -->
   <div class="card">
     <h3>📦 Type de commande</h3>
     <div class="chips">
@@ -339,8 +284,6 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
       <div class="chip" onclick="setType(this,'Autre','c')">✨ Autre</div>
     </div>
   </div>
-
-  <!-- FORMULAIRE -->
   <div class="card">
     <h3>📝 Votre commande</h3>
     <label>Votre nom</label><input type="text" id="c-nom" placeholder="Ex: Kouamé Adjoua"/>
@@ -357,28 +300,22 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
     <div id="rep-msg" style="font-size:.75rem;margin-top:-7px;margin-bottom:8px;"></div>
     <label>Décrivez votre commande</label>
     <textarea id="c-desc" placeholder="Ex: 1 riz sauce graine au Maquis Le Baron…"></textarea>
-
     <div class="ticket">
       <div class="row"><span>Mode</span><span id="t-mode">🛵 Livraison</span></div>
       <div class="row"><span>Zone</span><span id="t-zone">Kangandy</span></div>
       <div class="row"><span>Type</span><span id="t-type">Repas</span></div>
       <div class="row total"><span>Frais livraison</span><span id="t-frais">300 FCFA</span></div>
     </div>
-
-    <!-- OTP -->
     <div class="otp-box" id="otp-box">
       <div class="otp-code" id="otp-val">----</div>
       <p>🔐 Code de validation — donnez-le au livreur à la réception</p>
     </div>
-
-    <!-- WAVE -->
     <div class="wave-box" id="wave-box">
       <h4>💛 Payer via Wave</h4>
       <div class="wave-montant"><span id="wave-val">300</span> <small>FCFA</small></div>
       <div id="wave-qr-c"></div>
       <a id="wave-lien" href="#" target="_blank" class="btn btn-wave" style="text-decoration:none;display:block;margin-top:8px;">💛 Ouvrir Wave et Payer</a>
     </div>
-
     <button class="btn btn-vert" id="btn-valider" onclick="validerCommande()">✅ Valider ma commande</button>
     <div style="display:none;gap:8px;margin-top:8px;" id="btns-send">
       <button style="flex:1;padding:11px;border:none;border-radius:8px;font-weight:700;cursor:pointer;background:#25D366;color:#fff;" onclick="envoyerClient('WA')">💬 WhatsApp</button>
@@ -400,30 +337,106 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
     <h2>TAXI DJANVOUÊ</h2>
     <p>Bongouanou — Disponible 24h/24 — 7j/7</p>
   </div>
-  <div class="card">
-    <h3>🗺️ Réserver votre taxi</h3>
-    <label>Votre nom</label><input type="text" id="tx-nom" placeholder="Ex: Koné Moussa"/>
-    <label>Votre téléphone</label><input type="tel" id="tx-tel" placeholder="07xxxxxxxx"/>
-    <label>Point de départ</label><input type="text" id="tx-dep" placeholder="Ex: Grand Marché Agnikro"/>
-    <label>Destination</label><input type="text" id="tx-dest" placeholder="Ex: Lycée Moderne Bongouanou"/>
-    <label>Tarif estimé</label>
-    <div class="tarif-grid">
-      <div class="tarif-card selected" id="tf-500" onclick="setTarif(500,'Court')"><div class="t-val">500 FCFA</div><div class="t-lbl">Trajet court</div></div>
-      <div class="tarif-card" id="tf-1000" onclick="setTarif(1000,'Moyen')"><div class="t-val">1 000 FCFA</div><div class="t-lbl">Trajet moyen</div></div>
-      <div class="tarif-card" id="tf-1500" onclick="setTarif(1500,'Long')"><div class="t-val">1 500 FCFA</div><div class="t-lbl">Longue distance</div></div>
-      <div class="tarif-card" id="tf-0" onclick="setTarif(0,'Négocier')"><div class="t-val">?</div><div class="t-lbl">À négocier</div></div>
+
+  <!-- ONGLETS TAXI -->
+  <div style="display:flex;gap:8px;margin-bottom:12px;">
+    <button class="btn btn-bleu" id="tab-reserver" onclick="showTaxiTab('reserver')" style="flex:1;padding:10px;font-size:.82rem;">🗺️ Réserver</button>
+    <button class="btn" id="tab-chauffeurs" onclick="showTaxiTab('chauffeurs')" style="flex:1;padding:10px;font-size:.82rem;background:#eee;color:#333;">🚕 Chauffeurs</button>
+    <button class="btn" id="tab-inscription" onclick="showTaxiTab('inscription')" style="flex:1;padding:10px;font-size:.82rem;background:#eee;color:#333;">➕ S'inscrire</button>
+  </div>
+
+  <!-- TAB RÉSERVATION -->
+  <div id="taxi-tab-reserver">
+    <div class="card">
+      <h3>🗺️ Réserver votre taxi</h3>
+      <label>Votre nom</label><input type="text" id="tx-nom" placeholder="Ex: Koné Moussa"/>
+      <label>Votre téléphone</label><input type="tel" id="tx-tel" placeholder="07xxxxxxxx"/>
+      <label>Point de départ</label><input type="text" id="tx-dep" placeholder="Ex: Grand Marché Agnikro"/>
+      <label>Destination</label><input type="text" id="tx-dest" placeholder="Ex: Lycée Moderne Bongouanou"/>
+      <label>Tarif estimé</label>
+      <div class="tarif-grid">
+        <div class="tarif-card selected" id="tf-500" onclick="setTarif(500,'Court')">
+          <div class="t-val">500 FCFA</div><div class="t-lbl">Trajet court</div>
+        </div>
+        <div class="tarif-card" id="tf-1000" onclick="setTarif(1000,'Moyen')">
+          <div class="t-val">1 000 FCFA</div><div class="t-lbl">Trajet moyen</div>
+        </div>
+        <div class="tarif-card" id="tf-2000" onclick="setTarif(2000,'Long')">
+          <div class="t-val">2 000 FCFA</div><div class="t-lbl">Longue distance</div>
+        </div>
+        <div class="tarif-card" id="tf-0" onclick="choisirChauffeurNegociation()">
+          <div class="t-val">?</div><div class="t-lbl">À négocier</div>
+        </div>
+      </div>
+      <div class="wave-box" id="wave-taxi">
+        <h4>💛 Payer le taxi via Wave</h4>
+        <div class="wave-montant"><span id="wave-taxi-val">500</span> <small>FCFA</small></div>
+        <div id="wave-taxi-qr"></div>
+        <a id="wave-taxi-lien" href="#" target="_blank" class="btn btn-wave" style="text-decoration:none;display:block;margin-top:8px;">💛 Payer via Wave</a>
+      </div>
+      <button class="btn btn-jaune" style="color:#333;" onclick="appelerTaxi()">🚕 APPELER MON TAXI MAINTENANT</button>
+      <div class="succes" id="ok-taxi">
+        <div class="icon">🚕</div>
+        <p>Taxi en route !<br>Le chauffeur vous contacte immédiatement.</p>
+        <button class="btn btn-bleu" style="margin-top:10px;" onclick="resetTaxi()">← Nouvelle course</button>
+      </div>
     </div>
-    <div class="wave-box" id="wave-taxi">
-      <h4>💛 Payer le taxi via Wave</h4>
-      <div class="wave-montant"><span id="wave-taxi-val">500</span> <small>FCFA</small></div>
-      <div id="wave-taxi-qr"></div>
-      <a id="wave-taxi-lien" href="#" target="_blank" class="btn btn-wave" style="text-decoration:none;display:block;margin-top:8px;">💛 Payer via Wave</a>
+  </div>
+
+  <!-- TAB CHAUFFEURS -->
+  <div id="taxi-tab-chauffeurs" style="display:none;">
+    <div class="card">
+      <h3>🚕 Chauffeurs disponibles</h3>
+      <label>Filtrer par zone</label>
+      <select id="filtre-zone-chauf" onchange="chargerChauffeurs()">
+        <option value="">Toutes les zones</option>
+        <option>Kangandy</option>
+        <option>Agnikro</option>
+        <option>28 Janvier</option>
+        <option>Dioulakro</option>
+        <option>Habitat</option>
+      </select>
+      <div id="liste-chauffeurs">
+        <div style="text-align:center;padding:20px;color:#aaa;"><span class="loading-spin"></span> Chargement…</div>
+      </div>
     </div>
-    <button class="btn btn-jaune" style="color:#333;" onclick="appelerTaxi()">🚕 APPELER MON TAXI MAINTENANT</button>
-    <div class="succes" id="ok-taxi">
-      <div class="icon">🚕</div>
-      <p>Taxi en route !<br>Didireverb vous contacte immédiatement.</p>
-      <button class="btn btn-bleu" style="margin-top:10px;" onclick="resetTaxi()">← Nouvelle course</button>
+  </div>
+
+  <!-- TAB INSCRIPTION CHAUFFEUR -->
+  <div id="taxi-tab-inscription" style="display:none;">
+    <div class="chauf-form">
+      <h3>🚕 Inscription Chauffeur Djanvouê</h3>
+      <p style="font-size:.78rem;color:#555;margin-bottom:12px;">Enregistrez-vous pour recevoir des clients. Vos infos restent sécurisées.</p>
+      <label>Nom complet</label>
+      <input type="text" id="ch-nom" placeholder="Ex: Koné Mamadou"/>
+      <label>Numéro WhatsApp</label>
+      <input type="tel" id="ch-wa" placeholder="Ex: 0707123456"/>
+      <label>Numéro de plaque</label>
+      <input type="text" id="ch-plaque" placeholder="Ex: AB 1234 CI"/>
+      <label>Type de véhicule</label>
+      <select id="ch-type">
+        <option>Taxi</option>
+        <option>Moto-taxi</option>
+        <option>Minibus</option>
+        <option>Autre</option>
+      </select>
+      <label>Zone principale</label>
+      <select id="ch-zone">
+        <option>Kangandy</option>
+        <option>Agnikro</option>
+        <option>28 Janvier</option>
+        <option>Dioulakro</option>
+        <option>Habitat</option>
+      </select>
+      <button class="btn btn-orange" onclick="inscrireChauffeur()" id="btn-inscr-chauf">🚕 S'enregistrer comme chauffeur</button>
+      <div class="succes" id="ok-chauf">
+        <div class="icon">🎉</div>
+        <p>Inscription réussie !<br>Vous êtes maintenant visible par les clients.</p>
+      </div>
+    </div>
+    <div class="card" style="font-size:.8rem;color:#555;background:#fff8e1;border:1px solid var(--jaune);">
+      <strong>🔒 Données sécurisées</strong><br>
+      Vos informations (nom, WhatsApp, plaque) sont enregistrées dans notre système sécurisé Djanvouê. Elles servent uniquement à connecter les clients avec les chauffeurs de confiance.
     </div>
   </div>
 </div>
@@ -438,16 +451,12 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
     <button class="btn btn-bleu" onclick="authVendeur()">🔓 Accéder</button>
     <div id="v-err" style="color:var(--rouge);font-size:.8rem;margin-top:6px;display:none;">Code incorrect. Contactez Didireverb.</div>
   </div>
-
   <div id="v-content" style="display:none;">
-    <!-- TIRELIRE -->
     <div class="tirelire">
       <div class="lbl">💰 Ma Tirelire Djanvouê</div>
       <div class="solde" id="v-solde">0 FCFA</div>
       <div style="font-size:.72rem;opacity:.7;margin-top:3px;" id="v-boutique-lbl">—</div>
     </div>
-
-    <!-- BONUS -->
     <div class="card">
       <h3>🎯 Bonus Fidélité</h3>
       <div style="display:flex;justify-content:space-between;font-size:.83rem;margin-bottom:4px;">
@@ -457,8 +466,6 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
       <div class="prog-bar"><div class="prog-fill" id="v-bonus-bar" style="width:0%"></div></div>
       <div id="v-bonus-msg" style="font-size:.76rem;font-style:italic;color:#555;">Encore 10 courses pour votre bonus</div>
     </div>
-
-    <!-- GRILLE PRODUITS -->
     <div class="card">
       <h3>🍽️ Sélectionner un produit</h3>
       <div class="produits-grid" id="v-produits">
@@ -471,8 +478,6 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
       </div>
       <div id="v-produit-sel" style="font-size:.82rem;color:var(--vert);font-weight:600;margin-bottom:8px;display:none;">✅ Produit sélectionné : <span id="v-prod-nom"></span></div>
     </div>
-
-    <!-- COMMANDE -->
     <div class="card">
       <h3>📦 Envoyer une commande client</h3>
       <label>Nom du client</label><input type="text" id="v-client" placeholder="Ex: Kouamé"/>
@@ -487,8 +492,6 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
         <button class="btn btn-bleu" style="margin-top:10px;" onclick="resetVendeur()">← Nouvelle commande</button>
       </div>
     </div>
-
-    <!-- RECHARGEMENT -->
     <div class="card">
       <h3>🔄 Recharger ma Tirelire</h3>
       <p style="font-size:.8rem;color:#555;margin-bottom:10px;">Via Wave ou Orange Money — contactez Didireverb.</p>
@@ -496,23 +499,19 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
       <input type="number" id="v-recharge" placeholder="Ex: 5000"/>
       <button class="btn btn-wave" onclick="demanderRecharge()" style="text-decoration:none;display:block;">💛 Demander le rechargement</button>
     </div>
-
-    <!-- QR -->
     <div class="card">
       <h3>🔲 Mon QR Code Partenaire</h3>
       <input type="text" id="v-qr-nom" placeholder="Nom boutique pour le QR"/>
       <button class="btn btn-bleu" onclick="genQR()">⬇️ Générer mon QR Code</button>
       <div id="v-qr-zone" style="margin-top:12px;text-align:center;"></div>
     </div>
-
     <button class="btn btn-rouge" onclick="decoVendeur()">🔒 Déconnexion</button>
   </div>
 </div>
 
-<!-- ===== PARTENAIRE / ACCORD ===== -->
+<!-- ===== PARTENAIRE ===== -->
 <div class="page" id="page-partenaire">
   <div class="steps"><div class="step done" id="s1"></div><div class="step" id="s2"></div><div class="step" id="s3"></div><div class="step" id="s4"></div></div>
-
   <div id="e1">
     <div class="card">
       <h3>🤝 Devenir Partenaire Djanvouê</h3>
@@ -526,43 +525,31 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
       <button class="btn btn-bleu" onclick="goE(2)">Suivant →</button>
     </div>
   </div>
-
-  <!-- ÉTAPE 2 : PUB -->
   <div id="e2" style="display:none;">
     <div class="card">
       <h3>📢 Djanvouê Ads — Votre Publicité</h3>
       <p style="font-size:.8rem;color:#555;margin-bottom:10px;">Uploadez votre photo et choisissez la durée. Didireverb validera sous 15 minutes.</p>
-
-      <!-- Upload photo -->
       <div class="pub-upload" id="pub-upload-zone" onclick="document.getElementById('pub-photo-input').click()">
-        <div class="icon">📸</div>
-        <p>Appuyez pour choisir votre affiche</p>
+        <div class="icon">📸</div><p>Appuyez pour choisir votre affiche</p>
       </div>
       <input type="file" id="pub-photo-input" accept="image/*" style="display:none;" onchange="previewPub(this)"/>
       <img id="pub-preview" class="pub-preview" alt="Aperçu"/>
-
-      <!-- Durée -->
       <label>Durée de diffusion</label>
       <div class="pub-options">
         <div class="pub-opt selected" id="po-24h" onclick="setPub(500,'24h',24)"><div class="p-val">500F</div><div class="p-lbl">24 heures</div></div>
         <div class="pub-opt" id="po-3j" onclick="setPub(1200,'3 jours',72)"><div class="p-val">1 200F</div><div class="p-lbl">3 jours</div></div>
         <div class="pub-opt" id="po-1s" onclick="setPub(2500,'1 semaine',168)"><div class="p-val">2 500F</div><div class="p-lbl">1 semaine</div></div>
       </div>
-
-      <!-- Wave pub -->
       <div class="wave-box show" id="wave-pub">
         <h4>💛 Payer la pub via Wave</h4>
         <div class="wave-montant"><span id="wave-pub-val">500</span> <small>FCFA</small></div>
         <div id="wave-pub-qr"></div>
         <a id="wave-pub-lien" href="#" target="_blank" class="btn btn-wave" style="text-decoration:none;display:block;margin-top:8px;">💛 Payer via Wave</a>
       </div>
-
       <div style="display:flex;gap:8px;">
         <button class="btn btn-jaune" style="flex:1;" onclick="goE(1)">← Retour</button>
         <button class="btn btn-bleu" style="flex:1;" onclick="soumettrePub()">📤 Soumettre ma pub</button>
       </div>
-
-      <!-- TIMER 15 min -->
       <div class="timer-box" id="timer-box">
         <div class="timer-circle" id="timer-val">15:00</div>
         <p>⏳ Votre pub est en cours de validation par Didireverb.<br>Délai maximum : <strong>15 minutes</strong>.</p>
@@ -570,8 +557,6 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
       </div>
     </div>
   </div>
-
-  <!-- ÉTAPE 3 : SIGNATURE -->
   <div id="e3" style="display:none;">
     <div class="card">
       <h3>✍️ Accord Djanvouê — Signature</h3>
@@ -622,10 +607,7 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
     <button class="btn btn-bleu" onclick="loginAdmin()">Connexion</button>
     <div id="adm-err" style="color:var(--rouge);font-size:.8rem;margin-top:6px;display:none;">Code incorrect.</div>
   </div>
-
   <div id="adm-content" style="display:none;">
-
-    <!-- STATS -->
     <div class="card">
       <h3>📊 Tableau de bord DDR</h3>
       <div class="stats-grid">
@@ -636,14 +618,16 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
       </div>
       <button class="btn btn-rouge" style="margin-top:10px;font-size:.8rem;" onclick="resetStats()">🗑️ Réinitialiser</button>
     </div>
-
-    <!-- PUBS EN ATTENTE -->
+    <!-- CHAUFFEURS ADMIN -->
+    <div class="card">
+      <h3>🚕 Chauffeurs enregistrés</h3>
+      <div id="adm-chauffeurs-list"><p style="font-size:.8rem;color:#aaa;">Chargement…</p></div>
+      <button class="btn btn-bleu" style="margin-top:8px;font-size:.82rem;" onclick="chargerChauffeurAdmin()">🔄 Actualiser</button>
+    </div>
     <div class="card">
       <h3>🔔 Pubs en attente de validation</h3>
       <div id="pubs-attente-list"><p style="font-size:.8rem;color:#aaa;">Aucune pub en attente.</p></div>
     </div>
-
-    <!-- SIMULATEUR -->
     <div class="card">
       <h3>🧮 Simulateur de Transaction</h3>
       <label>Montant commande (FCFA)</label>
@@ -659,14 +643,10 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
         <div class="row total"><span>✅ Ton gain DDR</span><span id="sim-d">—</span></div>
       </div>
     </div>
-
-    <!-- HISTORIQUE -->
     <div class="card">
       <h3>📋 Historique des Transactions</h3>
       <div id="histo-list"><p style="font-size:.8rem;color:#aaa;">Aucune transaction.</p></div>
     </div>
-
-    <!-- CODES VENDEURS -->
     <div class="card">
       <h3>🔑 Codes Vendeurs</h3>
       <div id="codes-liste"></div>
@@ -676,29 +656,43 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
         <button class="btn btn-vert" style="width:50px;padding:10px;margin-top:0;" onclick="ajouterCode()">+</button>
       </div>
     </div>
-
-    <!-- CAPITAINES -->
     <div class="card">
       <h3>🎖️ Numéros des Capitaines</h3>
       <div class="cap-admin-row"><span>Kangandy</span><input type="tel" id="cap-k" placeholder="07xxxxxxxx" oninput="saveCapitaines()"/></div>
       <div class="cap-admin-row"><span>Agnikro</span><input type="tel" id="cap-a" placeholder="07xxxxxxxx" oninput="saveCapitaines()"/></div>
       <div class="cap-admin-row"><span>28 Janvier</span><input type="tel" id="cap-j" placeholder="07xxxxxxxx" oninput="saveCapitaines()"/></div>
     </div>
-
-    <!-- BONUS CALC -->
     <div class="card">
       <h3>🎯 Calculer Bonus Vendeur</h3>
       <label>Nombre de commandes</label><input type="number" id="adm-cnt" placeholder="Ex: 10" oninput="calcBonus()"/>
       <label>Cumul commissions (FCFA)</label><input type="number" id="adm-cum" placeholder="Ex: 5000" oninput="calcBonus()"/>
       <div id="adm-bonus-res" style="margin-top:8px;font-size:.85rem;font-weight:600;color:var(--vert);"></div>
     </div>
-
     <button class="btn btn-rouge" onclick="logoutAdmin()">🔒 Déconnexion Admin</button>
   </div>
 </div>
 
 <script>
-// ====== WAVE (masqué base64) ======
+// ====== CONFIG SUPABASE ======
+const SB_URL = 'https://cijhwnpgxlfnyjzlboen.supabase.co';
+const SB_KEY = 'sb_publishable_G7TLFrMc4Czf7Ptk6dd_bQ_KKYCDQsM';
+
+async function sbFetch(path, opts={}) {
+  const res = await fetch(SB_URL + '/rest/v1/' + path, {
+    ...opts,
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': opts.prefer || 'return=representation',
+      ...(opts.headers || {})
+    }
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json().catch(() => []);
+}
+
+// ====== WAVE ======
 const _w = { _i: atob('TV9jaV9QUTZYZXRRYK5yTWg='), _t: '2250703240589' };
 const wLink = m => `https://pay.wave.com/m/${_w._i}/c/ci/?amount=${m}`;
 const wQR = (m,id) => {
@@ -706,7 +700,7 @@ const wQR = (m,id) => {
   document.getElementById(id).innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(url)}&color=1A73E8" style="border-radius:8px;width:100%;height:100%;"/>`;
 };
 
-// ====== DB ======
+// ====== DB LOCAL ======
 const loadDB = () => { try { return JSON.parse(localStorage.getItem('djanvoue_db')) || {}; } catch(e) { return {}; } };
 const defDB = () => ({ commandes:0, ca:0, bonus:0, zoneStats:{}, codes:[], caps:{}, pubs:[], histo:[] });
 let DB = { ...defDB(), ...loadDB() };
@@ -716,7 +710,7 @@ const saveDB = () => localStorage.setItem('djanvoue_db', JSON.stringify(DB));
 const S = {
   mode:'LIVRAISON', zone:'Kangandy', frais:300,
   typeC:'Repas', typeV:'Repas',
-  tarif:75, pub:{montant:500,duree:'24h',heures:24},
+  tarif:500, pub:{montant:500,duree:'24h',heures:24},
   vCode:'', vCmd:0, vCumul:0, vTirelire:0, vProduit:'',
   simMode:'LIVRAISON', otp:'', pubImg:''
 };
@@ -724,7 +718,7 @@ const S = {
 // ====== SPLASH ======
 setTimeout(()=>document.getElementById('splash').classList.add('hide'), 3200);
 
-// ====== DIAPORAMA PUB ======
+// ====== DIAPORAMA ======
 let slideN = 0;
 const allSlides = () => document.querySelectorAll('#pubTrack .pub-slide');
 const allDots = () => document.querySelectorAll('#pubDots .pub-dot');
@@ -747,7 +741,7 @@ function addPubSlide(img, titre, desc) {
 }
 setInterval(()=>goSlide((slideN+1) % allSlides().length), 4500);
 
-// ====== HEURE & RÉSEAU ======
+// ====== HEURE ======
 function majHeure() {
   const now = new Date(), h = now.getHours(), m = now.getMinutes();
   document.getElementById('heureBadge').textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
@@ -778,6 +772,136 @@ function showPage(id, btn) {
   document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   if(btn) btn.classList.add('active');
+  if(id==='taxi') chargerChauffeurs();
+}
+
+// ====== TAXI TABS ======
+function showTaxiTab(tab) {
+  ['reserver','chauffeurs','inscription'].forEach(t => {
+    document.getElementById('taxi-tab-'+t).style.display = t===tab ? 'block' : 'none';
+    const btn = document.getElementById('tab-'+t);
+    btn.style.background = t===tab ? 'var(--bleu)' : '#eee';
+    btn.style.color = t===tab ? '#fff' : '#333';
+  });
+  if(tab==='chauffeurs') chargerChauffeurs();
+}
+
+// ====== CHAUFFEURS SUPABASE ======
+async function chargerChauffeurs() {
+  const el = document.getElementById('liste-chauffeurs');
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:#aaa;"><span class="loading-spin"></span> Chargement…</div>';
+  try {
+    const zone = document.getElementById('filtre-zone-chauf')?.value || '';
+    let path = 'chauffeurs?select=*&disponible=eq.true&order=created_at.desc';
+    if(zone) path += `&zone=eq.${encodeURIComponent(zone)}`;
+    const data = await sbFetch(path, { headers: { 'Prefer': '' } });
+    if(!data.length) {
+      el.innerHTML = '<div style="text-align:center;padding:20px;color:#aaa;">😔 Aucun chauffeur disponible dans cette zone.<br><small>Vérifiez une autre zone ou revenez plus tard.</small></div>';
+      return;
+    }
+    el.innerHTML = data.map(c => `
+      <div class="chauffeur-card" onclick="selChauffeur('${c.whatsapp}','${c.nom}')">
+        <div class="chauf-avatar">🚕</div>
+        <div class="chauf-info">
+          <div class="nom">${c.nom}</div>
+          <div class="zone">📍 ${c.zone} · ${c.type_vehicule}</div>
+          ${c.plaque ? `<div class="vehicule">🚗 ${c.plaque}</div>` : ''}
+          <span class="badge-dispo">✅ Disponible</span>
+        </div>
+        <button class="chauf-wa" onclick="event.stopPropagation();contacterChauffeur('${c.whatsapp}','${c.nom}')">💬 WA</button>
+      </div>`).join('');
+  } catch(e) {
+    el.innerHTML = '<div style="color:var(--rouge);font-size:.82rem;padding:10px;">⚠️ Erreur de chargement. Vérifiez votre connexion.</div>';
+  }
+}
+
+let chauffeurSelectionne = null;
+function selChauffeur(wa, nom) {
+  chauffeurSelectionne = { wa, nom };
+  document.querySelectorAll('.chauffeur-card').forEach(c => c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+}
+
+function contacterChauffeur(wa, nom) {
+  const num = '225' + wa.replace(/\D/g,'');
+  const msg = `Bonjour ${nom} ! Je vous contacte via Djanvouê pour une course de taxi. Êtes-vous disponible ?`;
+  window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`);
+}
+
+function choisirChauffeurNegociation() {
+  // Basculer vers l'onglet chauffeurs pour négociation
+  document.getElementById('wave-taxi').classList.remove('show');
+  ['500','1000','2000','0'].forEach(v => document.getElementById('tf-'+v)?.classList.remove('selected'));
+  document.getElementById('tf-0').classList.add('selected');
+  showTaxiTab('chauffeurs');
+  // Message d'explication
+  const el = document.getElementById('liste-chauffeurs');
+  el.insertAdjacentHTML('afterbegin', '<div style="background:#fffde7;border:2px solid var(--jaune);border-radius:10px;padding:10px;margin-bottom:10px;font-size:.82rem;">💬 Choisissez un chauffeur pour négocier le tarif directement via WhatsApp.</div>');
+  chargerChauffeurs();
+}
+
+async function inscrireChauffeur() {
+  const nom = document.getElementById('ch-nom').value.trim();
+  const wa = document.getElementById('ch-wa').value.trim();
+  const plaque = document.getElementById('ch-plaque').value.trim();
+  const type_vehicule = document.getElementById('ch-type').value;
+  const zone = document.getElementById('ch-zone').value;
+  if(!nom || !wa) { alert('Nom et WhatsApp obligatoires.'); return; }
+  const btn = document.getElementById('btn-inscr-chauf');
+  btn.disabled = true; btn.textContent = '⏳ Enregistrement…';
+  try {
+    await sbFetch('chauffeurs', {
+      method: 'POST',
+      prefer: 'return=minimal',
+      body: JSON.stringify({ nom, whatsapp: wa, plaque, type_vehicule, zone, disponible: true })
+    });
+    document.getElementById('ok-chauf').classList.add('show');
+    btn.style.display = 'none';
+    // Notif WhatsApp à Didireverb
+    const msg = `🚕 DJANVOUÊ — Nouveau chauffeur enregistré\n👤 ${nom}\n📞 ${wa}\n🚗 ${type_vehicule} — ${plaque||'plaque non renseignée'}\n📍 Zone : ${zone}`;
+    window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(msg)}`);
+  } catch(e) {
+    alert('Erreur lors de l\'inscription. Réessayez.');
+    btn.disabled = false; btn.textContent = '🚕 S\'enregistrer comme chauffeur';
+  }
+}
+
+async function chargerChauffeurAdmin() {
+  const el = document.getElementById('adm-chauffeurs-list');
+  el.innerHTML = '<p style="font-size:.8rem;color:#aaa;">Chargement…</p>';
+  try {
+    const data = await sbFetch('chauffeurs?select=*&order=created_at.desc', { headers: { 'Prefer': '' } });
+    if(!data.length) { el.innerHTML = '<p style="font-size:.8rem;color:#aaa;">Aucun chauffeur enregistré.</p>'; return; }
+    el.innerHTML = data.map(c => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--gris);border-radius:10px;margin-bottom:8px;">
+        <div>
+          <div style="font-weight:700;font-size:.85rem;">🚕 ${c.nom}</div>
+          <div style="font-size:.73rem;color:#777;">📍 ${c.zone} · ${c.type_vehicule} ${c.plaque?'· '+c.plaque:''}</div>
+          <div style="font-size:.73rem;color:var(--bleu);">📞 ${c.whatsapp}</div>
+        </div>
+        <div style="display:flex;gap:5px;flex-direction:column;">
+          <button onclick="toggleDispo('${c.id}',${c.disponible})" style="padding:4px 8px;border-radius:6px;border:none;cursor:pointer;font-size:.7rem;font-weight:700;background:${c.disponible?'var(--vert)':'#aaa'};color:#fff;">${c.disponible?'✅ Dispo':'⛔ Indispo'}</button>
+          <button onclick="supprimerChauffeur('${c.id}')" style="padding:4px 8px;border-radius:6px;border:none;cursor:pointer;font-size:.7rem;font-weight:700;background:var(--rouge);color:#fff;">✕ Suppr.</button>
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    el.innerHTML = '<p style="font-size:.8rem;color:var(--rouge);">Erreur de chargement.</p>';
+  }
+}
+
+async function toggleDispo(id, actuel) {
+  try {
+    await sbFetch(`chauffeurs?id=eq.${id}`, { method: 'PATCH', prefer: 'return=minimal', body: JSON.stringify({ disponible: !actuel }) });
+    chargerChauffeurAdmin();
+  } catch(e) { alert('Erreur.'); }
+}
+
+async function supprimerChauffeur(id) {
+  if(!confirm('Supprimer ce chauffeur ?')) return;
+  try {
+    await sbFetch(`chauffeurs?id=eq.${id}`, { method: 'DELETE', headers: { 'Prefer': '' } });
+    chargerChauffeurAdmin();
+  } catch(e) { alert('Erreur.'); }
 }
 
 // ====== CLIENT ======
@@ -792,7 +916,7 @@ function setMode(m) {
   document.getElementById('accroche').textContent = m==='LIVRAISON' ? `${sal} Que veux-tu recevoir ?` : `${sal} Tu viens chercher toi-même ?`;
 }
 function setZone(el,z,f) {
-  document.querySelectorAll('.zone-chip,.chip').forEach(c=>{ if(c.closest('#card-zone')) c.classList.remove('sel-bleu'); });
+  document.querySelectorAll('#card-zone .chip').forEach(c=>c.classList.remove('sel-bleu'));
   el.classList.add('sel-bleu'); S.zone=z; S.frais=f;
   document.getElementById('zone-info').textContent = z==='Autre'?'📍 Zone à définir — tarif à négocier':`📍 ${z} — ${f} FCFA`;
   majTicket();
@@ -819,7 +943,6 @@ function validerLoc() {
   rm.style.color = r.length>=5?'var(--vert)':'var(--rouge)';
 }
 const genOTP = () => String(Math.floor(1000+Math.random()*9000));
-
 function validerCommande() {
   const nom=document.getElementById('c-nom').value.trim();
   const tel=document.getElementById('c-tel').value.trim();
@@ -890,8 +1013,8 @@ function envoyerDiff(){
 
 // ====== TAXI ======
 function setTarif(m, lbl) {
-  S.tarif=500;
-  ['500','1000','1500','0'].forEach(v=>document.getElementById('tf-'+v)?.classList.remove('selected'));
+  S.tarif = m;
+  ['500','1000','2000','0'].forEach(v=>document.getElementById('tf-'+v)?.classList.remove('selected'));
   document.getElementById('tf-'+m)?.classList.add('selected');
   if(m>0){
     document.getElementById('wave-taxi').classList.add('show');
@@ -932,7 +1055,7 @@ function loadVendeurData(code){
   S.vCmd=d.cnt; S.vCumul=d.cumul; S.vTirelire=d.tirelire; showBonus();
 }
 function saveVendeurData(){localStorage.setItem('vd_'+S.vCode,JSON.stringify({cnt:S.vCmd,cumul:S.vCumul,tirelire:S.vTirelire}));}
-function selProduit(el, nom, prix){
+function selProduit(el,nom,prix){
   document.querySelectorAll('.produit-card').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected'); S.vProduit=`${nom} — ${prix} FCFA`;
   document.getElementById('v-produit-sel').style.display='block';
@@ -1021,26 +1144,23 @@ function previewPub(input){
 function soumettrePub(){
   const nom=document.getElementById('p-nom').value.trim()||'Partenaire';
   if(!S.pubImg){alert('Veuillez choisir une photo pour votre pub.');return;}
-  // Notification WhatsApp à Didireverb
   const msg=`🔔 DJANVOUÊ — Pub en attente de validation\n🏪 ${nom}\n⏱️ Durée : ${S.pub.duree} — ${S.pub.montant} FCFA\n✅ Répondre OUI pour valider`;
   window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(msg)}`);
-  // Enregistrer la pub en attente
   DB.pubs = DB.pubs || [];
   DB.pubs.push({ id:Date.now(), nom, img:S.pubImg, duree:S.pub.duree, montant:S.pub.montant, heures:S.pub.heures, statut:'EN_ATTENTE', ts:Date.now() });
   saveDB();
-  // Démarrer le timer 15 min
   demarrerTimer15();
 }
 let timerPub=null;
 function demarrerTimer15(){
   document.getElementById('timer-box').classList.add('show');
-  let s=900; // 15 minutes
+  let s=900;
   timerPub=setInterval(()=>{
     s--;
     const m=Math.floor(s/60), sec=s%60;
     document.getElementById('timer-val').textContent=`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
     document.getElementById('timer-prog').style.width=(s/900*100)+'%';
-    if(s<=0){clearInterval(timerPub);document.getElementById('timer-val').textContent='⏰';document.getElementById('timer-box').querySelector('p').textContent='Délai écoulé. Contactez Didireverb si la pub n\'est pas encore active.';}
+    if(s<=0){clearInterval(timerPub);document.getElementById('timer-val').textContent='⏰';}
   },1000);
   goE(3);
 }
@@ -1100,7 +1220,7 @@ async function loginAdmin(){
     document.getElementById('adm-login').style.display='none';
     document.getElementById('adm-content').style.display='block';
     document.getElementById('adm-err').style.display='none';
-    majStats(); showCodes(); loadCaps(); showHisto(); showPubsAttente();
+    majStats(); showCodes(); loadCaps(); showHisto(); showPubsAttente(); chargerChauffeurAdmin();
   } else { document.getElementById('adm-err').style.display='block'; }
 }
 function logoutAdmin(){document.getElementById('adm-login').style.display='block';document.getElementById('adm-content').style.display='none';document.getElementById('adm-pwd').value='';}
@@ -1114,8 +1234,6 @@ function majStats(){
   document.getElementById('s-zone').textContent=zMax;
 }
 function resetStats(){if(!confirm('Réinitialiser toutes les statistiques ?'))return;DB.commandes=0;DB.ca=0;DB.bonus=0;DB.zoneStats={};DB.histo=[];saveDB();majStats();showHisto();}
-
-// Pubs en attente
 function showPubsAttente(){
   const pubs=(DB.pubs||[]).filter(p=>p.statut==='EN_ATTENTE');
   const el=document.getElementById('pubs-attente-list');
@@ -1137,7 +1255,6 @@ function validerPub(i){
   DB.pubs[idx].statut='ACTIVE';
   DB.pubs[idx].expiration=Date.now()+(pub.heures*3600000);
   saveDB();
-  // Ajouter au diaporama
   addPubSlide(pub.img, `🏪 ${pub.nom}`, `Pub officielle Djanvouê · ${pub.duree}`);
   showPubsAttente();
   alert(`✅ Pub de ${pub.nom} validée et ajoutée au diaporama !`);
@@ -1149,9 +1266,7 @@ function refuserPub(i){
   DB.pubs[idx].statut='REFUSE'; saveDB(); showPubsAttente();
   alert(`❌ Pub de ${pub.nom} refusée.`);
 }
-
-// Historique
-function addHisto(type, details, montant){
+function addHisto(type,details,montant){
   if(!DB.histo)DB.histo=[];
   DB.histo.unshift({type,details,montant,date:new Date().toLocaleDateString('fr-FR')});
   if(DB.histo.length>50)DB.histo=DB.histo.slice(0,50);
@@ -1168,8 +1283,6 @@ function showHisto(){
       </div>
     </div>`).join('');
 }
-
-// Codes vendeurs
 function showCodes(){
   document.getElementById('codes-liste').innerHTML=(DB.codes||[]).map((c,i)=>
     `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:var(--gris);border-radius:8px;margin-bottom:6px;">
@@ -1187,15 +1300,11 @@ function ajouterCode(){
   document.getElementById('new-nom').value=''; document.getElementById('new-code').value='';
 }
 function delCode(i){if(!confirm('Supprimer ce code ?'))return;DB.codes.splice(i,1);saveDB();showCodes();}
-
-// Capitaines
-function loadCaps(){const c=DB.caps||{};['k','a','j'].forEach((k,i)=>{const el=document.getElementById('cap-'+k);if(el&&c[k])el.value=c[k];});}
+function loadCaps(){const c=DB.caps||{};['k','a','j'].forEach(k=>{const el=document.getElementById('cap-'+k);if(el&&c[k])el.value=c[k];});}
 function saveCapitaines(){
   DB.caps={k:document.getElementById('cap-k').value.trim(),a:document.getElementById('cap-a').value.trim(),j:document.getElementById('cap-j').value.trim()};
   saveDB(); showCapBureau();
 }
-
-// Simulateur
 let simM='LIVRAISON';
 function setSimMode(m){simM=m;document.getElementById('sim-liv').classList.toggle('selected',m==='LIVRAISON');document.getElementById('sim-pied').classList.toggle('selected',m==='A_PIED');simuler();}
 function simuler(){
@@ -1216,13 +1325,12 @@ function calcBonus(){
 
 // ====== INIT ======
 showCapBureau();
-// Init pub Wave par défaut
 wQR(500,'wave-pub-qr');
 document.getElementById('wave-pub-lien').href=wLink(500);
-// Charger pubs actives existantes
 (DB.pubs||[]).filter(p=>p.statut==='ACTIVE'&&p.expiration>Date.now()).forEach(p=>{addPubSlide(p.img,`🏪 ${p.nom}`,`Pub officielle · ${p.duree}`);});
-// Hash admin par défaut
 hashPwd('DDR2024').then(h=>{if(!localStorage.getItem('djanvoue_ah'))localStorage.setItem('djanvoue_ah',h);});
+// Init taxi tab
+showTaxiTab('reserver');
 </script>
 </body>
 </html>
