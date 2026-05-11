@@ -4,6 +4,13 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>DJANVOUÊ — Flash Express Moronou</title>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="DJANVOUÊ"/>
+<meta name="theme-color" content="#1565C0"/>
+<meta name="description" content="Livraison, Taxi et Services à Bongouanou — Par Flash Express Moronou"/>
+<link rel="manifest" id="djanvoue-manifest"/>
 <style>
 :root{--vert:#2E7D32;--jaune:#FFD600;--bleu:#1565C0;--rouge:#c62828;--gris:#f5f5f5;--orange:#E65100;}
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif;}
@@ -201,10 +208,21 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
 .t-bonus{background:#fffde7;color:#f57f17;}
 .t-rechargement{background:#e3f2fd;color:var(--bleu);}
 </style>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-<!-- SPLASH -->
+<!-- BANNIÈRE INSTALLATION -->
+<div id="install-banner" style="display:none;background:linear-gradient(135deg,#FFD600,#FFA000);padding:10px 14px;align-items:center;gap:10px;position:sticky;top:0;z-index:200;">
+  <span style="font-size:1.4rem;">⚡</span>
+  <div style="flex:1;">
+    <div style="font-size:.82rem;font-weight:800;color:#1A237E;">Installer DJANVOUÊ</div>
+    <div style="font-size:.7rem;color:#333;">Accès rapide depuis votre écran d'accueil</div>
+  </div>
+  <button id="btn-install" style="background:#1565C0;color:#fff;border:none;border-radius:20px;padding:7px 14px;font-weight:800;font-size:.78rem;cursor:pointer;">Installer</button>
+  <button id="btn-install-no" style="background:none;border:none;font-size:1.1rem;cursor:pointer;color:#333;">✕</button>
+</div>
 <div id="splash">
   <svg width="130" height="130" viewBox="0 0 140 140" style="animation:popIn .7s ease;">
     <circle cx="70" cy="70" r="67" fill="#1565C0" stroke="#2E7D32" stroke-width="6"/>
@@ -399,6 +417,10 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
     <div class="icon">🚕</div>
     <h2>TAXI DJANVOUÊ</h2>
     <p>Bongouanou — Disponible 24h/24 — 7j/7</p>
+    <a href="https://kouadiokonandidieransite-code.github.io/taxi-bongouanou" target="_blank"
+       style="display:inline-block;margin-top:14px;background:#1A237E;color:var(--jaune);padding:10px 22px;border-radius:25px;font-weight:900;font-size:.9rem;text-decoration:none;">
+      🚕 Voir les chauffeurs disponibles →
+    </a>
   </div>
   <div class="card">
     <h3>🗺️ Réserver votre taxi</h3>
@@ -698,53 +720,109 @@ label{font-size:.8rem;color:#555;display:block;margin-bottom:3px;}
 </div>
 
 <script>
-// ====== SUPABASE CONFIG ======
-const SB_URL = 'https://izzfcxtmyuxehdefdglc.supabase.co';
-const SB_KEY = 'sb_publishable_kS-XWWGz2thWQs0upCxBww_t4mGiYQM';
-const sbHeaders = { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` };
+// ====== PWA MANIFEST DYNAMIQUE ======
+const manifest = {
+  name: "DJANVOUÊ — Flash Express Moronou",
+  short_name: "DJANVOUÊ",
+  description: "Livraison, Taxi et Services à Bongouanou",
+  start_url: "./",
+  display: "standalone",
+  background_color: "#1565C0",
+  theme_color: "#1565C0",
+  orientation: "portrait",
+  icons: [
+    { src: "https://api.dicebear.com/7.x/initials/svg?seed=DJ&backgroundColor=1565C0&textColor=FFD600", sizes: "192x192", type: "image/svg+xml" },
+    { src: "https://api.dicebear.com/7.x/initials/svg?seed=DJ&backgroundColor=1565C0&textColor=FFD600", sizes: "512x512", type: "image/svg+xml" }
+  ],
+  shortcuts: [
+    { name: "Commander", short_name: "Commander", url: "./#client", description: "Passer une commande" },
+    { name: "Taxi", short_name: "Taxi", url: "./#taxi", description: "Appeler un taxi" }
+  ]
+};
+const mBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+document.getElementById('djanvoue-manifest').href = URL.createObjectURL(mBlob);
 
-async function sbInsertPub(pub) {
-  try {
-    const res = await fetch(`${SB_URL}/rest/v1/publicites`, {
-      method: 'POST', headers: sbHeaders, body: JSON.stringify(pub)
+// ====== SERVICE WORKER ======
+if ('serviceWorker' in navigator) {
+  const sw = `
+    const CACHE = 'djanvoue-v2';
+    const ASSETS = ['./'];
+    self.addEventListener('install', e => {
+      e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+      self.skipWaiting();
     });
-    return res.ok;
-  } catch(e) { console.error('Supabase insert error:', e); return false; }
+    self.addEventListener('activate', e => {
+      e.waitUntil(caches.keys().then(keys =>
+        Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+      ));
+    });
+    self.addEventListener('fetch', e => {
+      e.respondWith(
+        caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match('./')))
+      );
+    });
+  `;
+  const swBlob = new Blob([sw], { type: 'application/javascript' });
+  navigator.serviceWorker.register(URL.createObjectURL(swBlob))
+    .then(() => console.log('✅ SW enregistré'))
+    .catch(e => console.log('SW:', e));
 }
 
-async function sbGetPubsActives() {
-  try {
-    const res = await fetch(`${SB_URL}/rest/v1/publicites?statut=eq.ACTIVE&expiration=gt.${new Date().toISOString()}&select=*`, {
-      headers: sbHeaders
-    });
-    return res.ok ? await res.json() : [];
-  } catch(e) { return []; }
-}
+// ====== BANNIÈRE INSTALLATION ======
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('install-banner').style.display = 'flex';
+});
+document.getElementById('btn-install').addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      document.getElementById('install-banner').style.display = 'none';
+      setTimeout(() => alert('🎉 DJANVOUÊ installé ! Retrouvez l\'app sur votre écran d\'accueil.'), 1000);
+    }
+    deferredPrompt = null;
+  }
+});
+document.getElementById('btn-install-no').addEventListener('click', () => {
+  document.getElementById('install-banner').style.display = 'none';
+});
+window.addEventListener('appinstalled', () => {
+  document.getElementById('install-banner').style.display = 'none';
+});
 
-async function sbValiderPub(id) {
-  try {
-    const expiration = new Date(Date.now() + (DB.pubs.find(p=>p.id===id)?.heures||24)*3600000).toISOString();
-    const res = await fetch(`${SB_URL}/rest/v1/publicites?id=eq.${id}`, {
-      method: 'PATCH', headers: sbHeaders,
-      body: JSON.stringify({ statut: 'ACTIVE', expiration })
-    });
-    return res.ok;
-  } catch(e) { return false; }
-}
-
-async function sbRefuserPub(id) {
-  try {
-    const res = await fetch(`${SB_URL}/rest/v1/publicites?id=eq.${id}`, {
-      method: 'PATCH', headers: sbHeaders,
-      body: JSON.stringify({ statut: 'REFUSE' })
-    });
-    return res.ok;
-  } catch(e) { return false; }
-}
+// ====== FIREBASE PARTAGÉ (même base que Taxi Bongouanou) ======
+const FB_CONFIG = {
+  apiKey: "AIzaSyCef2A2-eCAs_YevJe2TRvZcsNDp_cuSQs",
+  authDomain: "djanvoue-ddr.firebaseapp.com",
+  projectId: "djanvoue-ddr"
+};
+let fbApp, fbDB;
+try {
+  if (!firebase.apps.length) firebase.initializeApp(FB_CONFIG);
+  fbDB = firebase.firestore();
+} catch(e) { console.log('Firebase:', e); }
 
 async function chargerPubsActives() {
-  const pubs = await sbGetPubsActives();
-  pubs.forEach(p => addPubSlide(p.image_url, `🏪 ${p.nom}`, `Pub officielle · ${p.duree}`));
+  if (!fbDB) return;
+  try {
+    const now = new Date();
+    const snap = await fbDB.collection('pubs')
+      .where('active', '==', true).get();
+    snap.docs.forEach(d => {
+      const p = d.data();
+      const fin = p.date_fin ? new Date(p.date_fin) : null;
+      if (!fin || fin > now) {
+        addPubSlide(
+          p.image || '',
+          `🏪 ${p.titre || p.nom || 'Partenaire'}`,
+          p.texte || `Pub officielle · ${p.type || ''}`
+        );
+      }
+    });
+  } catch(e) { console.log('Pubs Firebase:', e); }
 }
 
 // ====== WAVE (masqué base64) ======
