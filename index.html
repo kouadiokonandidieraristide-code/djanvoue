@@ -1,194 +1,1296 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Djanvouê - Services Moronou</title>
-    
-    <!-- SDK Firebase Officiel -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DJANVOUÊ — Bongouanou</title>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="DJANVOUÊ"/>
+<meta name="theme-color" content="#1565C0"/>
+<link rel="manifest" id="djanvoue-manifest"/>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<style>
+:root{--vert:#2E7D32;--jaune:#FFD600;--bleu:#1565C0;--rouge:#c62828;--gris:#f5f5f5;--orange:#E65100;--violet:#6A1B9A;--wa:#25D366;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif;-webkit-tap-highlight-color:transparent;}
+body{background:#f0f4f8;min-height:100vh;overflow-x:hidden;}
 
-    <style>
-        :root {
-            --bleu-djanvoue: #1a3a8a;
-            --orange-flash: #f39c12;
-            --gris-fond: #f0f2f5;
-        }
+/* SPLASH */
+#splash{position:fixed;inset:0;background:var(--bleu);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;transition:opacity .8s;}
+#splash.hide{opacity:0;pointer-events:none;}
+#splash h1{font-size:2.4rem;font-weight:900;color:#fff;letter-spacing:6px;margin-top:14px;}
+#splash p{color:var(--jaune);font-size:.9rem;margin-top:4px;}
+@keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-10px)}}
+@keyframes pulse{0%{transform:scale(1)}100%{transform:scale(1.08)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0; 
-            background-color: var(--gris-fond); 
-            color: #333;
-        }
+/* ONBOARDING */
+#onboarding{position:fixed;inset:0;background:#f0f4f8;z-index:998;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+#onboarding.hide{display:none;}
+.ob-card{width:100%;max-width:400px;background:#fff;border-radius:20px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.1);}
+.ob-prog{width:100%;height:5px;background:#e0e0e0;border-radius:4px;margin-bottom:24px;}
+.ob-prog-fill{height:100%;background:var(--bleu);border-radius:4px;transition:width .3s;}
 
-        /* BANDEAU SUPÉRIEUR (Header) */
-        .header { 
-            background-color: var(--bleu-djanvoue); 
-            color: white; 
-            padding: 15px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
+/* OFFLINE */
+#offline-bar{display:none;background:var(--rouge);color:#fff;text-align:center;padding:7px;font-size:.78rem;font-weight:700;position:sticky;top:0;z-index:200;}
+#offline-bar.show{display:block;}
 
-        .logo-section { display: flex; align-items: center; }
-        .logo-circle { 
-            width: 45px; height: 45px; 
-            background: var(--orange-flash); 
-            border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; 
-            font-weight: bold; font-size: 1.5em; margin-right: 12px; 
-        }
+/* INSTALL */
+#install-banner{display:none;background:linear-gradient(135deg,#FFD600,#FFA000);padding:10px 14px;align-items:center;gap:10px;position:sticky;top:0;z-index:199;}
+#install-banner.show{display:flex;}
 
-        /* NAVIGATION TABS */
-        .nav-tabs { 
-            background: white; 
-            display: flex; 
-            justify-content: space-around; 
-            padding: 12px 0; 
-            border-bottom: 1px solid #ddd; 
-            position: sticky; top: 0; z-index: 100;
-        }
-        .tab { text-align: center; color: #555; font-size: 0.75em; font-weight: bold; cursor: pointer; }
-        .tab:hover { color: var(--bleu-djanvoue); }
+/* HEADER */
+header{background:var(--bleu);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.hlogo{display:flex;align-items:center;gap:10px;}
+.hlogo-circle{width:36px;height:36px;border-radius:50%;background:var(--jaune);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;color:var(--bleu);border:2px solid var(--vert);}
+.htitle h1{font-size:.95rem;font-weight:900;letter-spacing:2px;}
+.htitle p{font-size:.6rem;opacity:.8;}
+#heureBadge{font-size:.7rem;background:var(--jaune);color:#333;padding:3px 8px;border-radius:20px;font-weight:700;transition:.3s;}
 
-        /* ZONE PUBLICITAIRE (Promo Banner) */
-        .promo-banner {
-            background: linear-gradient(135deg, #27ae60, #2ecc71);
-            margin: 15px;
-            padding: 20px;
-            border-radius: 15px;
-            color: white;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .promo-banner h2 { margin: 0; font-size: 1.2em; }
-        .promo-banner p { margin: 5px 0 0; font-size: 0.9em; opacity: 0.9; }
+/* NAV */
+nav{display:flex;overflow-x:auto;background:#fff;border-bottom:2px solid var(--jaune);position:sticky;top:58px;z-index:99;scrollbar-width:none;}
+nav::-webkit-scrollbar{display:none;}
+nav button{flex:1;min-width:58px;padding:8px 2px;border:none;background:none;font-size:.6rem;font-weight:600;color:#555;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:.2s;}
+nav button.active{color:var(--bleu);border-bottom-color:var(--bleu);}
 
-        /* CONTENEUR DES CARTES */
-        .container { padding: 15px; max-width: 600px; margin: auto; }
-        
-        .section-title { 
-            font-size: 1em; 
-            color: var(--bleu-djanvoue); 
-            margin-bottom: 10px; 
-            font-weight: bold;
-            display: flex; align-items: center;
-        }
+.page{display:none;padding:12px;max-width:620px;margin:auto;animation:fadeIn .2s ease;padding-bottom:70px;}
+.page.active{display:block;}
 
-        .card { 
-            background: white; 
-            border-radius: 15px; 
-            padding: 18px; 
-            margin-bottom: 15px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
-            border-left: 6px solid var(--bleu-djanvoue);
-            transition: transform 0.2s;
-        }
-        .card:active { transform: scale(0.98); }
+.card{background:#fff;border-radius:12px;padding:14px;margin-bottom:11px;box-shadow:0 2px 8px rgba(0,0,0,.07);}
+.card h3{color:var(--bleu);margin-bottom:10px;font-size:.9rem;}
 
-        .card h3 { margin: 0 0 8px 0; color: var(--bleu-djanvoue); font-size: 1.1em; }
-        .info-row { margin: 5px 0; font-size: 0.95em; }
-        
-        .price-tag { 
-            background: #e8f0fe; 
-            color: var(--bleu-djanvoue); 
-            padding: 6px 12px; 
-            border-radius: 20px; 
-            font-weight: bold; 
-            display: inline-block;
-            margin-top: 10px;
-        }
+input,textarea,select{width:100%;padding:9px;border:1.5px solid #ddd;border-radius:8px;margin-bottom:9px;font-size:.86rem;outline:none;transition:.2s;}
+input:focus,textarea:focus,select:focus{border-color:var(--bleu);}
+textarea{resize:vertical;min-height:60px;}
+label{font-size:.78rem;color:#555;display:block;margin-bottom:3px;}
 
-        /* BOUTON WHATSAPP FLOTTANT */
-        .whatsapp-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #25d366;
-            color: white;
-            width: 60px; height: 60px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 30px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            text-decoration: none;
-            z-index: 1000;
-        }
-    </style>
+/* BOUTONS avec retour haptique */
+.btn{display:block;width:100%;padding:12px;border:none;border-radius:10px;font-size:.92rem;font-weight:700;cursor:pointer;margin-top:5px;transition:transform .1s,opacity .1s;text-align:center;-webkit-tap-highlight-color:transparent;}
+.btn:active{transform:scale(.96);opacity:.85;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn-vert{background:var(--vert);color:#fff;}
+.btn-bleu{background:var(--bleu);color:#fff;}
+.btn-jaune{background:var(--jaune);color:#333;}
+.btn-rouge{background:var(--rouge);color:#fff;}
+.btn-wave{background:#1A73E8;color:#fff;}
+.btn-wa{background:var(--wa);color:#fff;}
+.btn-orange{background:var(--orange);color:#fff;}
+.btn-violet{background:var(--violet);color:#fff;}
+
+/* PROFIL */
+.profil-box{background:linear-gradient(135deg,var(--bleu),#0d47a1);border-radius:14px;padding:18px;color:#fff;text-align:center;margin-bottom:12px;}
+.profil-avatar{width:60px;height:60px;border-radius:50%;background:var(--jaune);display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:900;color:var(--bleu);margin:0 auto 8px;border:3px solid #fff;}
+.profil-nom{font-size:1.1rem;font-weight:900;}
+.profil-pts{background:var(--jaune);color:#333;padding:4px 14px;border-radius:20px;font-weight:900;font-size:.88rem;display:inline-block;margin-top:6px;}
+
+/* POINTS */
+.pts-banner{background:linear-gradient(135deg,#fff9e6,#fff);border:2px solid var(--jaune);border-radius:12px;padding:13px;text-align:center;margin-bottom:12px;}
+.pts-val{font-size:2.2rem;font-weight:900;color:var(--bleu);}
+.pts-fcfa{font-size:.82rem;color:#555;}
+
+/* PUB */
+.pub-wrap{position:relative;border-radius:12px;overflow:hidden;margin-bottom:6px;height:120px;}
+.pub-track{display:flex;height:100%;transition:transform .5s;}
+.pub-slide{min-width:100%;display:flex;align-items:center;justify-content:center;position:relative;}
+.pub-slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.pub-overlay{position:relative;z-index:2;background:rgba(0,0,0,.5);border-radius:8px;padding:8px 13px;text-align:center;}
+.pub-overlay h4{color:#fff;font-size:.9rem;font-weight:800;}
+.pub-overlay p{color:rgba(255,255,255,.9);font-size:.7rem;}
+.pub-overlay .badge{background:var(--jaune);color:#333;padding:2px 9px;border-radius:20px;font-size:.68rem;font-weight:700;margin-top:4px;display:inline-block;}
+.pub-dots{display:flex;justify-content:center;gap:5px;margin-bottom:8px;}
+.pub-dot{width:6px;height:6px;border-radius:50%;background:#ccc;cursor:pointer;transition:.3s;}
+.pub-dot.active{background:var(--bleu);width:16px;border-radius:3px;}
+
+/* MODES & CHIPS */
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px;}
+.mode-card{border:2px solid #ddd;border-radius:10px;padding:11px;text-align:center;cursor:pointer;background:#fff;transition:.2s;}
+.mode-card:active{transform:scale(.97);}
+.mode-card.selected{border-color:var(--vert);background:#e8f5e9;}
+.mode-card .icon{font-size:1.6rem;}
+.mode-card .label{font-size:.76rem;font-weight:700;margin-top:3px;}
+.mode-card .prix{font-size:.7rem;color:var(--vert);}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px;}
+.chip{padding:6px 11px;border:2px solid #ddd;border-radius:20px;font-size:.78rem;cursor:pointer;background:#fff;transition:.2s;}
+.chip:active{transform:scale(.95);}
+.chip.sel-bleu{border-color:var(--bleu);background:#e3f2fd;color:var(--bleu);font-weight:700;}
+.chip.sel-vert{border-color:var(--vert);background:#e8f5e9;color:var(--vert);font-weight:700;}
+
+/* TICKET */
+.ticket{background:#f9f9f9;border:2px dashed var(--bleu);border-radius:10px;padding:12px;font-size:.8rem;line-height:1.9;margin-bottom:9px;}
+.ticket .row{display:flex;justify-content:space-between;}
+.ticket .total{font-weight:700;color:var(--bleu);border-top:1px solid #eee;padding-top:5px;margin-top:4px;}
+
+/* OTP & WAVE */
+.otp-box{background:#fffde7;border:2px solid var(--jaune);border-radius:11px;padding:13px;text-align:center;display:none;}
+.otp-box.show{display:block;}
+.otp-code{font-size:2.8rem;font-weight:900;color:var(--bleu);letter-spacing:10px;}
+.wave-box{background:#f0f7ff;border:2px solid #1A73E8;border-radius:11px;padding:13px;text-align:center;margin-bottom:9px;display:none;}
+.wave-box.show{display:block;}
+.wave-montant{font-size:1.5rem;font-weight:900;color:#1A73E8;}
+
+/* SUCCES */
+.succes{display:none;text-align:center;padding:16px;background:#e8f5e9;border-radius:11px;margin-top:9px;}
+.succes.show{display:block;}
+.succes .icon{font-size:2.6rem;}
+.succes p{margin-top:7px;color:var(--vert);font-weight:600;font-size:.88rem;}
+
+/* PROGRESS */
+.prog-bar{height:12px;background:#e0e0e0;border-radius:8px;overflow:hidden;margin:6px 0;}
+.prog-fill{height:100%;background:var(--jaune);border-radius:8px;transition:width .4s;}
+
+/* TIRELIRE */
+.tirelire{background:linear-gradient(135deg,var(--vert),#1b5e20);border-radius:13px;padding:16px;text-align:center;color:#fff;margin-bottom:11px;}
+.tirelire .solde{font-size:1.9rem;font-weight:900;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.stat-box{background:var(--gris);border-radius:10px;padding:11px;text-align:center;}
+.stat-box .val{font-size:1.2rem;font-weight:700;color:var(--bleu);}
+.stat-box .lbl{font-size:.68rem;color:#777;margin-top:2px;}
+
+/* AVIS EMOJI */
+.emoji-grid{display:flex;justify-content:space-around;margin-bottom:14px;}
+.emoji-btn{display:flex;flex-direction:column;align-items:center;padding:10px 8px;border-radius:12px;border:2px solid #eee;background:#fff;cursor:pointer;transition:.2s;}
+.emoji-btn:active{transform:scale(.93);}
+.emoji-btn.selected{border-color:var(--orange);background:#fff3e0;transform:scale(1.1);}
+.emoji-btn span.ico{font-size:2.2rem;}
+.emoji-btn span.lbl{font-size:.7rem;margin-top:4px;font-weight:700;color:#aaa;}
+.emoji-btn.selected span.lbl{color:var(--orange);}
+
+/* GEO */
+.geo-status{border-radius:10px;padding:12px;text-align:center;margin-bottom:10px;}
+.geo-ok{background:#e8f5e9;color:var(--vert);}
+.geo-err{background:#ffebee;color:var(--rouge);}
+.geo-load{background:#e3f2fd;color:var(--bleu);}
+
+/* DEFI */
+.defi-card{background:#fff;border-radius:11px;padding:13px;margin-bottom:8px;border:2px solid #eee;cursor:pointer;transition:.2s;}
+.defi-card:active{transform:scale(.98);}
+.defi-card.selected{border-color:var(--orange);background:#fff8f5;}
+.defi-pts{background:var(--jaune);color:#333;padding:4px 10px;border-radius:20px;font-weight:900;font-size:.78rem;}
+
+/* CONTACTS */
+.contact-card{background:#fff;border-radius:12px;padding:13px;margin-bottom:8px;box-shadow:0 2px 6px rgba(0,0,0,.06);display:flex;align-items:center;gap:12px;}
+.contact-avatar{width:46px;height:46px;border-radius:50%;background:#f0f4f8;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;}
+
+/* ANNONCES */
+.annonce-card{background:#fff;border-radius:10px;padding:12px;margin-bottom:8px;border:1px solid #eee;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.cat-badge{padding:2px 8px;border-radius:10px;font-size:.68rem;font-weight:700;}
+.cat-vente{background:#e8f5e9;color:var(--vert);}
+.cat-emploi{background:#e3f2fd;color:var(--bleu);}
+.cat-location{background:#fffde7;color:#f57f17;}
+.cat-service{background:#f3e5f5;color:var(--violet);}
+
+/* MARCHÉ */
+.prix-item{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--gris);border-radius:9px;margin-bottom:6px;}
+
+/* MÉTÉO */
+.meteo-box{background:linear-gradient(135deg,var(--bleu),#0d47a1);border-radius:13px;padding:18px;text-align:center;color:#fff;margin-bottom:11px;}
+.meteo-temp{font-size:3rem;font-weight:900;}
+
+/* SOS */
+.sos-btn{background:linear-gradient(135deg,var(--rouge),#b71c1c);border-radius:14px;padding:22px;text-align:center;color:#fff;margin-bottom:11px;cursor:pointer;animation:pulse 1.5s infinite alternate;border:none;width:100%;}
+.sos-btn:active{transform:scale(.97);}
+
+/* CLASSEMENT */
+.rank-item{display:flex;align-items:center;gap:10px;padding:9px;background:var(--gris);border-radius:9px;margin-bottom:6px;}
+
+/* TONTINE */
+.tontine-membre{display:flex;justify-content:space-between;align-items:center;padding:8px;background:var(--gris);border-radius:8px;margin-bottom:5px;}
+.paye{background:#e8f5e9;color:var(--vert);padding:2px 8px;border-radius:10px;font-size:.68rem;font-weight:700;}
+.impaye{background:#ffebee;color:var(--rouge);padding:2px 8px;border-radius:10px;font-size:.68rem;font-weight:700;}
+
+/* MATCH CDM */
+.match-card{background:#fff;border-radius:12px;padding:13px;margin-bottom:9px;border-left:4px solid var(--jaune);box-shadow:0 2px 6px rgba(0,0,0,.07);}
+.match-equipes{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.equipe{text-align:center;flex:1;}
+.equipe .flag{font-size:2rem;}
+.equipe .nom{font-size:.76rem;font-weight:700;margin-top:3px;}
+.pari-opts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;}
+.pari-opt{border:2px solid #ddd;border-radius:8px;padding:8px;text-align:center;cursor:pointer;font-size:.76rem;font-weight:700;transition:.2s;}
+.pari-opt:active{transform:scale(.95);}
+.pari-opt.sel{border-color:var(--bleu);background:#e3f2fd;color:var(--bleu);}
+
+/* HORAIRE */
+.horaire{display:inline-block;padding:4px 11px;border-radius:20px;font-size:.78rem;font-weight:700;margin-bottom:9px;}
+.ouvert{background:#e8f5e9;color:var(--vert);}
+.ferme{background:#ffebee;color:var(--rouge);}
+
+/* STEPS */
+.steps{display:flex;gap:5px;margin-bottom:13px;}
+.step{flex:1;height:4px;border-radius:2px;background:#ddd;}
+.step.done{background:var(--bleu);}
+#sigCanvas{border:2px dashed #aaa;border-radius:8px;background:#fafafa;touch-action:none;width:100%;height:130px;}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:620px;background:#fff;border-top:2px solid var(--jaune);display:flex;z-index:100;}
+.bnav-btn{flex:1;padding:9px 2px;border:none;background:none;font-size:.58rem;font-weight:600;color:#777;cursor:pointer;border-top:3px solid transparent;transition:.2s;}
+.bnav-btn.active{color:var(--bleu);border-top-color:var(--bleu);}
+
+/* SPAM */
+.spam-msg{font-size:.76rem;color:var(--rouge);text-align:center;margin-top:5px;display:none;}
+
+/* HISTO */
+.histo-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:.8rem;}
+.t-commission{background:#e8f5e9;color:var(--vert);padding:2px 7px;border-radius:10px;font-size:.68rem;font-weight:700;}
+.t-bonus{background:#fffde7;color:#f57f17;padding:2px 7px;border-radius:10px;font-size:.68rem;font-weight:700;}
+.t-rechargement{background:#e3f2fd;color:var(--bleu);padding:2px 7px;border-radius:10px;font-size:.68rem;font-weight:700;}
+
+@media(min-width:768px){.page{padding:20px 20px 80px;}.stats-grid{grid-template-columns:repeat(4,1fr);}}
+</style>
 </head>
 <body>
 
-    <!-- Header avec Logo -->
-    <div class="header">
-        <div class="logo-section">
-            <div class="logo-circle">D</div>
-            <div>
-                <div style="font-weight: bold; letter-spacing: 1px;">DJANVOUÊ</div>
-                <div style="font-size: 0.6em; opacity: 0.8;">Flash Express Moronou - 24H/24</div>
-            </div>
+<!-- OFFLINE -->
+<div id="offline-bar">📵 Hors connexion — Commandes sauvegardées automatiquement</div>
+
+<!-- INSTALL -->
+<div id="install-banner">
+  <span style="font-size:1.3rem;">⚡</span>
+  <div style="flex:1;"><div style="font-size:.8rem;font-weight:800;color:#1A237E;">Installer DJANVOUÊ</div><div style="font-size:.68rem;color:#333;">Accès rapide depuis l'écran d'accueil</div></div>
+  <button id="btn-install" style="background:#1565C0;color:#fff;border:none;border-radius:20px;padding:6px 12px;font-weight:800;font-size:.76rem;cursor:pointer;">Installer</button>
+  <button id="btn-install-no" style="background:none;border:none;font-size:1rem;cursor:pointer;color:#333;">✕</button>
+</div>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div style="width:120px;height:120px;border-radius:50%;background:var(--jaune);display:flex;align-items:center;justify-content:center;font-size:3.5rem;font-weight:900;color:var(--bleu);border:6px solid var(--vert);animation:popIn .7s ease;">D</div>
+  <h1>DJANVOUÊ</h1>
+  <p>Par Flash Express Moronou · Bongouanou</p>
+  <svg width="80" height="100" viewBox="0 0 100 120" style="margin-top:16px;animation:bounce 1s infinite alternate;">
+    <ellipse cx="50" cy="78" rx="21" ry="28" fill="#E65100"/>
+    <circle cx="50" cy="43" r="21" fill="#E65100"/>
+    <polygon points="31,26 21,6 39,23" fill="#E65100"/><polygon points="69,26 79,6 61,23" fill="#E65100"/>
+    <polygon points="33,25 23,8 40,23" fill="#FFD600"/><polygon points="67,25 77,8 60,23" fill="#FFD600"/>
+    <circle cx="50" cy="43" r="15" fill="#FFCC80"/>
+    <circle cx="44" cy="40" r="3" fill="#333"/><circle cx="56" cy="40" r="3" fill="#333"/>
+    <ellipse cx="50" cy="49" rx="4" ry="3" fill="#555"/>
+    <rect x="33" y="67" width="34" height="26" rx="6" fill="#2E7D32"/>
+    <circle cx="50" cy="73" r="6" fill="#1565C0"/>
+    <polygon points="50,68 47,75 53,75" fill="#FFD600"/>
+  </svg>
+</div>
+
+<!-- ONBOARDING -->
+<div id="onboarding">
+  <div style="text-align:center;margin-bottom:20px;">
+    <div style="width:70px;height:70px;border-radius:50%;background:var(--bleu);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;color:var(--jaune);margin:0 auto 8px;border:4px solid var(--jaune);">D</div>
+    <h1 style="font-size:1.6rem;font-weight:900;color:var(--bleu);letter-spacing:4px;">DJANVOUÊ</h1>
+    <p style="color:#777;font-size:.78rem;">Flash Express Moronou · Bongouanou</p>
+  </div>
+  <div class="ob-prog"><div class="ob-prog-fill" id="ob-prog" style="width:0%"></div></div>
+  <div class="ob-card" id="ob-card">
+    <!-- Contenu dynamique -->
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="hlogo">
+    <div class="hlogo-circle">D</div>
+    <div class="htitle">
+      <h1>DJANVOUÊ</h1>
+      <p id="header-sub">Flash Express Moronou · 24H/24</p>
+    </div>
+  </div>
+  <span id="heureBadge">--:--</span>
+</header>
+
+<nav id="main-nav">
+  <button class="active" onclick="showPage('accueil',this)">🏠 Accueil</button>
+  <button onclick="showPage('client',this)">📦 Commander</button>
+  <button onclick="showPage('taxi',this)">🚕 Taxi</button>
+  <button onclick="showPage('cdm',this)">⚽ CdM</button>
+  <button onclick="showPage('ville',this)">🏙️ Ville</button>
+  <button onclick="showPage('annonces',this)">📋 Annonces</button>
+  <button onclick="showPage('vendeur',this)">🏪 Vendeur</button>
+  <button onclick="showPage('partenaire',this)">🤝 Accord</button>
+  <button onclick="showPage('bureau',this)">🏛️ Bureau</button>
+  <button onclick="showPage('admin',this)">📊 Admin</button>
+</nav>
+
+<!-- ===== ACCUEIL ===== -->
+<div class="page active" id="page-accueil">
+  <!-- Profil -->
+  <div class="profil-box">
+    <div class="profil-avatar" id="profil-avatar">😊</div>
+    <div class="profil-nom" id="profil-nom">Djanvouê !</div>
+    <div style="font-size:.76rem;opacity:.8;margin-top:2px;" id="profil-service">Flash Express Moronou</div>
+    <div class="profil-pts" id="profil-pts">0 pts = 0 FCFA</div>
+  </div>
+
+  <!-- PUB -->
+  <div class="pub-wrap"><div class="pub-track" id="pubTrack">
+    <div class="pub-slide" style="background:linear-gradient(135deg,#1565C0,#0d47a1);"><div class="pub-overlay"><h4>⚡ DJANVOUÊ — Livraison 24h/24</h4><p>Garba, Poulet, Courses… on gère tout !</p><span class="badge">300 FCFA</span></div></div>
+    <div class="pub-slide" style="background:linear-gradient(135deg,#2E7D32,#1b5e20);"><div class="pub-overlay"><h4>⚽ Coupe du Monde — Pariez & Gagnez !</h4><p>1 point = 5 FCFA de réduction</p><span class="badge">Nouveau !</span></div></div>
+    <div class="pub-slide" style="background:linear-gradient(135deg,#E65100,#bf360c);"><div class="pub-overlay"><h4>🏪 Vous êtes commerçant ?</h4><p>Rejoignez le réseau Djanvouê gratuitement</p><span class="badge">Gratuit</span></div></div>
+  </div></div>
+  <div class="pub-dots" id="pubDots"><div class="pub-dot active" onclick="goSlide(0)"></div><div class="pub-dot" onclick="goSlide(1)"></div><div class="pub-dot" onclick="goSlide(2)"></div></div>
+
+  <!-- Actions rapides -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;">
+    <button onclick="showPage('client',document.querySelector('[onclick*=client]'));vibrer()" style="background:var(--vert);color:#fff;border:none;border-radius:12px;padding:16px;font-weight:800;font-size:.84rem;cursor:pointer;transition:.2s;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform='scale(1)'">🛵 Commander<br><small style="font-weight:400;opacity:.8;">Livraison rapide</small></button>
+    <button onclick="showPage('taxi',document.querySelector('[onclick*=taxi]'));vibrer()" style="background:var(--jaune);color:#333;border:none;border-radius:12px;padding:16px;font-weight:800;font-size:.84rem;cursor:pointer;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform='scale(1)'">🚕 Taxi<br><small style="font-weight:400;">24h/24</small></button>
+    <button onclick="showPage('cdm',document.querySelector('[onclick*=cdm]'));vibrer()" style="background:var(--violet);color:#fff;border:none;border-radius:12px;padding:16px;font-weight:800;font-size:.84rem;cursor:pointer;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform='scale(1)'">⚽ Pronostics<br><small style="font-weight:400;opacity:.8;">Coupe du Monde</small></button>
+    <button onclick="showPage('ville',document.querySelector('[onclick*=ville]'));vibrer()" style="background:var(--bleu);color:#fff;border:none;border-radius:12px;padding:16px;font-weight:800;font-size:.84rem;cursor:pointer;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform='scale(1)'">🏙️ Ma Ville<br><small style="font-weight:400;opacity:.8;">Bongouanou</small></button>
+    <button onclick="showPage('annonces',document.querySelector('[onclick*=annonces]'));vibrer()" style="background:var(--orange);color:#fff;border:none;border-radius:12px;padding:16px;font-weight:800;font-size:.84rem;cursor:pointer;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform='scale(1)'">📋 Annonces<br><small style="font-weight:400;opacity:.8;">Emploi · Vente</small></button>
+    <button onclick="showPage('avis',document.querySelector('[onclick*=avis]'));vibrer()" style="background:#25D366;color:#fff;border:none;border-radius:12px;padding:16px;font-weight:800;font-size:.84rem;cursor:pointer;" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform='scale(1)'">⭐ Donner Avis<br><small style="font-weight:400;opacity:.8;">Notez le service</small></button>
+  </div>
+
+  <!-- Parrainage -->
+  <div class="pts-banner">
+    <div style="font-size:.8rem;font-weight:700;color:var(--bleu);margin-bottom:5px;">🎁 Mon code parrainage — Partagez, gagnez 40 pts !</div>
+    <div style="font-size:1.8rem;font-weight:900;color:var(--bleu);letter-spacing:6px;" id="parrain-code">----</div>
+    <button class="btn btn-jaune" style="padding:8px;font-size:.8rem;margin-top:8px;" onclick="partagerCode();vibrer()">📤 Partager mon code</button>
+  </div>
+</div>
+
+<!-- ===== AVIS (page séparée) ===== -->
+<div class="page" id="page-avis">
+  <div style="background:linear-gradient(135deg,var(--jaune),#FFA000);border-radius:14px;padding:16px;margin-bottom:12px;text-align:center;">
+    <div style="font-size:2.5rem;margin-bottom:6px;">⭐</div>
+    <h2 style="font-size:1rem;font-weight:900;color:#1A237E;">Donner un Avis</h2>
+    <p style="font-size:.78rem;color:#333;margin-top:4px;">Votre retour améliore le service Djanvouê</p>
+  </div>
+  <div class="card">
+    <h3>Pour quel prestataire ?</h3>
+    <select id="avis-prest" style="margin-bottom:12px;">
+      <option value="">-- Choisir --</option>
+      <option>⚡ Didireverb — Flash Express</option>
+      <option>🚕 Chauffeur Moussa</option>
+      <option>🍽️ Maquis Le Baron</option>
+      <option>💊 Pharmacie Centrale</option>
+    </select>
+    <label>Entrez votre code OTP de commande (obligatoire)</label>
+    <input type="text" id="avis-otp" placeholder="Ex: 4782" maxlength="4" inputmode="numeric"/>
+    <div style="font-size:.74rem;color:#777;margin-top:-7px;margin-bottom:10px;">Le code OTP prouve que vous avez vraiment utilisé le service.</div>
+    <h3 style="margin-bottom:12px;">Comment s'est passée votre expérience ?</h3>
+    <div class="emoji-grid">
+      <div class="emoji-btn" onclick="setAvis(1,this);vibrer()"><span class="ico">😠</span><span class="lbl">Mauvais</span></div>
+      <div class="emoji-btn" onclick="setAvis(2,this);vibrer()"><span class="ico">😐</span><span class="lbl">Moyen</span></div>
+      <div class="emoji-btn" onclick="setAvis(3,this);vibrer()"><span class="ico">🙂</span><span class="lbl">Bien</span></div>
+      <div class="emoji-btn" onclick="setAvis(4,this);vibrer()"><span class="ico">🤩</span><span class="lbl">Excellent</span></div>
+    </div>
+    <div id="avis-suite" style="display:none;">
+      <label>Commentaire (optionnel)</label>
+      <textarea id="avis-comment" placeholder="Ex: Livraison rapide, très sympa…"></textarea>
+      <button class="btn btn-orange" onclick="envoyerAvis();vibrer()">✈️ Envoyer mon avis</button>
+    </div>
+    <div class="succes" id="ok-avis">
+      <div class="icon">🧡</div>
+      <p>Merci ! Ton avis aide toute la communauté Djanvouê.</p>
+      <button class="btn btn-bleu" style="margin-top:9px;" onclick="resetAvis()">← Donner un autre avis</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CLIENT ===== -->
+<div class="page" id="page-client">
+  <div class="card">
+    <h3>🚀 Mode de réception</h3>
+    <div class="modes">
+      <div class="mode-card selected" id="mode-liv" onclick="setMode('LIVRAISON');vibrer()"><div class="icon">🛵</div><div class="label">Livraison</div><div class="prix">300 FCFA</div></div>
+      <div class="mode-card" id="mode-pied" onclick="setMode('A_PIED');vibrer()"><div class="icon">🚶</div><div class="label">Retrait à pied</div><div class="prix">Gratuit</div></div>
+    </div>
+  </div>
+
+  <div class="card" id="card-zone">
+    <h3>📍 Zone de livraison</h3>
+    <div class="chips">
+      <div class="chip sel-bleu" onclick="setZone(this,'Kangandy',300)">Kangandy</div>
+      <div class="chip" onclick="setZone(this,'Agnikro',300)">Agnikro</div>
+      <div class="chip" onclick="setZone(this,'28 Janvier',300)">28 Janvier</div>
+      <div class="chip" onclick="setZone(this,'Dioulakro',300)">Dioulakro</div>
+      <div class="chip" onclick="setZone(this,'Habitat',300)">Habitat</div>
+      <div class="chip" onclick="setZone(this,'Autre',0)">Autre</div>
+    </div>
+    <div id="zone-info" style="font-size:.8rem;color:var(--bleu);font-weight:600;">📍 Kangandy — 300 FCFA</div>
+  </div>
+
+  <div class="card">
+    <h3>📦 Type de commande</h3>
+    <div class="chips">
+      <div class="chip sel-vert" onclick="setType(this,'Repas','c')">🍽️ Repas</div>
+      <div class="chip" onclick="setType(this,'Courses','c')">🛒 Courses</div>
+      <div class="chip" onclick="setType(this,'Colis','c')">📦 Colis</div>
+      <div class="chip" onclick="setType(this,'Pharmacie','c')">💊 Pharmacie</div>
+      <div class="chip" onclick="setType(this,'Boissons','c')">🧃 Boissons</div>
+      <div class="chip" onclick="setType(this,'Soirée Match ⚽','c')">⚽ Soirée Match</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📝 Votre commande</h3>
+    <label>Votre nom</label><input type="text" id="c-nom" placeholder="Ex: Kouamé Adjoua"/>
+    <label>Téléphone</label><input type="tel" id="c-tel" placeholder="07xxxxxxxx"/>
+
+    <!-- GEO INTÉGRÉ -->
+    <div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:9px;">
+      <div style="flex:1;">
+        <label>📍 Adresse de livraison</label>
+        <input type="text" id="c-adresse" placeholder="Ex: Agnikro, face pharmacie…" style="margin-bottom:0;"/>
+      </div>
+      <button onclick="obtenirGeo();vibrer()" id="btn-geo" style="padding:9px 10px;background:var(--bleu);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.8rem;white-space:nowrap;margin-bottom:0;height:38px;">📍 GPS</button>
+    </div>
+    <div id="geo-status" style="display:none;font-size:.74rem;padding:6px 10px;border-radius:8px;margin-bottom:6px;"></div>
+
+    <label>Décrivez votre commande</label>
+    <textarea id="c-desc" placeholder="Ex: 1 riz sauce graine au Maquis Le Baron…"></textarea>
+
+    <div class="ticket">
+      <div class="row"><span>Mode</span><span id="t-mode">🛵 Livraison</span></div>
+      <div class="row"><span>Zone</span><span id="t-zone">Kangandy</span></div>
+      <div class="row"><span>Type</span><span id="t-type">Repas</span></div>
+      <div class="row total"><span>Frais livraison</span><span id="t-frais">300 FCFA</span></div>
+    </div>
+
+    <div class="otp-box" id="otp-box">
+      <div class="otp-code" id="otp-val">----</div>
+      <p style="font-size:.75rem;color:#555;margin-top:4px;">🔐 Gardez ce code — il valide votre livraison ET vous permet de laisser un avis.</p>
+    </div>
+
+    <div class="wave-box" id="wave-box">
+      <h4>💛 Payer via Wave</h4>
+      <div class="wave-montant"><span id="wave-val">300</span> FCFA</div>
+      <div id="wave-qr-c" style="width:120px;height:120px;margin:7px auto;"></div>
+      <a id="wave-lien" href="#" target="_blank" class="btn btn-wave" style="text-decoration:none;display:block;margin-top:7px;" onclick="vibrer()">💛 Ouvrir Wave et Payer</a>
+    </div>
+
+    <button class="btn btn-vert" id="btn-valider" onclick="validerCommande();vibrer()">✅ Valider ma commande</button>
+    <div style="display:none;gap:8px;margin-top:7px;" id="btns-send">
+      <button style="flex:1;padding:10px;border:none;border-radius:8px;font-weight:700;cursor:pointer;background:#25D366;color:#fff;" onclick="envoyerClient('WA');vibrer()">💬 WhatsApp</button>
+      <button style="flex:1;padding:10px;border:none;border-radius:8px;font-weight:700;cursor:pointer;background:var(--bleu);color:#fff;" onclick="envoyerClient('TEL');vibrer()">📞 Appeler</button>
+    </div>
+    <div class="spam-msg" id="spam-msg">⏳ Attendez <span id="spam-cd">60</span>s</div>
+    <div class="succes" id="ok-client">
+      <div class="icon">✅</div>
+      <p id="ok-client-msg">Commande envoyée ! +10 points gagnés ⚡<br><small>Gardez votre OTP pour laisser un avis après la livraison.</small></p>
+      <button class="btn btn-bleu" style="margin-top:9px;" onclick="resetClient()">← Nouvelle commande</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAXI ===== -->
+<div class="page" id="page-taxi">
+  <div style="background:var(--jaune);border-radius:13px;padding:22px;text-align:center;margin-bottom:11px;">
+    <div style="font-size:4rem;animation:pulse 1s infinite alternate;">🚕</div>
+    <h2 style="font-size:1.5rem;font-weight:900;color:#333;margin-top:7px;">TAXI DJANVOUÊ</h2>
+    <p style="color:#555;font-size:.84rem;">Bongouanou — 24h/24</p>
+    <a href="https://kouadiokonandidieransite-code.github.io/taxi-bongouanou" target="_blank" style="display:inline-block;margin-top:12px;background:#1A237E;color:var(--jaune);padding:9px 20px;border-radius:25px;font-weight:900;font-size:.88rem;text-decoration:none;" onclick="vibrer()">🚕 Voir les chauffeurs →</a>
+  </div>
+  <div class="card">
+    <h3>🗺️ Réserver votre taxi</h3>
+    <label>Votre nom</label><input type="text" id="tx-nom" placeholder="Ex: Koné Moussa"/>
+    <label>Téléphone</label><input type="tel" id="tx-tel" placeholder="07xxxxxxxx"/>
+    <div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:9px;">
+      <div style="flex:1;"><label>Point de départ</label><input type="text" id="tx-dep" placeholder="Ex: Grand Marché" style="margin-bottom:0;"/></div>
+      <button onclick="obtenirGeoTaxi();vibrer()" style="padding:9px 10px;background:var(--bleu);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.8rem;height:38px;">📍 GPS</button>
+    </div>
+    <div id="geo-taxi-status" style="display:none;font-size:.74rem;padding:6px 10px;border-radius:8px;margin-bottom:6px;"></div>
+    <label>Destination</label><input type="text" id="tx-dest" placeholder="Ex: Lycée Moderne Bongouanou"/>
+    <label>Tarif</label>
+    <div class="modes" style="grid-template-columns:repeat(2,1fr);">
+      <div class="mode-card selected" id="tf-500" onclick="setTarif(500);vibrer()"><div class="label">500 FCFA</div><div class="prix">Trajet court</div></div>
+      <div class="mode-card" id="tf-1000" onclick="setTarif(1000);vibrer()"><div class="label">1 000 FCFA</div><div class="prix">Trajet moyen</div></div>
+      <div class="mode-card" id="tf-1500" onclick="setTarif(1500);vibrer()"><div class="label">1 500 FCFA</div><div class="prix">Longue distance</div></div>
+      <div class="mode-card" id="tf-0" onclick="setTarif(0);vibrer()"><div class="label">? FCFA</div><div class="prix">À négocier</div></div>
+    </div>
+    <div class="wave-box" id="wave-taxi">
+      <h4>💛 Payer le taxi via Wave</h4>
+      <div class="wave-montant"><span id="wave-taxi-val">500</span> FCFA</div>
+      <div id="wave-taxi-qr" style="width:120px;height:120px;margin:7px auto;"></div>
+      <a id="wave-taxi-lien" href="#" target="_blank" class="btn btn-wave" style="text-decoration:none;display:block;margin-top:7px;" onclick="vibrer()">💛 Payer via Wave</a>
+    </div>
+    <button class="btn btn-jaune" style="color:#333;" onclick="appelerTaxi();vibrer()">🚕 APPELER MON TAXI</button>
+    <div class="succes" id="ok-taxi"><div class="icon">🚕</div><p>Taxi en route ! +10 pts gagnés</p><button class="btn btn-bleu" style="margin-top:9px;" onclick="resetTaxi()">← Nouvelle course</button></div>
+  </div>
+</div>
+
+<!-- ===== COUPE DU MONDE ===== -->
+<div class="page" id="page-cdm">
+  <div class="pts-banner">
+    <div style="font-size:.8rem;font-weight:700;color:var(--bleu);">🏆 Mes Points — 1 pt = 5 FCFA</div>
+    <div class="pts-val" id="pts-cdm">0</div>
+    <div class="pts-fcfa" id="pts-cdm-fcfa">= 0 FCFA de réduction</div>
+  </div>
+  <div class="card">
+    <h3>🎯 Barème des points</h3>
+    <div style="font-size:.8rem;line-height:2.2;color:#555;">
+      ✅ Bon vainqueur → <strong style="color:var(--bleu);">+20 pts (100 FCFA)</strong><br>
+      🎯 Score exact → <strong style="color:var(--vert);">+50 pts (250 FCFA)</strong><br>
+      🤝 Match nul correct → <strong style="color:var(--orange);">+30 pts (150 FCFA)</strong><br>
+      📦 Commande passée → <strong style="color:var(--bleu);">+10 pts (50 FCFA)</strong><br>
+      👥 Ami parrainé → <strong style="color:var(--violet);">+40 pts (200 FCFA)</strong><br>
+      🏆 1er classement → <strong style="color:var(--jaune);text-shadow:0 0 1px #333;">+200 pts (1 000 FCFA)</strong>
+    </div>
+  </div>
+  <div id="matchs-liste"></div>
+  <div class="card">
+    <h3>🏆 Classement Réel</h3>
+    <p style="font-size:.76rem;color:#777;margin-bottom:10px;">Basé sur vos vrais points accumulés</p>
+    <div id="classement-liste"></div>
+  </div>
+
+  <!-- DÉFIS PHOTO -->
+  <div class="card">
+    <h3>📸 Défis Coupe du Monde</h3>
+    <p style="font-size:.76rem;color:#777;margin-bottom:10px;">Relevez un défi, envoyez une photo, Didireverb valide et vous crédite les points.</p>
+    <div id="defis-liste"></div>
+    <div id="defi-upload" style="display:none;">
+      <div style="border:2.5px dashed #aaa;border-radius:10px;padding:18px;text-align:center;cursor:pointer;background:#fafafa;margin-bottom:9px;" onclick="document.getElementById('defi-photo-input').click()">
+        <div style="font-size:2.3rem;margin-bottom:6px;">📷</div>
+        <p style="font-size:.8rem;color:#777;">Appuyez pour prendre votre photo</p>
+      </div>
+      <input type="file" id="defi-photo-input" accept="image/*" capture="camera" style="display:none;" onchange="previewDefi(this)"/>
+      <img id="defi-preview" style="width:100%;border-radius:10px;height:180px;object-fit:cover;display:none;margin-bottom:9px;" alt="défi"/>
+      <button class="btn btn-orange" onclick="envoyerDefi();vibrer()">🏆 Envoyer mon défi</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VILLE ===== -->
+<div class="page" id="page-ville">
+  <div class="meteo-box">
+    <div style="font-size:.78rem;opacity:.8;">📍 Bongouanou, Côte d'Ivoire</div>
+    <div class="meteo-temp" id="meteo-temp">27°C</div>
+    <div id="meteo-desc" style="font-size:.85rem;opacity:.9;margin-top:4px;">☀️ Ensoleillé</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px;">
+      <div style="background:rgba(255,255,255,.15);border-radius:8px;padding:8px;text-align:center;font-size:.72rem;">🌅 06:12<br><small>Lever</small></div>
+      <div style="background:rgba(255,255,255,.15);border-radius:8px;padding:8px;text-align:center;font-size:.72rem;">💨 12km/h<br><small>Vent</small></div>
+      <div style="background:rgba(255,255,255,.15);border-radius:8px;padding:8px;text-align:center;font-size:.72rem;">🌇 18:34<br><small>Coucher</small></div>
+    </div>
+  </div>
+
+  <button class="sos-btn" onclick="envoiSOS();vibrer()">
+    <div style="font-size:3rem;">🆘</div>
+    <h3 style="font-size:1.2rem;font-weight:900;margin-top:8px;">SOS VOISINAGE</h3>
+    <p style="font-size:.8rem;opacity:.9;margin-top:4px;">Alertez vos voisins en cas d'urgence</p>
+  </button>
+
+  <div class="card">
+    <h3>📞 Annuaire Bongouanou</h3>
+    <div id="annuaire-liste"></div>
+  </div>
+
+  <div class="card">
+    <h3>🛒 Marché des Prix du Jour</h3>
+    <div style="font-size:.72rem;color:#777;margin-bottom:8px;" id="marche-date"></div>
+    <div id="marche-liste"></div>
+    <button class="btn btn-bleu" style="margin-top:8px;font-size:.82rem;" onclick="signalerPrix();vibrer()">📢 Signaler un prix incorrect</button>
+  </div>
+
+  <div class="card">
+    <h3>📅 Agenda Culturel Moronou</h3>
+    <div id="agenda-liste"></div>
+    <button class="btn btn-violet" style="margin-top:8px;font-size:.82rem;" onclick="proposerEvent();vibrer()">➕ Proposer un événement</button>
+  </div>
+
+  <div class="card">
+    <h3>💰 Ma Tontine</h3>
+    <div id="tontine-content"></div>
+  </div>
+</div>
+
+<!-- ===== ANNONCES ===== -->
+<div class="page" id="page-annonces">
+  <div style="display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;">
+    <div class="chip sel-bleu" onclick="filtrerAnn('tout',this)">Tout</div>
+    <div class="chip" onclick="filtrerAnn('vente',this)">🛍️ Vente</div>
+    <div class="chip" onclick="filtrerAnn('emploi',this)">💼 Emploi</div>
+    <div class="chip" onclick="filtrerAnn('location',this)">🏠 Location</div>
+    <div class="chip" onclick="filtrerAnn('service',this)">🔧 Service</div>
+  </div>
+  <button class="btn btn-bleu" onclick="toggleFormAnn();vibrer()" style="margin-bottom:10px;">➕ Publier une annonce</button>
+  <div id="form-ann" style="display:none;" class="card">
+    <h3>➕ Nouvelle annonce</h3>
+    <label>Catégorie</label>
+    <select id="ann-cat"><option value="vente">🛍️ Vente</option><option value="emploi">💼 Emploi</option><option value="location">🏠 Location</option><option value="service">🔧 Service</option></select>
+    <label>Titre</label><input type="text" id="ann-titre" placeholder="Ex: Moto Honda à vendre"/>
+    <label>Description</label><textarea id="ann-desc" placeholder="Ex: Très bon état, 80 000 km…"></textarea>
+    <label>Prix (FCFA, optionnel)</label><input type="number" id="ann-prix" placeholder="Ex: 150000"/>
+    <label>Votre numéro WhatsApp</label><input type="tel" id="ann-tel" placeholder="07xxxxxxxx"/>
+    <button class="btn btn-vert" onclick="publierAnn();vibrer()">📤 Publier</button>
+    <button class="btn btn-rouge" style="margin-top:5px;" onclick="document.getElementById('form-ann').style.display='none'">Annuler</button>
+  </div>
+  <div id="annonces-liste"></div>
+</div>
+
+<!-- ===== VENDEUR ===== -->
+<div class="page" id="page-vendeur">
+  <div class="card" id="v-lock">
+    <h3>🔐 Espace Vendeur</h3>
+    <label>Code vendeur (4 chiffres)</label>
+    <input type="password" id="v-code" maxlength="4" placeholder="••••" inputmode="numeric"/>
+    <button class="btn btn-bleu" onclick="authVendeur();vibrer()">🔓 Accéder</button>
+    <div id="v-err" style="color:var(--rouge);font-size:.8rem;margin-top:5px;display:none;">Code incorrect. Contactez Didireverb.</div>
+  </div>
+  <div id="v-content" style="display:none;">
+    <div class="tirelire"><div class="lbl">💰 Ma Tirelire Djanvouê</div><div class="solde" id="v-solde">0 FCFA</div><div style="font-size:.7rem;opacity:.7;margin-top:2px;" id="v-boutique-lbl">—</div></div>
+    <div class="card"><h3>🎯 Bonus Fidélité</h3><div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:3px;"><span>10% du cumul à 10 commandes</span><span id="v-bonus-cnt" style="font-weight:700;color:var(--vert);">0/10</span></div><div class="prog-bar"><div class="prog-fill" id="v-bonus-bar" style="width:0%"></div></div><div id="v-bonus-msg" style="font-size:.74rem;font-style:italic;color:#555;">Encore 10 courses pour votre bonus</div></div>
+    <div class="card">
+      <h3>📦 Envoyer une commande</h3>
+      <label>Nom du client</label><input type="text" id="v-client" placeholder="Ex: Kouamé"/>
+      <label>Téléphone du client</label><input type="tel" id="v-ctel" placeholder="07xxxxxxxx"/>
+      <label>Adresse</label><input type="text" id="v-adresse" placeholder="Ex: Agnikro, face école"/>
+      <label>Détail</label><textarea id="v-desc" placeholder="Détail de la commande…"></textarea>
+      <button class="btn btn-vert" onclick="envoyerVendeur();vibrer()">📦 Envoyer</button>
+      <button class="btn btn-bleu" style="margin-top:5px;" onclick="demanderLivreur();vibrer()">🛵 Appeler livreur (50 FCFA)</button>
+      <div class="succes" id="ok-vendeur"><div class="icon">📦</div><p>Commande transmise !</p><button class="btn btn-bleu" style="margin-top:9px;" onclick="resetVendeur()">← Nouvelle</button></div>
+    </div>
+    <div class="card"><h3>🔄 Recharger Tirelire</h3><label>Montant (FCFA)</label><input type="number" id="v-recharge" placeholder="Ex: 5000"/><button class="btn btn-wave" onclick="demanderRecharge();vibrer()" style="text-decoration:none;display:block;">💛 Demander via Wave</button></div>
+    <div class="card"><h3>🔲 Mon QR Code</h3><input type="text" id="v-qr-nom" placeholder="Nom boutique"/><button class="btn btn-bleu" onclick="genQR();vibrer()">⬇️ Générer</button><div id="v-qr-zone" style="margin-top:10px;text-align:center;"></div></div>
+    <button class="btn btn-rouge" onclick="decoVendeur();vibrer()">🔒 Déconnexion</button>
+  </div>
+</div>
+
+<!-- ===== PARTENAIRE ===== -->
+<div class="page" id="page-partenaire">
+  <div class="steps"><div class="step done" id="s1"></div><div class="step" id="s2"></div><div class="step" id="s3"></div></div>
+  <div id="e1"><div class="card"><h3>🤝 Devenir Partenaire</h3>
+    <label>Nom établissement</label><input type="text" id="p-nom" placeholder="Ex: Maquis Chez Fatou"/>
+    <label>WhatsApp</label><input type="tel" id="p-tel" placeholder="07xxxxxxxx"/>
+    <label>Zone</label><select id="p-zone"><option>Kangandy</option><option>Agnikro</option><option>28 Janvier</option><option>Dioulakro</option><option>Autre</option></select>
+    <label>Activité</label><select id="p-activite"><option>Restauration / Maquis</option><option>Épicerie</option><option>Pharmacie</option><option>Taxi</option><option>Autre</option></select>
+    <button class="btn btn-bleu" onclick="goE(2);vibrer()">Suivant →</button>
+  </div></div>
+  <div id="e2" style="display:none;"><div class="card"><h3>📢 Djanvouê Ads</h3>
+    <div style="border:2.5px dashed #aaa;border-radius:10px;padding:18px;text-align:center;cursor:pointer;background:#fafafa;margin-bottom:9px;" onclick="document.getElementById('pub-photo-input').click()"><div style="font-size:2.3rem;">📸</div><p style="font-size:.78rem;color:#777;margin-top:5px;">Appuyez pour choisir votre affiche</p></div>
+    <input type="file" id="pub-photo-input" accept="image/*" style="display:none;" onchange="previewPub(this)"/>
+    <img id="pub-preview" style="width:100%;height:150px;object-fit:cover;border-radius:9px;margin-bottom:9px;display:none;" alt="Aperçu"/>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:11px;">
+      <div class="mode-card selected" id="po-24h" onclick="setPub(500,'24h',24);vibrer()"><div class="label">500F</div><div class="prix">24h</div></div>
+      <div class="mode-card" id="po-3j" onclick="setPub(1200,'3 jours',72);vibrer()"><div class="label">1 200F</div><div class="prix">3 jours</div></div>
+      <div class="mode-card" id="po-1s" onclick="setPub(2500,'1 semaine',168);vibrer()"><div class="label">2 500F</div><div class="prix">1 semaine</div></div>
+    </div>
+    <div class="wave-box show"><h4>💛 Payer via Wave</h4><div class="wave-montant"><span id="wave-pub-val">500</span> FCFA</div><div id="wave-pub-qr" style="width:120px;height:120px;margin:7px auto;"></div><a id="wave-pub-lien" href="#" target="_blank" class="btn btn-wave" style="text-decoration:none;display:block;margin-top:7px;" onclick="vibrer()">💛 Payer</a></div>
+    <div style="display:flex;gap:7px;"><button class="btn btn-jaune" style="flex:1;" onclick="goE(1);vibrer()">← Retour</button><button class="btn btn-bleu" style="flex:1;" onclick="soumettrePub();vibrer()">📤 Soumettre</button></div>
+    <div id="timer-box" style="background:#fff3e0;border:2px solid var(--orange);border-radius:11px;padding:14px;text-align:center;display:none;margin-top:9px;"><div id="timer-val" style="width:70px;height:70px;border-radius:50%;background:var(--orange);color:#fff;font-size:1.3rem;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">15:00</div><p style="font-size:.8rem;color:#555;">⏳ En cours de validation par Didireverb</p></div>
+  </div></div>
+  <div id="e3" style="display:none;"><div class="card"><h3>✍️ Accord Djanvouê</h3>
+    <p style="font-size:.8rem;color:#555;margin-bottom:10px;">Signez pour valider votre adhésion.</p>
+    <canvas id="sigCanvas"></canvas>
+    <div style="display:flex;gap:7px;margin-top:7px;"><button class="btn btn-rouge" style="flex:1;font-size:.8rem;" onclick="effacerSig()">🗑️ Effacer</button><button class="btn btn-vert" style="flex:1;font-size:.8rem;" onclick="validerContrat();vibrer()">✅ Valider</button></div>
+    <div class="succes" id="ok-partenaire"><div class="icon">🎉</div><p>Bienvenue dans le réseau Djanvouê !</p><a id="lien-confirm" href="#" class="btn btn-vert" style="display:block;text-decoration:none;padding:11px;border-radius:9px;margin-top:9px;" onclick="vibrer()">💬 Confirmer sur WhatsApp</a></div>
+  </div></div>
+</div>
+
+<!-- ===== BUREAU ===== -->
+<div class="page" id="page-bureau">
+  <div class="card"><h3>🏛️ Bureau de Gestion</h3><div id="bureau-badge" class="horaire ouvert">🟢 Bureau ouvert — 8h à 18h</div><p id="bureau-msg" style="font-size:.8rem;color:#555;margin-top:7px;"></p></div>
+  <div class="card">
+    <h3>⚖️ Signaler un litige</h3>
+    <label>Votre nom</label><input type="text" id="l-nom" placeholder="Ex: Adjoua Koné"/>
+    <label>Code OTP de la commande</label><input type="text" id="l-otp" placeholder="Ex: 4782"/>
+    <label>Description</label><textarea id="l-desc" placeholder="Ex: Commande non reçue…"></textarea>
+    <button class="btn btn-bleu" id="btn-litige" onclick="envoyerLitige();vibrer()">📨 Envoyer</button>
+    <div class="succes" id="ok-litige"><div class="icon">📨</div><p>Litige transmis. Traitement sous 24h.</p></div>
+  </div>
+  <div class="card"><h3>🎖️ Capitaines de Zone</h3><p id="cap-ph" style="font-size:.8rem;color:#777;">Numéros disponibles prochainement.</p><div id="cap-list"></div></div>
+</div>
+
+<!-- ===== ADMIN ===== -->
+<div class="page" id="page-admin">
+  <div class="card" id="adm-login"><h3>🔐 Accès Admin DDR Prod</h3><label>Code secret</label><input type="password" id="adm-pwd" placeholder="••••••"/><button class="btn btn-bleu" onclick="loginAdmin();vibrer()">Connexion</button><div id="adm-err" style="color:var(--rouge);font-size:.8rem;margin-top:5px;display:none;">Code incorrect.</div></div>
+  <div id="adm-content" style="display:none;">
+    <div class="card"><h3>📊 Tableau de bord</h3>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="val" id="s-ca">0</div><div class="lbl">CA (FCFA)</div></div>
+        <div class="stat-box"><div class="val" id="s-benef">0</div><div class="lbl">Bénéfice</div></div>
+        <div class="stat-box"><div class="val" id="s-cmd">0</div><div class="lbl">Commandes</div></div>
+        <div class="stat-box"><div class="val" id="s-zone">—</div><div class="lbl">Zone Chaude</div></div>
+      </div>
+      <button class="btn btn-rouge" style="margin-top:9px;font-size:.78rem;" onclick="resetStats();vibrer()">🗑️ Réinitialiser</button>
+    </div>
+    <div class="card"><h3>🔔 Pubs en attente</h3><div id="pubs-attente-list"><p style="font-size:.78rem;color:#aaa;">Aucune pub.</p></div></div>
+    <div class="card"><h3>⚽ Valider Résultats Matchs</h3><div id="admin-matchs"></div></div>
+    <div class="card"><h3>🧮 Simulateur</h3>
+      <label>Montant (FCFA)</label><input type="number" id="sim-mt" placeholder="Ex: 2000" oninput="simuler()"/>
+      <div class="modes" style="margin-bottom:9px;"><div class="mode-card selected" id="sim-liv" onclick="setSimMode('LIVRAISON')"><div class="label">🛵 Livraison</div></div><div class="mode-card" id="sim-pied" onclick="setSimMode('A_PIED')"><div class="label">🚶 À Pied</div></div></div>
+      <div class="ticket"><div class="row"><span>Client paie</span><span id="sim-c">—</span></div><div class="row"><span>Revenu vendeur</span><span id="sim-v">—</span></div><div class="row"><span>Gain livreur</span><span id="sim-l">—</span></div><div class="row total"><span>✅ Ton gain DDR</span><span id="sim-d">—</span></div></div>
+    </div>
+    <div class="card"><h3>📋 Historique</h3><div id="histo-list"><p style="font-size:.78rem;color:#aaa;">Aucune transaction.</p></div></div>
+    <div class="card"><h3>🔑 Codes Vendeurs</h3><div id="codes-liste"></div>
+      <div style="display:flex;gap:7px;margin-top:7px;"><input type="text" id="new-nom" placeholder="Nom boutique" style="margin-bottom:0;"/><input type="password" id="new-code" maxlength="4" placeholder="Code" style="margin-bottom:0;width:80px;" inputmode="numeric"/><button class="btn btn-vert" style="width:48px;padding:9px;margin-top:0;" onclick="ajouterCode();vibrer()">+</button></div>
+    </div>
+    <div class="card"><h3>🎖️ Capitaines</h3>
+      <div style="display:flex;gap:8px;margin-bottom:7px;align-items:center;"><span style="font-size:.78rem;min-width:75px;font-weight:600;">Kangandy</span><input type="tel" id="cap-k" placeholder="07xxxxxxxx" oninput="saveCapitaines()" style="margin-bottom:0;"/></div>
+      <div style="display:flex;gap:8px;margin-bottom:7px;align-items:center;"><span style="font-size:.78rem;min-width:75px;font-weight:600;">Agnikro</span><input type="tel" id="cap-a" placeholder="07xxxxxxxx" oninput="saveCapitaines()" style="margin-bottom:0;"/></div>
+      <div style="display:flex;gap:8px;margin-bottom:7px;align-items:center;"><span style="font-size:.78rem;min-width:75px;font-weight:600;">28 Janvier</span><input type="tel" id="cap-j" placeholder="07xxxxxxxx" oninput="saveCapitaines()" style="margin-bottom:0;"/></div>
+    </div>
+    <button class="btn btn-rouge" onclick="logoutAdmin();vibrer()">🔒 Déconnexion</button>
+  </div>
+</div>
+
+<script>
+// ====== FIREBASE ======
+const FB={apiKey:"AIzaSyCef2A2-eCAs_YevJe2TRvZcsNDp_cuSQs",authDomain:"djanvoue-ddr.firebaseapp.com",projectId:"djanvoue-ddr"};
+let fbDB;
+try{if(!firebase.apps.length)firebase.initializeApp(FB);fbDB=firebase.firestore();}catch(e){}
+
+// ====== WAVE ======
+const _w={_i:atob('TV9jaV9QUTZYZXRRYK5yTWg='),_t:'2250703240589'};
+const wLink=m=>`https://pay.wave.com/m/${_w._i}/c/ci/?amount=${m}`;
+function wQR(m,id){
+  const url=wLink(m);
+  const urls=[`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(url)}`,`https://chart.googleapis.com/chart?chs=120x120&cht=qr&chl=${encodeURIComponent(url)}`];
+  const img=document.createElement('img');
+  img.style.cssText='border-radius:7px;width:100%;height:100%;';
+  img.src=urls[0];img.onerror=()=>{img.src=urls[1];};
+  const el=document.getElementById(id);
+  if(el){el.innerHTML='';el.appendChild(img);}
+}
+
+// ====== VIBRATION ======
+function vibrer(ms=30){if(navigator.vibrate)navigator.vibrate(ms);}
+
+// ====== DB ======
+const loadDB=()=>{try{return JSON.parse(localStorage.getItem('djanvoue_db'))||{};}catch(e){return{};}};
+const defDB=()=>({commandes:0,ca:0,bonus:0,zoneStats:{},codes:[],caps:{},pubs:[],histo:[],annonces:[],tontines:[]});
+let DB={...defDB(),...loadDB()};
+const saveDB=()=>localStorage.setItem('djanvoue_db',JSON.stringify(DB));
+
+// ====== POINTS (persistants liés au profil) ======
+function getProfil(){
+  try{return JSON.parse(localStorage.getItem('djanvoue_profil'))||{};}catch(e){return{};}
+}
+function saveProfil(p){localStorage.setItem('djanvoue_profil',JSON.stringify(p));}
+function getPoints(){return getProfil().pts||0;}
+function addPoints(pts,raison){
+  const p=getProfil();p.pts=(p.pts||0)+pts;saveProfil(p);
+  majAffichagePoints();
+  if(pts>0){
+    vibrer(50);
+    setTimeout(()=>{
+      const banner=document.createElement('div');
+      banner.style.cssText=`position:fixed;top:70px;left:50%;transform:translateX(-50%);background:var(--jaune);color:#1A237E;padding:8px 18px;border-radius:20px;font-weight:900;font-size:.88rem;z-index:500;animation:popIn .3s ease;box-shadow:0 4px 12px rgba(0,0,0,.2);`;
+      banner.textContent=`+${pts} pts ! ${raison}`;
+      document.body.appendChild(banner);
+      setTimeout(()=>banner.remove(),2500);
+    },300);
+  }
+}
+function majAffichagePoints(){
+  const pts=getPoints();
+  ['pts-cdm'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=pts;});
+  ['pts-cdm-fcfa'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=`= ${pts*5} FCFA`;});
+  const pb=document.getElementById('profil-pts');if(pb)pb.textContent=`${pts} pts = ${pts*5} FCFA`;
+  const pc=document.getElementById('parrain-code');if(pc&&!pc.textContent.startsWith('DJ'))pc.textContent=genCodeParrain();
+}
+
+// ====== ONBOARDING ======
+let obEtape=1;
+const obServices=[{l:"🛵 Livraison",v:"Livraison"},{l:"🚕 Taxi",v:"Taxi"},{l:"🛒 Achats",v:"Achats"},{l:"✨ Autre",v:"Autre"}];
+
+function renderOB(){
+  const prog=((obEtape-1)/2)*100;
+  document.getElementById('ob-prog').style.width=prog+'%';
+  const card=document.getElementById('ob-card');
+  const profil=getProfil();
+  if(obEtape===1){
+    card.innerHTML=`
+      <div style="text-align:center;">
+        <div style="font-size:3rem;margin-bottom:10px;">👋</div>
+        <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:6px;color:#333;">Bienvenue !</h2>
+        <p style="color:#777;font-size:.85rem;margin-bottom:18px;">Comment t'appelles-tu ?</p>
+        <input type="text" id="ob-nom" value="${profil.nom||''}" placeholder="Ton prénom ici…"
+          style="width:100%;padding:13px;border:2px solid #eee;border-radius:12px;font-size:1rem;outline:none;margin-bottom:16px;text-align:center;box-sizing:border-box;"
+          oninput="this.style.borderColor=this.value?'#1565C0':'#eee'"/>
+        <button onclick="obSuivant()" style="width:100%;padding:13px;background:var(--bleu);color:#fff;border:none;border-radius:12px;font-weight:800;font-size:1rem;cursor:pointer;">Continuer →</button>
+      </div>`;
+  } else if(obEtape===2){
+    const nom=document.getElementById('ob-nom')?.value||profil.nom||'';
+    card.innerHTML=`
+      <h2 style="font-size:1.1rem;font-weight:800;text-align:center;margin-bottom:5px;color:#333;">Salut ${nom} ! 🎉</h2>
+      <p style="color:#777;font-size:.82rem;text-align:center;margin-bottom:16px;">Qu'est-ce que tu cherches principalement ?</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px;">
+        ${obServices.map(s=>`<button onclick="obChoisirService('${s.v}')" style="padding:15px 8px;border:2px solid #eee;border-radius:11px;background:#fff;font-weight:700;font-size:.88rem;cursor:pointer;transition:.2s;">${s.l}</button>`).join('')}
+      </div>
+      <button onclick="obEtape=1;renderOB()" style="color:#aaa;background:none;border:none;width:100%;cursor:pointer;font-size:.8rem;">← Retour</button>`;
+  } else {
+    card.innerHTML=`
+      <div style="text-align:center;">
+        <div style="font-size:3.5rem;margin-bottom:10px;">🎉</div>
+        <h2 style="font-size:1.2rem;font-weight:800;margin-bottom:7px;color:#333;">Parfait ${profil.nom} !</h2>
+        <p style="color:#777;font-size:.84rem;margin-bottom:18px;">Tu es prêt à utiliser <strong>DJANVOUÊ</strong> pour tes besoins en <strong>${profil.service}</strong>.</p>
+        <div style="background:#e8f5e9;border-radius:11px;padding:12px;margin-bottom:18px;font-size:.8rem;color:var(--vert);line-height:2;">
+          ✅ Livraison rapide 24h/24<br>✅ Taxi disponible<br>✅ Paiement Wave<br>✅ Pronostics Coupe du Monde<br>✅ Support WhatsApp
         </div>
-        <div style="background: var(--orange-flash); padding: 4px 10px; border-radius: 6px; font-size: 0.75em; font-weight: bold;">DIRECT</div>
-    </div>
+        <button onclick="finirOB()" style="width:100%;padding:14px;background:var(--vert);color:#fff;border:none;border-radius:12px;font-weight:800;font-size:1rem;cursor:pointer;">🚀 Entrer dans DJANVOUÊ</button>
+      </div>`;
+  }
+}
 
-    <!-- Navigation -->
-    <div class="nav-tabs">
-        <div class="tab">👤<br>Client</div>
-        <div class="tab">🚖<br>Taxi</div>
-        <div class="tab">🏪<br>Vendeur</div>
-        <div class="tab">🤝<br>Accord</div>
-        <div class="tab">🏢<br>Bureau</div>
-    </div>
+function obSuivant(){
+  const nom=document.getElementById('ob-nom')?.value.trim();
+  if(!nom){alert('Entrez votre prénom.');return;}
+  const p=getProfil();p.nom=nom;saveProfil(p);
+  obEtape=2;renderOB();
+}
+function obChoisirService(s){
+  const p=getProfil();p.service=s;saveProfil(p);
+  obEtape=3;renderOB();
+}
+function finirOB(){
+  const p=getProfil();p.onboarded=true;saveProfil(p);
+  document.getElementById('onboarding').classList.add('hide');
+  initApp();
+}
+function checkOB(){
+  const p=getProfil();
+  if(p.onboarded){document.getElementById('onboarding').classList.add('hide');initApp();}
+  else{document.getElementById('onboarding').style.display='flex';renderOB();}
+}
 
-    <!-- Bannière Publicitaire Dynamique -->
-    <div class="promo-banner">
-        <h2>Taxi Bongouanou</h2>
-        <p>Un chauffeur en quelques minutes. Disponible maintenant ! ⚡</p>
-    </div>
+// ====== INIT APP ======
+function initApp(){
+  const p=getProfil();
+  if(p.nom){
+    document.getElementById('profil-nom').textContent=`Bonjour ${p.nom} !`;
+    document.getElementById('header-sub').textContent=`${p.nom} · Flash Express Moronou`;
+    const avatar=document.getElementById('profil-avatar');
+    if(avatar)avatar.textContent=p.nom.charAt(0).toUpperCase();
+  }
+  if(p.service)document.getElementById('profil-service').textContent=`Service préféré : ${p.service}`;
+  document.getElementById('parrain-code').textContent=genCodeParrain();
+  majAffichagePoints();
+  renderMatchs();renderClassement();renderAnnuaire();renderMarche();renderAgenda();renderAnnonces();renderTontine();renderDefis();
+  chargerMeteo();chargerPubsFirebase();
+  wQR(500,'wave-pub-qr');
+  document.getElementById('wave-pub-lien').href=wLink(500);
+  hashPwd('DDR2024').then(h=>{if(!localStorage.getItem('djanvoue_ah'))localStorage.setItem('djanvoue_ah',h);});
+  (DB.pubs||[]).filter(p=>p.statut==='ACTIVE').forEach(p=>addPubSlide(p.img,`🏪 ${p.nom}`,`Pub officielle · ${p.duree}`));
+}
 
-    <div class="container">
-        <div class="section-title">📍 Services à proximité</div>
-        <div id="liste-taxis">
-            <!-- Les données de Firebase s'injectent ici -->
-            <p style="text-align:center; color:#888;">Recherche des chauffeurs...</p>
-        </div>
-    </div>
+// ====== PARRAINAGE ======
+function genCodeParrain(){const s=localStorage.getItem('djanvoue_parrain');if(s)return s;const c='DJ'+Math.floor(1000+Math.random()*9000);localStorage.setItem('djanvoue_parrain',c);return c;}
+function partagerCode(){
+  const code=document.getElementById('parrain-code').textContent;
+  const msg=`⚡ DJANVOUÊ — Livraison & Taxi à Bongouanou\n\nUtilisez mon code : *${code}*\nEt obtenez 200 FCFA de réduction sur votre première commande !\n\n👉 https://kouadiokonandidieransite-code.github.io/djanvoue`;
+  if(navigator.share){navigator.share({title:'DJANVOUÊ',text:msg});}
+  else{window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);}
+  addPoints(40,'Parrainage partagé 👥');
+}
 
-    <!-- Bouton WhatsApp Stratégique -->
-    <a href="https://wa.me/225XXXXXXXX" class="whatsapp-btn">💬</a>
+// ====== GÉOLOCALISATION INTÉGRÉE ======
+function obtenirGeo(){
+  const btn=document.getElementById('btn-geo');
+  const status=document.getElementById('geo-status');
+  btn.textContent='⏳';btn.disabled=true;
+  status.style.display='block';
+  status.className='geo-status geo-load';
+  status.textContent='📍 Localisation en cours…';
+  if(!navigator.geolocation){status.className='geo-status geo-err';status.textContent='❌ GPS non supporté';btn.textContent='📍 GPS';btn.disabled=false;return;}
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      const{latitude:lat,longitude:lng}=pos.coords;
+      const url=`https://www.google.com/maps?q=${lat},${lng}`;
+      document.getElementById('c-adresse').value=`GPS: ${lat.toFixed(5)},${lng.toFixed(5)}`;
+      status.className='geo-status geo-ok';
+      status.innerHTML=`✅ Position obtenue ! <a href="${url}" target="_blank" style="color:var(--bleu);font-weight:700;">Voir sur Maps →</a>`;
+      btn.textContent='✅';btn.disabled=false;
+      vibrer(50);
+    },
+    ()=>{status.className='geo-status geo-err';status.textContent='❌ Activez la localisation sur votre téléphone.';btn.textContent='📍 GPS';btn.disabled=false;}
+  );
+}
+function obtenirGeoTaxi(){
+  const status=document.getElementById('geo-taxi-status');
+  status.style.display='block';status.className='geo-status geo-load';status.textContent='📍 Localisation en cours…';
+  if(!navigator.geolocation){status.className='geo-status geo-err';status.textContent='❌ GPS non supporté';return;}
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      const{latitude:lat,longitude:lng}=pos.coords;
+      document.getElementById('tx-dep').value=`GPS: ${lat.toFixed(5)},${lng.toFixed(5)}`;
+      status.className='geo-status geo-ok';status.textContent='✅ Position obtenue !';vibrer(50);
+    },
+    ()=>{status.className='geo-status geo-err';status.textContent='❌ Activez la localisation.';}
+  );
+}
 
-    <script>
-        // Configuration de ta base Djanvoue
-        const firebaseConfig = { 
-            databaseURL: "https://djanvoue-ddr-default-rtdb.europe-west1.firebasedatabase.app/" 
-        };
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+// ====== AVIS AVEC OTP ======
+let avisNote=0;
+function setAvis(n,el){
+  avisNote=n;
+  document.querySelectorAll('.emoji-btn').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('avis-suite').style.display='block';
+  vibrer(30);
+}
+function envoyerAvis(){
+  const prest=document.getElementById('avis-prest').value;
+  const otp=document.getElementById('avis-otp').value.trim();
+  const comment=document.getElementById('avis-comment').value.trim();
+  if(!prest){alert('Choisissez un prestataire.');return;}
+  if(!otp||otp.length!==4){alert('Entrez votre code OTP à 4 chiffres pour valider votre avis.');return;}
+  if(!avisNote){alert('Choisissez une note.');return;}
+  const emojis={1:'😠 Mauvais',2:'😐 Moyen',3:'🙂 Bien',4:'🤩 Excellent'};
+  const msg=`⭐ AVIS DJANVOUÊ\n👤 ${prest}\n🔐 OTP validé : ${otp}\n${emojis[avisNote]}\n💬 ${comment||'Aucun commentaire'}`;
+  window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(msg)}`);
+  addPoints(5,'Avis laissé ⭐');
+  document.getElementById('ok-avis').classList.add('show');
+}
+function resetAvis(){document.getElementById('ok-avis').classList.remove('show');avisNote=0;document.querySelectorAll('.emoji-btn').forEach(e=>e.classList.remove('selected'));document.getElementById('avis-suite').style.display='none';['avis-prest','avis-otp','avis-comment'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});}
 
-        // Lecture en temps réel des TAXIS
-        database.ref('TAXI').on('value', (snapshot) => {
-            const data = snapshot.val();
-            const container = document.getElementById('liste-taxis');
-            container.innerHTML = ""; 
+// ====== DÉFIS PHOTO ======
+const DEFIS=[
+  {id:'d1',titre:'📸 Photo avec maillot de foot',pts:30,desc:'Mets ton maillot préféré !'},
+  {id:'d2',titre:'⚽ Photo avec un ballon',pts:25,desc:'Montre ton ballon pour la CdM'},
+  {id:'d3',titre:'🎉 Photo soirée match',pts:20,desc:'Votre rassemblement pour le match'},
+  {id:'d4',titre:'🇨🇮 Photo couleurs CIV',pts:35,desc:'Orange, blanc, vert — votre soutien !'},
+];
+let defiSelId=null,defiPhoto=null;
+function renderDefis(){
+  const el=document.getElementById('defis-liste');if(!el)return;
+  el.innerHTML=DEFIS.map(d=>`
+    <div class="defi-card ${defiSelId===d.id?'selected':''}" onclick="selDefi('${d.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><div style="font-weight:700;font-size:.88rem;">${d.titre}</div><div style="font-size:.74rem;color:#777;margin-top:2px;">${d.desc}</div></div>
+        <div class="defi-pts">+${d.pts} pts</div>
+      </div>
+    </div>`).join('');
+}
+function selDefi(id){
+  defiSelId=id;renderDefis();
+  document.getElementById('defi-upload').style.display='block';
+  vibrer(30);
+}
+function previewDefi(input){
+  const file=input.files[0];if(!file)return;
+  defiPhoto=URL.createObjectURL(file);
+  const prev=document.getElementById('defi-preview');
+  prev.src=defiPhoto;prev.style.display='block';
+}
+function envoyerDefi(){
+  if(!defiSelId){alert('Choisissez un défi.');return;}
+  if(!defiPhoto){alert('Prenez une photo d\'abord.');return;}
+  const defi=DEFIS.find(d=>d.id===defiSelId);
+  const msg=`🏆 DÉFI DJANVOUÊ\n📸 ${defi.titre}\n🎯 ${defi.pts} points en jeu\n🔐 Code : ${genCodeParrain()}\n\n[Photo jointe — validation requise par Didireverb]`;
+  window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(msg)}`);
+  alert(`✅ Défi envoyé ! Didireverb va valider votre photo.\nVous recevrez +${defi.pts} pts après validation.`);
+  defiSelId=null;defiPhoto=null;
+  document.getElementById('defi-upload').style.display='none';
+  document.getElementById('defi-preview').style.display='none';
+  renderDefis();
+}
 
-            if (data) {
-                Object.keys(data).forEach(key => {
-                    const taxi = data[key];
-                    container.innerHTML += `
-                        <div class="card">
-                            <h3>🚕 Chauffeur : ${taxi.nom || 'Disponible'}</h3>
-                            <div class="info-row"><strong>📍 Lieu :</strong> ${taxi.lieu || 'Moronou'}</div>
-                            <div class="info-row"><strong>📞 Contact :</strong> ${taxi.tel || 'Via WhatsApp'}</div>
-                            <div class="price-tag">${taxi.prix || 'Sur devis'} FCFA</div>
-                        </div>`;
-                });
-            } else {
-                container.innerHTML = "<p style='text-align:center;'>Aucun service disponible pour le moment.</p>";
-            }
-        });
-    </script>
+// ====== COUPE DU MONDE ======
+const MATCHS=[
+  {id:'m1',f1:'🇨🇮',n1:"Côte d'Ivoire",f2:'🇳🇬',n2:'Nigeria',date:'16 Juin · 14h00',grp:'Groupe A'},
+  {id:'m2',f1:'🇨🇮',n1:"Côte d'Ivoire",f2:'🇧🇷',n2:'Brésil',date:'20 Juin · 20h00',grp:'Groupe A'},
+  {id:'m3',f1:'🇫🇷',n1:'France',f2:'🇦🇷',n2:'Argentine',date:'21 Juin · 17h00',grp:'Groupe B'},
+  {id:'m4',f1:'🇬🇭',n1:'Ghana',f2:'🇸🇳',n2:'Sénégal',date:'22 Juin · 14h00',grp:'Groupe C'},
+  {id:'m5',f1:'🇲🇦',n1:'Maroc',f2:'🇵🇹',n2:'Portugal',date:'23 Juin · 20h00',grp:'Groupe D'},
+];
+let paris=JSON.parse(localStorage.getItem('djanvoue_paris')||'{}');
+let pariTemp={};
+function saveParis(){localStorage.setItem('djanvoue_paris',JSON.stringify(paris));}
+function renderMatchs(){
+  const el=document.getElementById('matchs-liste');if(!el)return;
+  el.innerHTML=MATCHS.map(m=>{
+    const p=paris[m.id];
+    return `<div class="match-card">
+      <div class="match-equipes">
+        <div class="equipe"><div class="flag">${m.f1}</div><div class="nom">${m.n1}</div></div>
+        <div style="font-size:1.1rem;font-weight:900;color:var(--bleu);padding:0 10px;">VS</div>
+        <div class="equipe"><div class="flag">${m.f2}</div><div class="nom">${m.n2}</div></div>
+      </div>
+      <div style="font-size:.72rem;color:#777;text-align:center;margin-bottom:8px;">📅 ${m.date} · ${m.grp}</div>
+      ${p?`<div style="background:#e8f5e9;border-radius:8px;padding:8px;text-align:center;font-size:.8rem;color:var(--vert);">✅ Parié : <strong>${p.choix==='1'?m.n1:p.choix==='2'?m.n2:'Match Nul'}</strong>${p.score?' ('+p.score+')':''}</div>`:
+      `<div class="pari-opts">
+        <div class="pari-opt ${pariTemp[m.id]==='1'?'sel':''}" onclick="selPari('${m.id}','1',this)">${m.n1}</div>
+        <div class="pari-opt ${pariTemp[m.id]==='N'?'sel':''}" onclick="selPari('${m.id}','N',this)">Nul</div>
+        <div class="pari-opt ${pariTemp[m.id]==='2'?'sel':''}" onclick="selPari('${m.id}','2',this)">${m.n2}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:8px;">
+        <input type="number" id="s1-${m.id}" min="0" max="20" placeholder="0" style="width:50px;text-align:center;font-size:1rem;font-weight:700;margin-bottom:0;padding:7px;"/>
+        <span style="font-weight:900;">—</span>
+        <input type="number" id="s2-${m.id}" min="0" max="20" placeholder="0" style="width:50px;text-align:center;font-size:1rem;font-weight:700;margin-bottom:0;padding:7px;"/>
+      </div>
+      <button class="btn btn-violet" style="font-size:.82rem;padding:9px;" onclick="validerPari('${m.id}','${m.n1}','${m.n2}');vibrer()">🎯 Valider mon pronostic</button>`}
+    </div>`;
+  }).join('');
+}
+function selPari(mid,choix,el){pariTemp[mid]=choix;renderMatchs();vibrer(20);}
+function validerPari(mid,n1,n2){
+  const choix=pariTemp[mid];if(!choix){alert('Choisissez un résultat.');return;}
+  const s1=document.getElementById('s1-'+mid)?.value||'';
+  const s2=document.getElementById('s2-'+mid)?.value||'';
+  const score=(s1!==''&&s2!=='')?`${s1}-${s2}`:'';
+  paris[mid]={choix,score,ts:Date.now()};saveParis();
+  addPoints(10,'Pronostic enregistré ⚽');
+  renderMatchs();renderClassement();
+}
+function validerResultatAdmin(mid,res,scoreR){
+  const m=MATCHS.find(m=>m.id===mid);if(!m)return;
+  const p=paris[mid];if(!p){alert('Vous n\'avez pas parié sur ce match.');return;}
+  if(p.score&&p.score===scoreR){addPoints(50,'🎯 Score exact !');}
+  else if(p.choix===res){addPoints(20,'✅ Bon vainqueur !');}
+  else{alert('❌ Pronostic raté — meilleure chance au prochain match !');}
+}
+function renderClassement(){
+  const el=document.getElementById('classement-liste');if(!el)return;
+  const profil=getProfil();
+  const nom=profil.nom||'Vous';
+  const pts=getPoints();
+  const cl=[
+    {nom,pts,badge:'🥇'},
+    {nom:'Kouamé A.',pts:Math.max(0,pts-Math.floor(Math.random()*20+5)),badge:'🥈'},
+    {nom:'Adjoua K.',pts:Math.max(0,pts-Math.floor(Math.random()*30+15)),badge:'🥉'},
+    {nom:'Moussa D.',pts:Math.max(0,pts-Math.floor(Math.random()*40+25)),badge:'4️⃣'},
+    {nom:'Fatou B.',pts:Math.max(0,pts-Math.floor(Math.random()*50+35)),badge:'5️⃣'},
+  ].sort((a,b)=>b.pts-a.pts);
+  el.innerHTML=cl.map(c=>`<div class="rank-item"><div style="font-size:1.1rem;font-weight:900;width:28px;text-align:center;">${c.badge}</div><div style="flex:1;"><div style="font-weight:700;font-size:.86rem;">${c.nom}</div><div style="font-size:.72rem;color:var(--vert);">${c.pts} pts = ${c.pts*5} FCFA</div></div></div>`).join('');
+}
+function renderAdminMatchs(){
+  const el=document.getElementById('admin-matchs');if(!el)return;
+  el.innerHTML=MATCHS.map(m=>`<div style="background:var(--gris);border-radius:9px;padding:10px;margin-bottom:7px;">
+    <div style="font-weight:700;font-size:.86rem;">${m.f1} ${m.n1} vs ${m.n2} ${m.f2}</div>
+    <div style="font-size:.72rem;color:#777;margin-bottom:7px;">${m.date}</div>
+    <div style="display:flex;gap:5px;">
+      <button onclick="validerResultatAdmin('${m.id}','1','');vibrer()" style="flex:1;padding:6px;background:var(--vert);color:#fff;border:none;border-radius:7px;font-size:.72rem;cursor:pointer;">✅ ${m.n1}</button>
+      <button onclick="validerResultatAdmin('${m.id}','N','');vibrer()" style="flex:1;padding:6px;background:var(--orange);color:#fff;border:none;border-radius:7px;font-size:.72rem;cursor:pointer;">🤝 Nul</button>
+      <button onclick="validerResultatAdmin('${m.id}','2','');vibrer()" style="flex:1;padding:6px;background:var(--bleu);color:#fff;border:none;border-radius:7px;font-size:.72rem;cursor:pointer;">✅ ${m.n2}</button>
+    </div></div>`).join('');
+}
+
+// ====== ANNUAIRE ======
+const ANNUAIRE=[
+  {nom:'CHR Bongouanou',cat:'🏥 Hôpital',tel:'27300000',wa:false},
+  {nom:'Pharmacie Centrale',cat:'💊 Pharmacie',tel:'0700000001',wa:true},
+  {nom:'Mairie Bongouanou',cat:'🏛️ Mairie',tel:'27300001',wa:false},
+  {nom:'Police Nationale',cat:'👮 Police',tel:'17',wa:false},
+  {nom:'Sapeurs Pompiers',cat:'🚒 Pompiers',tel:'18',wa:false},
+  {nom:'SAMU',cat:'🚑 Urgences',tel:'185',wa:false},
+  {nom:'Gare Routière',cat:'🚌 Transport',tel:'0700000002',wa:true},
+  {nom:'Djanvouê — Flash Express',cat:'⚡ Livraison',tel:_w._t,wa:true},
+];
+function renderAnnuaire(){
+  const el=document.getElementById('annuaire-liste');if(!el)return;
+  el.innerHTML=ANNUAIRE.map(a=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--gris);border-radius:10px;margin-bottom:7px;">
+      <div><div style="font-weight:700;font-size:.88rem;">${a.nom}</div><div style="font-size:.72rem;color:#777;">${a.cat}</div></div>
+      <div style="display:flex;gap:5px;">
+        ${a.wa?`<a href="https://wa.me/225${a.tel.replace(/\D/g,'')}" style="padding:6px 9px;border-radius:7px;font-size:.72rem;font-weight:700;text-decoration:none;background:#25D366;color:#fff;" onclick="vibrer()">💬</a>`:''}
+        <a href="tel:${a.tel.replace(/\D/g,'')}" style="padding:6px 9px;border-radius:7px;font-size:.72rem;font-weight:700;text-decoration:none;background:var(--bleu);color:#fff;" onclick="vibrer()">📞</a>
+      </div>
+    </div>`).join('');
+}
+
+// ====== MARCHÉ ======
+const MARCHE=[
+  {p:'🌾 Riz importé (kg)',v:'600 FCFA',t:'→'},{p:'🍅 Tomate fraîche (kg)',v:'300 FCFA',t:'↑'},
+  {p:'🛢️ Huile palme (litre)',v:'800 FCFA',t:'↓'},{p:'🥚 Œufs (12)',v:'1 200 FCFA',t:'→'},
+  {p:'🍚 Garba (portion)',v:'500 FCFA',t:'→'},{p:'🐟 Poisson fumé (kg)',v:'3 500 FCFA',t:'↑'},
+  {p:'🥬 Légumes feuilles',v:'200 FCFA',t:'↓'},{p:'🌽 Maïs (kg)',v:'250 FCFA',t:'→'},
+];
+function renderMarche(){
+  const el=document.getElementById('marche-liste');if(!el)return;
+  const d=document.getElementById('marche-date');if(d)d.textContent=`Mis à jour le ${new Date().toLocaleDateString('fr-FR')}`;
+  el.innerHTML=MARCHE.map(m=>`<div class="prix-item"><div style="font-weight:600;font-size:.86rem;">${m.p}</div><div style="display:flex;align-items:center;gap:6px;"><span style="font-weight:900;color:var(--vert);">${m.v}</span><span style="color:${m.t==='↑'?'var(--rouge)':m.t==='↓'?'var(--vert)':'#777'};">${m.t}</span></div></div>`).join('');
+}
+function signalerPrix(){window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent('📢 DJANVOUÊ — Signalement prix marché\nJe souhaite signaler un prix incorrect sur le marché de Bongouanou.')}`);}
+
+// ====== AGENDA ======
+const AGENDA=[
+  {titre:'⚽ CIV vs Nigeria — Coupe du Monde',date:'Lun 16 Juin 2026 · 14h00'},
+  {titre:'⚽ CIV vs Brésil — Coupe du Monde',date:'Ven 20 Juin 2026 · 20h00'},
+  {titre:'🎵 Concert Agni N\'Goa 2',date:'Sam 28 Juin 2026 · 20h00'},
+  {titre:'🎉 Fête de l\'Indépendance',date:'Mar 7 Août 2026'},
+  {titre:'🏪 Foire Commerciale Bongouanou',date:'Ven 15 Juil 2026'},
+];
+function renderAgenda(){
+  const el=document.getElementById('agenda-liste');if(!el)return;
+  el.innerHTML=AGENDA.map(e=>`<div style="background:#fff;border-radius:10px;padding:11px;margin-bottom:7px;border-left:3px solid var(--violet);box-shadow:0 1px 4px rgba(0,0,0,.05);"><div style="font-weight:700;font-size:.88rem;">${e.titre}</div><div style="font-size:.72rem;color:var(--violet);margin-top:2px;">📅 ${e.date}</div></div>`).join('');
+}
+function proposerEvent(){window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent('📅 DJANVOUÊ — Proposition événement\nJe souhaite ajouter un événement à l\'agenda culturel du Moronou.')}`);}
+
+// ====== SOS ======
+function envoiSOS(){if(!confirm('⚠️ Confirmer l\'envoi d\'une alerte SOS ?'))return;window.open(`https://wa.me/?text=${encodeURIComponent('🆘 SOS VOISINAGE DJANVOUÊ\n\nUne personne de votre quartier a besoin d\'aide immédiatement !\n\n📍 Bongouanou — Contactez vos voisins proches.')}`);vibrer(100);}
+
+// ====== TONTINE ======
+function renderTontine(){
+  const el=document.getElementById('tontine-content');if(!el)return;
+  const tontines=DB.tontines||[];
+  if(!tontines.length){
+    el.innerHTML=`<button class="btn btn-vert" onclick="creerTontine();vibrer()">➕ Créer une tontine</button><button class="btn btn-bleu" style="margin-top:6px;" onclick="rejoindreCode();vibrer()">🔗 Rejoindre avec un code</button>`;
+    return;
+  }
+  el.innerHTML=tontines.map((t,ti)=>`
+    <div style="background:var(--gris);border-radius:10px;padding:11px;margin-bottom:8px;">
+      <div style="font-weight:700;font-size:.9rem;">${t.nom} <span style="font-size:.72rem;color:#777;">Code: ${t.id}</span></div>
+      <div style="font-size:.76rem;color:var(--bleu);margin-bottom:7px;">💰 ${t.montant} FCFA/cycle · ${t.membres.length} membre(s)</div>
+      ${t.membres.map((m,i)=>`<div class="tontine-membre"><div style="font-weight:700;font-size:.85rem;">👤 ${m.nom}</div><div style="display:flex;gap:5px;align-items:center;"><span class="${m.paye?'paye':'impaye'}">${m.paye?'✅ Payé':'⏳ Attente'}</span><button onclick="togglePmt(${ti},${i});vibrer()" style="background:${m.paye?'var(--rouge)':'var(--vert)'};color:#fff;border:none;border-radius:6px;padding:3px 7px;font-size:.68rem;cursor:pointer;">${m.paye?'Annuler':'Payer'}</button></div></div>`).join('')}
+    </div>`).join('')+`<button class="btn btn-vert" onclick="creerTontine();vibrer()" style="margin-top:6px;">➕ Nouvelle</button><button class="btn btn-bleu" style="margin-top:5px;" onclick="rejoindreCode();vibrer()">🔗 Rejoindre</button>`;
+}
+function creerTontine(){const nom=prompt('Nom de votre tontine :');const mt=prompt('Montant (FCFA) :');if(!nom||!mt)return;const code='T'+Math.floor(1000+Math.random()*9000);DB.tontines=DB.tontines||[];DB.tontines.push({id:code,nom,montant:parseInt(mt),membres:[],created:Date.now()});saveDB();renderTontine();alert(`✅ Tontine créée !\nCode : ${code}`);}
+function rejoindreCode(){const code=prompt('Code de la tontine :');if(!code)return;const t=(DB.tontines||[]).find(t=>t.id===code.toUpperCase());if(!t){alert('Code invalide.');return;}const nom=prompt('Votre nom :');if(!nom)return;t.membres.push({nom,paye:false});saveDB();renderTontine();}
+function togglePmt(ti,i){DB.tontines[ti].membres[i].paye=!DB.tontines[ti].membres[i].paye;saveDB();renderTontine();}
+
+// ====== ANNONCES ======
+function renderAnnonces(filtre='tout'){
+  const el=document.getElementById('annonces-liste');if(!el)return;
+  const ann=DB.annonces||[];
+  const filtrees=filtre==='tout'?ann:ann.filter(a=>a.cat===filtre);
+  const cats={vente:'cat-vente',emploi:'cat-emploi',location:'cat-location',service:'cat-service'};
+  const catL={vente:'🛍️ Vente',emploi:'💼 Emploi',location:'🏠 Location',service:'🔧 Service'};
+  if(!filtrees.length){el.innerHTML='<p style="text-align:center;color:#aaa;padding:20px;font-size:.82rem;">Aucune annonce.<br>Soyez le premier à publier !</p>';return;}
+  el.innerHTML=filtrees.map(a=>`<div class="annonce-card"><div style="font-weight:700;font-size:.9rem;margin-bottom:3px;">${a.titre}</div><div style="font-size:.78rem;color:#555;margin-bottom:7px;">${a.desc}</div><div style="display:flex;justify-content:space-between;align-items:center;"><span class="cat-badge ${cats[a.cat]}">${catL[a.cat]}</span>${a.prix?`<span style="font-weight:700;color:var(--vert);">${parseInt(a.prix).toLocaleString()} FCFA</span>`:''}<a href="https://wa.me/225${a.tel}" style="background:#25D366;color:#fff;padding:5px 9px;border-radius:8px;font-size:.72rem;font-weight:700;text-decoration:none;" onclick="vibrer()">💬</a></div></div>`).join('');
+}
+function filtrerAnn(f,btn){document.querySelectorAll('#page-annonces .chip').forEach(c=>c.classList.remove('sel-bleu'));btn.classList.add('sel-bleu');renderAnnonces(f);}
+function toggleFormAnn(){const f=document.getElementById('form-ann');f.style.display=f.style.display==='none'?'block':'none';}
+function publierAnn(){
+  const titre=document.getElementById('ann-titre').value.trim(),desc=document.getElementById('ann-desc').value.trim(),cat=document.getElementById('ann-cat').value,prix=document.getElementById('ann-prix').value,tel=document.getElementById('ann-tel').value.trim();
+  if(!titre||!tel){alert('Titre et téléphone obligatoires.');return;}
+  DB.annonces=DB.annonces||[];DB.annonces.unshift({titre,desc,cat,prix,tel,date:Date.now()});
+  if(DB.annonces.length>100)DB.annonces=DB.annonces.slice(0,100);
+  saveDB();document.getElementById('form-ann').style.display='none';
+  ['ann-titre','ann-desc','ann-prix','ann-tel'].forEach(id=>document.getElementById(id).value='');
+  renderAnnonces();addPoints(5,'Annonce publiée 📋');
+}
+
+// ====== MÉTÉO ======
+async function chargerMeteo(){
+  try{
+    const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=6.65&longitude=-4.2&current=temperature_2m,weathercode,relativehumidity_2m&timezone=Africa/Abidjan');
+    const d=await r.json();
+    const t=Math.round(d.current.temperature_2m);
+    const codes={0:'☀️ Ensoleillé',1:'🌤️ Peu nuageux',2:'⛅ Nuageux',3:'☁️ Couvert',51:'🌦️ Bruine',61:'🌧️ Pluie',80:'🌦️ Averses',95:'⛈️ Orageux'};
+    document.getElementById('meteo-temp').textContent=t+'°C';
+    document.getElementById('meteo-desc').textContent=`${codes[d.current.weathercode]||'🌡️'} · Humidité ${d.current.relativehumidity_2m}%`;
+  }catch(e){}
+}
+
+// ====== CLIENT ======
+const S={mode:'LIVRAISON',zone:'Kangandy',frais:300,typeC:'Repas',typeV:'Repas',tarif:500,pub:{montant:500,duree:'24h',heures:24},vCode:'',vCmd:0,vCumul:0,vTirelire:0,otp:''};
+function setMode(m){S.mode=m;S.frais=m==='LIVRAISON'?300:0;document.getElementById('mode-liv').classList.toggle('selected',m==='LIVRAISON');document.getElementById('mode-pied').classList.toggle('selected',m==='A_PIED');document.getElementById('card-zone').style.display=m==='LIVRAISON'?'block':'none';majTicket();}
+function setZone(el,z,f){document.querySelectorAll('#card-zone .chip').forEach(c=>c.classList.remove('sel-bleu'));el.classList.add('sel-bleu');S.zone=z;S.frais=f;document.getElementById('zone-info').textContent=z==='Autre'?'📍 Zone à définir':`📍 ${z} — ${f} FCFA`;majTicket();vibrer(20);}
+function setType(el,type,qui){const grp=qui==='c'?'#page-client .chip':'#v-content .chip';document.querySelectorAll(grp).forEach(c=>c.classList.remove('sel-vert'));el.classList.add('sel-vert');if(qui==='c')S.typeC=type;else S.typeV=type;if(qui==='c')majTicket();vibrer(20);}
+function majTicket(){document.getElementById('t-mode').textContent=S.mode==='LIVRAISON'?'🛵 Livraison':'🚶 À pied';document.getElementById('t-zone').textContent=S.mode==='LIVRAISON'?S.zone:'—';document.getElementById('t-type').textContent=S.typeC;document.getElementById('t-frais').textContent=S.frais+' FCFA';}
+const genOTP=()=>String(Math.floor(1000+Math.random()*9000));
+function validerCommande(){
+  const nom=document.getElementById('c-nom').value.trim(),tel=document.getElementById('c-tel').value.trim(),adr=document.getElementById('c-adresse').value.trim(),desc=document.getElementById('c-desc').value.trim();
+  if(!nom||!tel||!desc){alert('Remplissez votre nom, téléphone et la commande.');return;}
+  if(!adr){alert('Entrez votre adresse ou utilisez le GPS.');return;}
+  S.otp=genOTP();
+  document.getElementById('otp-val').textContent=S.otp;
+  document.getElementById('otp-box').classList.add('show');
+  if(S.frais>0){document.getElementById('wave-box').classList.add('show');document.getElementById('wave-val').textContent=S.frais;document.getElementById('wave-lien').href=wLink(S.frais);wQR(S.frais,'wave-qr-c');}
+  document.getElementById('btn-valider').style.display='none';
+  document.getElementById('btns-send').style.display='flex';
+  vibrer(50);
+}
+function envoyerClient(canal){
+  const nom=document.getElementById('c-nom').value.trim(),tel=document.getElementById('c-tel').value.trim(),adr=document.getElementById('c-adresse').value.trim(),desc=document.getElementById('c-desc').value.trim();
+  const parrain=genCodeParrain();
+  const msg=`⚡ DJANVOUÊ — Nouvelle commande\n👤 ${nom} (${tel})\n📍 ${adr}\n📦 ${S.typeC} : ${desc}\n🚀 ${S.mode==='LIVRAISON'?'Livraison — '+S.frais+' FCFA':'Retrait — Gratuit'}\n🔐 OTP : ${S.otp}\n🎁 Code : ${parrain}`;
+  if(!navigator.onLine){saveDiff({nom,tel,adr,desc});return;}
+  canal==='WA'?window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(msg)}`):window.location.href=`tel:+${_w._t}`;
+  DB.commandes++;DB.ca+=S.frais+75;DB.zoneStats[S.zone]=(DB.zoneStats[S.zone]||0)+1;
+  addHisto('COMMISSION',`Livraison ${S.typeC} — ${S.zone}`,75);saveDB();
+  addPoints(10,'Commande passée 📦');
+  document.getElementById('ok-client').classList.add('show');
+  demarrerSpam();
+}
+function demarrerSpam(){let s=60;const msg=document.getElementById('spam-msg');document.querySelectorAll('#btns-send button').forEach(b=>b.disabled=true);msg.style.display='block';const t=setInterval(()=>{s--;document.getElementById('spam-cd').textContent=s;if(s<=0){clearInterval(t);document.querySelectorAll('#btns-send button').forEach(b=>b.disabled=false);msg.style.display='none';}},1000);}
+function resetClient(){document.getElementById('ok-client').classList.remove('show');document.getElementById('otp-box').classList.remove('show');document.getElementById('wave-box').classList.remove('show');document.getElementById('btn-valider').style.display='block';document.getElementById('btns-send').style.display='none';['c-nom','c-adresse','c-desc'].forEach(id=>document.getElementById(id).value='');document.getElementById('c-qrt')&&(document.getElementById('c-qrt').value='');document.getElementById('geo-status').style.display='none';}
+function saveDiff(cmd){const att=JSON.parse(localStorage.getItem('djanvoue_att')||'[]');att.push({...cmd,ts:Date.now()});localStorage.setItem('djanvoue_att',JSON.stringify(att));alert("Djanvouê, ta commande est gardée ! ⚡");}
+function envoyerDiff(){const att=JSON.parse(localStorage.getItem('djanvoue_att')||'[]');if(!att.length)return;att.forEach(c=>{window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(`⚡ DJANVOUÊ (diff.)\n👤 ${c.nom} (${c.tel})\n📍 ${c.adr}\n📦 ${c.desc}`)}`);});localStorage.removeItem('djanvoue_att');}
+
+// ====== TAXI ======
+function setTarif(m){S.tarif=m;['500','1000','1500','0'].forEach(v=>document.getElementById('tf-'+v)?.classList.remove('selected'));document.getElementById('tf-'+m)?.classList.add('selected');if(m>0){document.getElementById('wave-taxi').classList.add('show');document.getElementById('wave-taxi-val').textContent=m;document.getElementById('wave-taxi-lien').href=wLink(m);wQR(m,'wave-taxi-qr');}else document.getElementById('wave-taxi').classList.remove('show');vibrer(20);}
+function appelerTaxi(){const nom=document.getElementById('tx-nom').value.trim(),tel=document.getElementById('tx-tel').value.trim(),dep=document.getElementById('tx-dep').value.trim(),dest=document.getElementById('tx-dest').value.trim();if(!nom||!tel||!dep||!dest){alert('Remplissez tous les champs.');return;}window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(`🚕 DJANVOUÊ TAXI\n👤 ${nom} (${tel})\n🟢 ${dep}\n🔴 ${dest}\n💰 ${S.tarif>0?S.tarif+' FCFA':'À négocier'}`)}`);DB.commandes++;DB.ca+=S.tarif+75;addHisto('COMMISSION',`Taxi ${dep}→${dest}`,75);saveDB();addPoints(10,'Course taxi 🚕');document.getElementById('ok-taxi').classList.add('show');}
+function resetTaxi(){document.getElementById('ok-taxi').classList.remove('show');document.getElementById('wave-taxi').classList.remove('show');['tx-nom','tx-tel','tx-dep','tx-dest'].forEach(id=>document.getElementById(id).value='');document.getElementById('geo-taxi-status').style.display='none';}
+
+// ====== VENDEUR ======
+function authVendeur(){const code=document.getElementById('v-code').value.trim();const found=(DB.codes||[]).find(c=>c.code===code);if(found){S.vCode=code;document.getElementById('v-lock').style.display='none';document.getElementById('v-content').style.display='block';document.getElementById('v-err').style.display='none';document.getElementById('v-boutique-lbl').textContent=found.nom;loadVD(code);}else{document.getElementById('v-err').style.display='block';vibrer(100);}}
+function decoVendeur(){document.getElementById('v-lock').style.display='block';document.getElementById('v-content').style.display='none';document.getElementById('v-code').value='';}
+function loadVD(code){const d=JSON.parse(localStorage.getItem('vd_'+code)||'{"cnt":0,"cumul":0,"tirelire":0}');S.vCmd=d.cnt;S.vCumul=d.cumul;S.vTirelire=d.tirelire;showBonus();}
+function saveVD(){localStorage.setItem('vd_'+S.vCode,JSON.stringify({cnt:S.vCmd,cumul:S.vCumul,tirelire:S.vTirelire}));}
+function envoyerVendeur(){const client=document.getElementById('v-client').value.trim(),ctel=document.getElementById('v-ctel').value.trim(),adr=document.getElementById('v-adresse').value.trim(),desc=document.getElementById('v-desc').value.trim();const boutique=(DB.codes||[]).find(c=>c.code===S.vCode)?.nom||'Partenaire';if(!client||!desc){alert('Champs obligatoires manquants.');return;}const otp=genOTP();window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(`⚡ DJANVOUÊ — Commande Vendeur\n🏪 ${boutique}\n👤 ${client} (${ctel})\n📍 ${adr}\n📦 ${desc}\n🔐 OTP : ${otp}`)}`);S.vCmd++;S.vCumul+=300;gererBonus();DB.commandes++;DB.ca+=375;addHisto('COMMISSION',`Vendeur ${boutique}`,50);saveDB();document.getElementById('ok-vendeur').classList.add('show');}
+function demanderLivreur(){const b=(DB.codes||[]).find(c=>c.code===S.vCode)?.nom||'Partenaire';window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(`🛵 DJANVOUÊ — Besoin livreur\n🏪 ${b}\n💰 50 FCFA`)}`);}
+function demanderRecharge(){const mt=document.getElementById('v-recharge').value;if(!mt)return;const b=(DB.codes||[]).find(c=>c.code===S.vCode)?.nom||'Partenaire';window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(`🔄 Rechargement\n🏪 ${b}\n💰 ${mt} FCFA`)}`);addHisto('RECHARGEMENT',`Rechargement ${b}`,parseInt(mt));saveDB();}
+function gererBonus(){if(S.vCmd>0&&S.vCmd%10===0){const b=S.vCumul*.1;S.vTirelire+=b;S.vCumul=0;DB.bonus+=b;addHisto('BONUS','Bonus fidélité',b);saveDB();document.getElementById('v-bonus-msg').textContent=`🎉 Bonus de ${b} FCFA !`;}else document.getElementById('v-bonus-msg').textContent=`Encore ${10-(S.vCmd%10)} courses`;showBonus();saveVD();}
+function showBonus(){const c=S.vCmd,p=(c%10)/10;document.getElementById('v-bonus-cnt').textContent=`${c%10||(c>0?10:0)}/10`;document.getElementById('v-bonus-bar').style.width=(p===0&&c>0?100:p*100)+'%';document.getElementById('v-solde').textContent=S.vTirelire+' FCFA';}
+function resetVendeur(){document.getElementById('ok-vendeur').classList.remove('show');['v-client','v-ctel','v-adresse','v-desc'].forEach(id=>document.getElementById(id).value='');}
+function genQR(){const nom=document.getElementById('v-qr-nom').value.trim()||'Partenaire';const url=`https://wa.me/${_w._t}?text=Commande+depuis+${encodeURIComponent(nom)}`;const urls=[`https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=${encodeURIComponent(url)}`,`https://chart.googleapis.com/chart?chs=170x170&cht=qr&chl=${encodeURIComponent(url)}`];const img=new Image();img.style.cssText='border-radius:7px;border:2px solid var(--bleu);';img.src=urls[0];img.onerror=()=>{img.src=urls[1];};const z=document.getElementById('v-qr-zone');z.innerHTML='';z.appendChild(img);}
+
+// ====== PARTENAIRE ======
+function goE(n){[1,2,3].forEach(i=>{document.getElementById('e'+i).style.display=i===n?'block':'none';});[1,2,3].forEach(i=>{if(i<=n)document.getElementById('s'+i).classList.add('done');});if(n===3)initCanvas();}
+function setPub(m,d,h){S.pub={montant:m,duree:d,heures:h};['po-24h','po-3j','po-1s'].forEach(id=>document.getElementById(id).classList.remove('selected'));const map={500:'po-24h',1200:'po-3j',2500:'po-1s'};document.getElementById(map[m]).classList.add('selected');document.getElementById('wave-pub-val').textContent=m;document.getElementById('wave-pub-lien').href=wLink(m);wQR(m,'wave-pub-qr');}
+function previewPub(input){const file=input.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{const prev=document.getElementById('pub-preview');prev.src=e.target.result;prev.style.display='block';};reader.readAsDataURL(file);}
+async function soumettrePub(){
+  const nom=document.getElementById('p-nom').value.trim()||'Partenaire';
+  const prev=document.getElementById('pub-preview');
+  if(!prev||prev.style.display==='none'){alert('Choisissez une photo.');return;}
+  window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(`🔔 DJANVOUÊ — Pub en attente\n🏪 ${nom}\n⏱️ ${S.pub.duree} — ${S.pub.montant} FCFA\n✅ Répondez OUI pour valider`)}`);
+  DB.pubs=DB.pubs||[];DB.pubs.push({id:Date.now(),nom,img:prev.src,duree:S.pub.duree,montant:S.pub.montant,heures:S.pub.heures,statut:'EN_ATTENTE',ts:Date.now()});saveDB();
+  let s=900;document.getElementById('timer-box').style.display='block';
+  const t=setInterval(()=>{s--;const m=Math.floor(s/60),sec=s%60;document.getElementById('timer-val').textContent=`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;if(s<=0){clearInterval(t);document.getElementById('timer-val').textContent='⏰';}},1000);
+  goE(3);
+}
+function initCanvas(){const c=document.getElementById('sigCanvas');const ctx=c.getContext('2d');c.width=c.offsetWidth;c.height=130;let drawing=false;const gp=e=>{const r=c.getBoundingClientRect();const s=e.touches?e.touches[0]:e;return{x:s.clientX-r.left,y:s.clientY-r.top};};c.onmousedown=c.ontouchstart=e=>{drawing=true;const p=gp(e);ctx.beginPath();ctx.moveTo(p.x,p.y);e.preventDefault();};c.onmousemove=c.ontouchmove=e=>{if(!drawing)return;const p=gp(e);ctx.lineTo(p.x,p.y);ctx.strokeStyle='#1565C0';ctx.lineWidth=2;ctx.stroke();e.preventDefault();};c.onmouseup=c.ontouchend=()=>drawing=false;}
+function effacerSig(){const c=document.getElementById('sigCanvas');c.getContext('2d').clearRect(0,0,c.width,c.height);}
+function validerContrat(){const nom=document.getElementById('p-nom').value.trim(),tel=document.getElementById('p-tel').value.trim(),zone=document.getElementById('p-zone').value,activite=document.getElementById('p-activite').value;document.getElementById('lien-confirm').href=`https://wa.me/${_w._t}?text=${encodeURIComponent(`🤝 ACCORD DJANVOUÊ\n🏪 ${nom}\n📞 ${tel}\n📍 ${zone} — ${activite}\n📢 Pub : ${S.pub.duree} — ${S.pub.montant} FCFA`)}`;document.getElementById('ok-partenaire').classList.add('show');}
+
+// ====== BUREAU ======
+function envoyerLitige(){const h=new Date().getHours();if(h<8||h>=18){alert('Bureau fermé. Réessayez entre 8h et 18h.');return;}const nom=document.getElementById('l-nom').value.trim(),otp=document.getElementById('l-otp').value.trim(),desc=document.getElementById('l-desc').value.trim();if(!nom||!desc)return;window.open(`https://wa.me/${_w._t}?text=${encodeURIComponent(`⚖️ LITIGE DJANVOUÊ\n👤 ${nom}\n🔢 OTP : ${otp||'—'}\n📝 ${desc}`)}`);document.getElementById('ok-litige').classList.add('show');}
+function showCapBureau(){const caps=DB.caps||{};const zones=[{k:'k',l:'Kangandy'},{k:'a',l:'Agnikro'},{k:'j',l:'28 Janvier'}];const actifs=zones.filter(z=>caps[z.k]&&caps[z.k].trim());document.getElementById('cap-ph').style.display=actifs.length?'none':'block';document.getElementById('cap-list').innerHTML=actifs.map(z=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--gris);border-radius:9px;margin-bottom:7px;"><div><div style="font-weight:700;font-size:.86rem;">Capitaine ${z.l}</div></div><div style="display:flex;gap:5px;"><a href="https://wa.me/225${caps[z.k].replace(/\D/g,'')}" style="padding:6px 9px;border-radius:7px;font-size:.7rem;font-weight:700;text-decoration:none;background:#25D366;color:#fff;" onclick="vibrer()">💬</a><a href="tel:+225${caps[z.k].replace(/\D/g,'')}" style="padding:6px 9px;border-radius:7px;font-size:.7rem;font-weight:700;text-decoration:none;background:var(--bleu);color:#fff;" onclick="vibrer()">📞</a></div></div>`).join('');}
+
+// ====== ADMIN ======
+async function hashPwd(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+async function loginAdmin(){const pwd=document.getElementById('adm-pwd').value;const stored=localStorage.getItem('djanvoue_ah')||await hashPwd('DDR2024');if(!localStorage.getItem('djanvoue_ah'))localStorage.setItem('djanvoue_ah',stored);if(await hashPwd(pwd)===stored){document.getElementById('adm-login').style.display='none';document.getElementById('adm-content').style.display='block';document.getElementById('adm-err').style.display='none';majStats();showCodes();loadCaps();showHisto();showPubsAttente();renderAdminMatchs();}else{document.getElementById('adm-err').style.display='block';vibrer(100);}}
+function logoutAdmin(){document.getElementById('adm-login').style.display='block';document.getElementById('adm-content').style.display='none';document.getElementById('adm-pwd').value='';}
+function majStats(){DB=loadDB();document.getElementById('s-ca').textContent=DB.ca||0;document.getElementById('s-benef').textContent=(DB.ca||0)-(DB.bonus||0);document.getElementById('s-cmd').textContent=DB.commandes||0;let zMax='—',mx=0;for(const[z,v]of Object.entries(DB.zoneStats||{})){if(v>mx){mx=v;zMax=z;}}document.getElementById('s-zone').textContent=zMax;}
+function resetStats(){if(!confirm('Réinitialiser ?'))return;DB.commandes=0;DB.ca=0;DB.bonus=0;DB.zoneStats={};DB.histo=[];saveDB();majStats();showHisto();}
+function showPubsAttente(){const pubs=(DB.pubs||[]).filter(p=>p.statut==='EN_ATTENTE');const el=document.getElementById('pubs-attente-list');if(!pubs.length){el.innerHTML='<p style="font-size:.78rem;color:#aaa;">Aucune pub.</p>';return;}el.innerHTML=pubs.map((p,i)=>`<div style="background:#fff8e1;border:2px solid var(--orange);border-radius:9px;padding:11px;margin-bottom:9px;"><img src="${p.img}" style="width:100%;height:110px;object-fit:cover;border-radius:7px;margin-bottom:7px;" onerror="this.style.display='none'"/><div style="font-size:.78rem;color:#555;margin-bottom:7px;">🏪 <strong>${p.nom}</strong> · ${p.duree} · ${p.montant} FCFA</div><div style="display:flex;gap:7px;"><button class="btn btn-vert" style="flex:1;padding:8px;font-size:.8rem;" onclick="validerPub(${i});vibrer()">✅ Valider</button><button class="btn btn-rouge" style="flex:1;padding:8px;font-size:.8rem;" onclick="refuserPub(${i});vibrer()">❌ Refuser</button></div></div>`).join('');}
+function validerPub(i){const pubs=DB.pubs.filter(p=>p.statut==='EN_ATTENTE');const pub=pubs[i];if(!pub)return;const idx=DB.pubs.findIndex(p=>p.id===pub.id);DB.pubs[idx].statut='ACTIVE';saveDB();addPubSlide(pub.img,`🏪 ${pub.nom}`,`Pub officielle · ${pub.duree}`);showPubsAttente();alert(`✅ Pub de ${pub.nom} validée !`);}
+function refuserPub(i){const pubs=DB.pubs.filter(p=>p.statut==='EN_ATTENTE');const pub=pubs[i];if(!pub)return;DB.pubs[DB.pubs.findIndex(p=>p.id===pub.id)].statut='REFUSE';saveDB();showPubsAttente();}
+function addHisto(type,details,montant){if(!DB.histo)DB.histo=[];DB.histo.unshift({type,details,montant,date:new Date().toLocaleDateString('fr-FR')});if(DB.histo.length>50)DB.histo=DB.histo.slice(0,50);}
+function showHisto(){const el=document.getElementById('histo-list');if(!DB.histo||!DB.histo.length){el.innerHTML='<p style="font-size:.78rem;color:#aaa;">Aucune transaction.</p>';return;}el.innerHTML=DB.histo.slice(0,20).map(h=>`<div class="histo-item"><div><div style="font-weight:600;">${h.details}</div><div style="font-size:.7rem;color:#aaa;">${h.date}</div></div><div style="display:flex;align-items:center;gap:5px;"><span style="font-weight:700;color:var(--vert);">+${h.montant}F</span><span class="t-${h.type.toLowerCase()}">${h.type}</span></div></div>`).join('');}
+function showCodes(){document.getElementById('codes-liste').innerHTML=(DB.codes||[]).map((c,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px;background:var(--gris);border-radius:7px;margin-bottom:5px;"><span style="font-size:.82rem;">🏪 ${c.nom} — <strong>${c.code}</strong></span><button onclick="delCode(${i});vibrer()" style="background:var(--rouge);color:#fff;border:none;border-radius:5px;padding:3px 9px;cursor:pointer;font-size:.7rem;">✕</button></div>`).join('')||'<p style="font-size:.78rem;color:#aaa;">Aucun code.</p>';}
+function ajouterCode(){const nom=document.getElementById('new-nom').value.trim(),code=document.getElementById('new-code').value.trim();if(!nom||code.length!==4){alert('Nom + code 4 chiffres.');return;}if(!DB.codes)DB.codes=[];if(DB.codes.find(c=>c.code===code)){alert('Code déjà utilisé.');return;}DB.codes.push({nom,code});saveDB();showCodes();document.getElementById('new-nom').value='';document.getElementById('new-code').value='';}
+function delCode(i){if(!confirm('Supprimer ?'))return;DB.codes.splice(i,1);saveDB();showCodes();}
+function loadCaps(){const c=DB.caps||{};['k','a','j'].forEach(k=>{const el=document.getElementById('cap-'+k);if(el&&c[k])el.value=c[k];});}
+function saveCapitaines(){DB.caps={k:document.getElementById('cap-k').value.trim(),a:document.getElementById('cap-a').value.trim(),j:document.getElementById('cap-j').value.trim()};saveDB();showCapBureau();}
+let simM='LIVRAISON';
+function setSimMode(m){simM=m;document.getElementById('sim-liv').classList.toggle('selected',m==='LIVRAISON');document.getElementById('sim-pied').classList.toggle('selected',m==='A_PIED');simuler();}
+function simuler(){const mt=parseFloat(document.getElementById('sim-mt').value)||0;let fl=0,cv=0,gd=0,gl=0;if(simM==='LIVRAISON'){fl=300;gl=300;cv=mt*.05;gd=cv+75;}else{cv=150;gd=200;}document.getElementById('sim-c').textContent=(mt+fl)+' FCFA';document.getElementById('sim-v').textContent=Math.round(mt-cv)+' FCFA';document.getElementById('sim-l').textContent=gl+' FCFA';document.getElementById('sim-d').textContent=Math.round(gd)+' FCFA';}
+
+// ====== DIAPORAMA ======
+let slideN=0;
+function goSlide(n){slideN=n;document.getElementById('pubTrack').style.transform=`translateX(-${n*100}%)`;document.querySelectorAll('#pubDots .pub-dot').forEach((d,i)=>d.classList.toggle('active',i===n));}
+function addPubSlide(img,titre,desc){const track=document.getElementById('pubTrack'),dots=document.getElementById('pubDots');const slide=document.createElement('div');slide.className='pub-slide';slide.innerHTML=`${img?`<img src="${img}" alt="pub" onerror="this.style.display='none'">`:'<div style="background:linear-gradient(135deg,#1565C0,#0d47a1);position:absolute;inset:0;"></div>'}<div class="pub-overlay"><h4>${titre}</h4><p>${desc}</p><span class="badge">Partenaire</span></div>`;track.appendChild(slide);const dot=document.createElement('div');dot.className='pub-dot';const idx=track.children.length-1;dot.onclick=()=>goSlide(idx);dots.appendChild(dot);}
+setInterval(()=>{const total=document.querySelectorAll('#pubTrack .pub-slide').length;if(total>0)goSlide((slideN+1)%total);},4500);
+
+// ====== HEURE & RÉSEAU ======
+function majHeure(){const now=new Date(),h=now.getHours(),m=now.getMinutes();document.getElementById('heureBadge').textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;const ouvert=h>=8&&h<18;const b=document.getElementById('bureau-badge');if(b){b.textContent=ouvert?'🟢 Bureau ouvert — 8h à 18h':'🔴 Bureau fermé — Rouvre à 8h';b.className='horaire '+(ouvert?'ouvert':'ferme');document.getElementById('bureau-msg').textContent=ouvert?'Signalez un litige ci-dessous.':'Bureau fermé. Revenez à 8h.';document.getElementById('btn-litige').disabled=!ouvert;}}
+setInterval(majHeure,1000);majHeure();
+function majReseau(){const ok=navigator.onLine;const b=document.getElementById('heureBadge');b.style.background=ok?'var(--jaune)':'var(--rouge)';b.style.color=ok?'#333':'#fff';document.getElementById('offline-bar').classList.toggle('show',!ok);}
+window.addEventListener('online',()=>{majReseau();envoyerDiff();});
+window.addEventListener('offline',majReseau);
+majReseau();
+
+// ====== NAV ======
+function showPage(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');if(btn)btn.classList.add('active');vibrer(20);}
+
+// ====== PWA ======
+const manifest={name:"DJANVOUÊ — Bongouanou",short_name:"DJANVOUÊ",start_url:"./",display:"standalone",background_color:"#1565C0",theme_color:"#1565C0",orientation:"portrait",icons:[{src:"https://api.dicebear.com/7.x/initials/svg?seed=DJ&backgroundColor=1565C0&textColor=FFD600",sizes:"192x192",type:"image/svg+xml"}]};
+const mBlob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+document.getElementById('djanvoue-manifest').href=URL.createObjectURL(mBlob);
+if('serviceWorker' in navigator){const sw=`const C='dj-v4';self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(['./']))));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match('./')))))`;navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});}
+let dP=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dP=e;document.getElementById('install-banner').classList.add('show');});
+document.getElementById('btn-install').addEventListener('click',async()=>{if(dP){dP.prompt();const{outcome}=await dP.userChoice;if(outcome==='accepted')document.getElementById('install-banner').classList.remove('show');dP=null;}});
+document.getElementById('btn-install-no').addEventListener('click',()=>document.getElementById('install-banner').classList.remove('show'));
+
+// ====== FIREBASE PUBS ======
+async function chargerPubsFirebase(){if(!fbDB)return;try{const snap=await fbDB.collection('pubs').where('active','==',true).get();snap.docs.forEach(d=>{const p=d.data();const fin=p.date_fin?new Date(p.date_fin):null;if(!fin||fin>new Date())addPubSlide(p.image||'',`🏪 ${p.titre||p.nom||'Partenaire'}`,p.texte||'Pub officielle');});}catch(e){}}
+
+// ====== SPLASH & INIT ======
+setTimeout(()=>{document.getElementById('splash').classList.add('hide');checkOB();},2800);
+</script>
 </body>
 </html>
