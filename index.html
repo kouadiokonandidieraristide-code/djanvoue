@@ -3,38 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Djanvouê - Flash Express</title>
+    <title>Djanvouê - Services Moronou</title>
+    
+    <!-- SDK Firebase Officiel -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f0f2f5; }
-        /* Ton bandeau bleu Djanvouê */
-        .header { background-color: #1a3a8a; color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between; }
+        :root {
+            --bleu-djanvoue: #1a3a8a;
+            --orange-flash: #f39c12;
+            --gris-fond: #f0f2f5;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            background-color: var(--gris-fond); 
+            color: #333;
+        }
+
+        /* BANDEAU SUPÉRIEUR (Header) */
+        .header { 
+            background-color: var(--bleu-djanvoue); 
+            color: white; 
+            padding: 15px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
         .logo-section { display: flex; align-items: center; }
-        .logo-circle { width: 40px; height: 40px; background: #f39c12; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 10px; }
-        /* Menu de navigation blanc */
-        .nav-tabs { background: white; display: flex; justify-content: space-around; padding: 10px 0; border-bottom: 1px solid #ddd; font-size: 0.8em; }
-        .tab { text-align: center; color: #555; }
-        /* Cartes des chauffeurs */
-        .container { padding: 15px; }
-        .card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-left: 5px solid #1a3a8a; }
-        .card h3 { margin: 0 0 10px 0; color: #1a3a8a; }
-        .price-tag { background: #e8f0fe; color: #1a3a8a; padding: 5px 10px; border-radius: 20px; font-weight: bold; display: inline-block; }
+        .logo-circle { 
+            width: 45px; height: 45px; 
+            background: var(--orange-flash); 
+            border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: bold; font-size: 1.5em; margin-right: 12px; 
+        }
+
+        /* NAVIGATION TABS */
+        .nav-tabs { 
+            background: white; 
+            display: flex; 
+            justify-content: space-around; 
+            padding: 12px 0; 
+            border-bottom: 1px solid #ddd; 
+            position: sticky; top: 0; z-index: 100;
+        }
+        .tab { text-align: center; color: #555; font-size: 0.75em; font-weight: bold; cursor: pointer; }
+        .tab:hover { color: var(--bleu-djanvoue); }
+
+        /* ZONE PUBLICITAIRE (Promo Banner) */
+        .promo-banner {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            margin: 15px;
+            padding: 20px;
+            border-radius: 15px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .promo-banner h2 { margin: 0; font-size: 1.2em; }
+        .promo-banner p { margin: 5px 0 0; font-size: 0.9em; opacity: 0.9; }
+
+        /* CONTENEUR DES CARTES */
+        .container { padding: 15px; max-width: 600px; margin: auto; }
+        
+        .section-title { 
+            font-size: 1em; 
+            color: var(--bleu-djanvoue); 
+            margin-bottom: 10px; 
+            font-weight: bold;
+            display: flex; align-items: center;
+        }
+
+        .card { 
+            background: white; 
+            border-radius: 15px; 
+            padding: 18px; 
+            margin-bottom: 15px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+            border-left: 6px solid var(--bleu-djanvoue);
+            transition: transform 0.2s;
+        }
+        .card:active { transform: scale(0.98); }
+
+        .card h3 { margin: 0 0 8px 0; color: var(--bleu-djanvoue); font-size: 1.1em; }
+        .info-row { margin: 5px 0; font-size: 0.95em; }
+        
+        .price-tag { 
+            background: #e8f0fe; 
+            color: var(--bleu-djanvoue); 
+            padding: 6px 12px; 
+            border-radius: 20px; 
+            font-weight: bold; 
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        /* BOUTON WHATSAPP FLOTTANT */
+        .whatsapp-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #25d366;
+            color: white;
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            text-decoration: none;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
 
+    <!-- Header avec Logo -->
     <div class="header">
         <div class="logo-section">
             <div class="logo-circle">D</div>
             <div>
                 <div style="font-weight: bold; letter-spacing: 1px;">DJANVOUÊ</div>
-                <div style="font-size: 0.6em;">Flash Express Moronou - 24H/24</div>
+                <div style="font-size: 0.6em; opacity: 0.8;">Flash Express Moronou - 24H/24</div>
             </div>
         </div>
-        <div style="background: #f39c12; padding: 3px 8px; border-radius: 5px; font-size: 0.7em;">22:40</div>
+        <div style="background: var(--orange-flash); padding: 4px 10px; border-radius: 6px; font-size: 0.75em; font-weight: bold;">DIRECT</div>
     </div>
 
+    <!-- Navigation -->
     <div class="nav-tabs">
         <div class="tab">👤<br>Client</div>
         <div class="tab">🚖<br>Taxi</div>
@@ -43,29 +143,50 @@
         <div class="tab">🏢<br>Bureau</div>
     </div>
 
-    <div class="container" id="liste-taxis">
-        <!-- Tes chauffeurs Firebase s'afficheront ici avec le nouveau look -->
+    <!-- Bannière Publicitaire Dynamique -->
+    <div class="promo-banner">
+        <h2>Taxi Bongouanou</h2>
+        <p>Un chauffeur en quelques minutes. Disponible maintenant ! ⚡</p>
     </div>
 
+    <div class="container">
+        <div class="section-title">📍 Services à proximité</div>
+        <div id="liste-taxis">
+            <!-- Les données de Firebase s'injectent ici -->
+            <p style="text-align:center; color:#888;">Recherche des chauffeurs...</p>
+        </div>
+    </div>
+
+    <!-- Bouton WhatsApp Stratégique -->
+    <a href="https://wa.me/225XXXXXXXX" class="whatsapp-btn">💬</a>
+
     <script>
-        const firebaseConfig = { databaseURL: "https://djanvoue-ddr-default-rtdb.europe-west1.firebasedatabase.app/" };
+        // Configuration de ta base Djanvoue
+        const firebaseConfig = { 
+            databaseURL: "https://djanvoue-ddr-default-rtdb.europe-west1.firebasedatabase.app/" 
+        };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
+        // Lecture en temps réel des TAXIS
         database.ref('TAXI').on('value', (snapshot) => {
             const data = snapshot.val();
             const container = document.getElementById('liste-taxis');
             container.innerHTML = ""; 
+
             if (data) {
                 Object.keys(data).forEach(key => {
                     const taxi = data[key];
                     container.innerHTML += `
                         <div class="card">
-                            <h3>🚕 Chauffeur : ${taxi.nom || 'En attente...'}</h3>
-                            <p><strong>Lieu :</strong> ${taxi.lieu || 'Moronou'}</p>
-                            <div class="price-tag">${taxi.prix || '---'} FCFA</div>
+                            <h3>🚕 Chauffeur : ${taxi.nom || 'Disponible'}</h3>
+                            <div class="info-row"><strong>📍 Lieu :</strong> ${taxi.lieu || 'Moronou'}</div>
+                            <div class="info-row"><strong>📞 Contact :</strong> ${taxi.tel || 'Via WhatsApp'}</div>
+                            <div class="price-tag">${taxi.prix || 'Sur devis'} FCFA</div>
                         </div>`;
                 });
+            } else {
+                container.innerHTML = "<p style='text-align:center;'>Aucun service disponible pour le moment.</p>";
             }
         });
     </script>
