@@ -1289,7 +1289,28 @@ document.getElementById('btn-install-no').addEventListener('click',()=>document.
 // ====== FIREBASE PUBS ======
 async function chargerPubsFirebase(){if(!fbDB)return;try{const snap=await fbDB.collection('pubs').where('active','==',true).get();snap.docs.forEach(d=>{const p=d.data();const fin=p.date_fin?new Date(p.date_fin):null;if(!fin||fin>new Date())addPubSlide(p.image||'',`🏪 ${p.titre||p.nom||'Partenaire'}`,p.texte||'Pub officielle');});}catch(e){}}
 
-// ====== SPLASH & INIT ======
+// ====== SPLASH & INIT ======// --- SYNC WHATSAPP & FIREBASE ---
+const finaliserInscription = async () => {
+    const nom = document.getElementById('nom_client').value;
+    const whatsapp = "0703240589"; // Ton numéro Business enregistré
+
+    try {
+        // Enregistrement dans ta Realtime Database
+        await firebase.database().ref('utilisateurs/' + whatsapp).set({
+            nom: nom,
+            date: new Date().toLocaleString()
+        });
+        
+        // Mémoire locale pour ne plus redemander
+        localStorage.setItem('djanvoue_id', whatsapp);
+
+        // Ouverture de WhatsApp pour valider
+        const msg = encodeURIComponent(`Bonjour Djanvouê, je suis ${nom}. Je valide mon inscription.`);
+        window.open(https://wa.me/225${whatsapp}?text=${msg});
+        
+        location.reload(); 
+    } catch (e) { console.error(e); }
+};
 setTimeout(()=>{document.getElementById('splash').classList.add('hide');checkOB();},2800);
 </script>
 </body>
