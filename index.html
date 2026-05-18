@@ -561,12 +561,18 @@ label{font-size:.78rem;color:#555;display:block;margin-bottom:3px;}
 <div class="page" id="page-partenaire">
   <div class="steps"><div class="step done" id="s1"></div><div class="step" id="s2"></div><div class="step" id="s3"></div></div>
   <div id="e1"><div class="card"><h3>🤝 Devenir Partenaire</h3>
-    <label>Nom établissement</label><input type="text" id="p-nom" placeholder="Ex: Maquis Chez Fatou"/>
-    <label>WhatsApp</label><input type="tel" id="p-tel" placeholder="07xxxxxxxx"/>
-    <label>Zone</label><select id="p-zone"><option>Kangandy</option><option>Agnikro</option><option>28 Janvier</option><option>Dioulakro</option><option>Autre</option></select>
-    <label>Activité</label><select id="p-activite"><option>Restauration / Maquis</option><option>Épicerie</option><option>Pharmacie</option><option>Taxi</option><option>Hôtel</option><option>Autre</option></select>
-    <button class="btn btn-bleu" onclick="goE(2);vibrer()">Suivant →</button>
-  </div></div>
+    <label>Nom établissement</label><input type="text" id="p-nom" placeholder="Ex: Maquis Chez Fatou"/>
+    <label>WhatsApp</label><input type="tel" id="p-tel" placeholder="07xxxxxxxx"/>
+    <label>Zone</label><select id="p-zone"><option>Kangandy</option><option>Agnikro</option><option>28 Janvier</option><option>Dioulakro</option><option>Autre</option></select>
+    <label>Activité</label><select id="p-activite"><option>Restauration / Maquis</option><option>Épicerie</option><option>Pharmacie</option><option>Taxi</option><option>Hôtel</option><option>Autre</option></select>
+    
+    <label>📸 Photo de votre marchandise / Établissement</label>
+    <input type="file" id="p-photo-marchandise" accept="image/*" onchange="aperçuMarchandiseDjanvoue(this)" style="margin-bottom:4px;"/>
+    <img id="marchandise-preview" style="width:100%; max-height:140px; object-fit:cover; border-radius:8px; margin-bottom:9px; display:none; border:1px solid #ddd;" />
+
+    <button class="btn btn-bleu" onclick="sauvegarderInfosPartenaire();goE(2);vibrer()">Suivant →</button>
+  </div></div>
+
   <div id="e2" style="display:none;"><div class="card"><h3>📢 Djanvouê Ads</h3>
     <div style="border:2.5px dashed #aaa;border-radius:10px;padding:18px;text-align:center;cursor:pointer;background:#fafafa;margin-bottom:9px;" onclick="document.getElementById('pub-photo-input').click()"><div style="font-size:2.3rem;">📸</div><p style="font-size:.78rem;color:#777;margin-top:5px;">Choisir votre affiche</p></div>
     <input type="file" id="pub-photo-input" accept="image/*" style="display:none;" onchange="previewPub(this)"/>
@@ -1016,9 +1022,112 @@ let dP=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dP=e;document.getElementById('install-banner').classList.add('show');});
 document.getElementById('btn-install').addEventListener('click',async()=>{if(dP){dP.prompt();const{outcome}=await dP.userChoice;if(outcome==='accepted')document.getElementById('install-banner').classList.remove('show');dP=null;}});
 document.getElementById('btn-install-no').addEventListener('click',()=>document.getElementById('install-banner').classList.remove('show'));
+// ==========================================
+//   FONCTIONS CHIRURGICALES PARTENAIRES
+// ==========================================
 
+function aperçuMarchandiseDjanvoue(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('marchandise-preview');
+            if (preview) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                localStorage.setItem('djanvoue_photo_marchandise', e.target.result);
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function sauvegarderInfosPartenaire() {
+    const telPartenaire = document.getElementById('p-tel').value.trim();
+    const nomPartenaire = document.getElementById('p-nom').value.trim();
+    
+    if (telPartenaire !== "") {
+        localStorage.setItem('djanvoue_tel_prestataire', telPartenaire);
+    }
+    if (nomPartenaire !== "") {
+        localStorage.setItem('djanvoue_nom_prestataire', nomPartenaire);
+    }
+}
+
+function envoyerClient(mode) {
+    if (mode === 'WA') {
+        let numeroWhatsApp = localStorage.getItem('djanvoue_tel_prestataire');
+        const nomBoutique = localStorage.getItem('djanvoue_nom_prestataire') || "le prestataire";
+
+        if (!numeroWhatsApp || numeroWhatsApp === "") {
+            numeroWhatsApp = "2250700000000"; // <-- Mettez votre numéro complet ici par sécurité
+        } else {
+            numeroWhatsApp = numeroWhatsApp.replace(/\s+/g, '');
+            if (!numeroWhatsApp.startsWith('225') && numeroWhatsApp.length === 10) {
+                numeroWhatsApp = '225' + numeroWhatsApp;
+            }
+        }
+
+        const nomClient = document.getElementById('c-nom').value;
+        const telClient = document.getElementById('c-tel').value;
+        const adresseClient = document.getElementById('c-adresse').value;
+        const descCommande = document.getElementById('c-desc').value;
+        const typeCommande = document.getElementById('t-type').innerText; 
+        const codeOTP = document.getElementById('otp-val').innerText;
+        const fraisLivraison = document.getElementById('t-frais').innerText;
+
+        const message = `⚡ *ACCUSÉ DE RÉCEPTION DJANVOUÊ* ⚡\n` +
+                        `----------------------------------------\n` +
+                        `🏪 *Destinataire :* ${nomBoutique}\n` +
+                        `📦 *Type :* ${typeCommande}\n\n` +
+                        `👤 *Client :* ${nomClient}\n` +
+                        `📞 *Contact :* ${telClient}\n` +
+                        `📍 *Adresse :* ${adresseClient}\n\n` +
+                        `📝 *Détails :*\n"${descCommande}"\n\n` +
+                        `🛵 *Livraison :* ${fraisLivraison}\n` +
+                        `🔐 *CODE OTP :* ${codeOTP}\n` +
+                        `----------------------------------------\n` +
+                        `👉 _Commande envoyée en direct via l'application._`;
+
+        const lienWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(message)}`;
+        window.open(lienWhatsApp, '_blank');
+        
+        const cardSucces = document.getElementById('ok-client');
+        if(cardSucces) cardSucces.style.display = 'block';
+        
+    } else if (mode === 'TEL') {
+        let numeroTel = localStorage.getItem('djanvoue_tel_prestataire') || "0700000000";
+        window.location.href = `tel:${numeroTel}`;
+    }
+}
 // ====== SPLASH & INIT ======
 setTimeout(()=>{document.getElementById('splash').classList.add('hide');checkOB();},2800);
+// Fonction pour afficher l'aperçu de l'image de la marchandise et la stocker temporairement
+function aperçuMarchandiseDjanvoue(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('marchandise-preview');
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            // Sauvegarde de l'image de la marchandise sous forme de texte (Base64)
+            localStorage.setItem('djanvoue_photo_marchandise', e.target.result);
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Fonction pour mémoriser le numéro WhatsApp du prestataire au moment du clic sur Suivant
+function sauvegarderInfosPartenaire() {
+    const telPartenaire = document.getElementById('p-tel').value.trim();
+    const nomPartenaire = document.getElementById('p-nom').value.trim();
+    
+    if (telPartenaire !== "") {
+        localStorage.setItem('djanvoue_tel_prestataire', telPartenaire);
+    }
+    if (nomPartenaire !== "") {
+        localStorage.setItem('djanvoue_nom_prestataire', nomPartenaire);
+    }
+}
 </script>
 </body>
 </html>
