@@ -226,10 +226,6 @@ label{font-size:.78rem;color:#555;display:block;margin-bottom:3px;}
 .step.done{background:var(--bleu);}
 #sigCanvas{border:2px dashed #aaa;border-radius:8px;background:#fafafa;touch-action:none;width:100%;height:130px;}
 
-/* TONTINE */
-.paye{background:#e8f5e9;color:var(--vert);padding:2px 8px;border-radius:10px;font-size:.68rem;font-weight:700;}
-.impaye{background:#ffebee;color:var(--rouge);padding:2px 8px;border-radius:10px;font-size:.68rem;font-weight:700;}
-
 /* WA FLOTTANT */
 .wa-float{position:fixed;bottom:80px;right:16px;background:var(--wa);color:#fff;width:55px;height:55px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;box-shadow:0 4px 12px rgba(0,0,0,.3);text-decoration:none;z-index:90;}
 
@@ -483,7 +479,7 @@ label{font-size:.78rem;color:#555;display:block;margin-bottom:3px;}
   <div class="card"><h3>🏆 Classement</h3><div id="classement-liste"></div></div>
   <div class="card">
     <h3>📸 Défis Photo</h3>
-    <p style="font-size:.76rem;color:#777;margin-bottom:10px;">Relevez un défi, envoyez votre photo, Didireverb valide et vous crédite les points.</p>
+    <p style="font-size:.76rem;color:#777;margin-bottom:10px;">mon maillot un défi,prend une photo de toi,  gagngne des likes.</p>
     <div id="defis-liste"></div>
     <div id="defi-upload" style="display:none;">
       <div style="border:2.5px dashed #aaa;border-radius:10px;padding:18px;text-align:center;cursor:pointer;background:#fafafa;margin-bottom:9px;" onclick="document.getElementById('defi-photo-input').click()"><div style="font-size:2.3rem;margin-bottom:6px;">📷</div><p style="font-size:.8rem;color:#777;">Prendre une photo</p></div>
@@ -757,9 +753,9 @@ function chargerService(type){
     if(!data){
       // Données locales de secours
       const local={
-        HOTEL:[{nom:'Résidence Moronou',prix:'15 000 F/nuit',contact:'2250500000000',info:'Climatisé',disponible:true}],
-        IMMO:[{nom:'Studio Moderne Dioulakro',prix:'35 000 F/mois',contact:'2250700000000',info:'Meublé',disponible:true}],
-        SHOP:[{nom:'Épicerie Centrale',prix:'Variable',contact:'2250700000001',info:'Bongouanou Centre',disponible:true}],
+        RESIDENCE:[{nom:'Résidence Moronou',prix:'15 000 F/nuit',contact:'2250758243334',info:'Climatisé & Meublé',disponible:true}],
+        RESIDENCE:[{nom:'CHAMBRE SITUEE  A KANGANDI',prix:'VARIABLE',contact:'2250777323711',info:'',disponible:true}],
+        SHOP:[{nom:'BON PRIX',prix:'Variable',contact:'2250758743517',info:'Bongouanou Centre',disponible:true}],
       };
       const items=local[type]||[];
       if(!items.length){el.innerHTML='<p class="fb-loader">Bientôt disponible…</p>';return;}
