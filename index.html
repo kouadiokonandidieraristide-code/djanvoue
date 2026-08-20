@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#1565C0"/>
   <title>DJANVOUÊ ⚡ Flash Express Moronou</title>
   <link rel="manifest" href="manifest.json"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
     body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;max-width:480px;margin:0 auto;min-height:100vh}
@@ -231,6 +232,7 @@
       <button id="vtab-taxi"     onclick="vTab('taxi')"     style="flex:1;padding:8px 4px;border:none;background:none;color:#777;font-weight:700;font-size:.68rem;min-width:60px">🚕 Taxi</button>
       <button id="vtab-moto"     onclick="vTab('moto')"     style="flex:1;padding:8px 4px;border:none;background:none;color:#777;font-weight:700;font-size:.68rem;min-width:60px">🛵 Moto</button>
       <button id="vtab-avis"     onclick="vTab('avis')"     style="flex:1;padding:8px 4px;border:none;background:none;color:#777;font-weight:700;font-size:.68rem;min-width:60px">⭐ Avis</button>
+      <button id="vtab-services" onclick="vTab('services')" style="flex:1;padding:8px 4px;border:none;background:none;color:#777;font-weight:700;font-size:.68rem;min-width:60px">🧰 Services</button>
     </div>
     <div id="vendeurs-content"></div>
   </div>
@@ -276,6 +278,26 @@ const FIXES = [
   {id:5, nom:"Restaurant Le Drapeau", type:"🍽️ Restauration",  tel:"2250778780268", icone:"🍽️",zone:"Bongouanou",      cat:"resto"},
   {id:6, nom:"Pharmacie Sion",        type:"💊 Pharmacie",     tel:"2250779036594", icone:"💊", zone:"Bongouanou",      cat:"pharmacie"},
   {id:7, nom:"Résidence Bongouanou",  type:"🏨 Hébergement",   tel:"2250758243334", icone:"🏨", zone:"Bongouanou",      cat:"hotel"},
+];
+
+// ── Supabase (base réelle et partagée, module Services)
+const sb = window.supabase.createClient(
+  "https://bqmhkkygequdukxzjwbw.supabase.co",
+  "sb_publishable_TrVZ1RA7LsxvfW42w5BWsw_OmRbCUcg"
+);
+
+const CATEGORIES_SERVICES = [
+  {id:"menage",label:"Ménage",icone:"🧹"},
+  {id:"jardinage",label:"Jardinage",icone:"🌿"},
+  {id:"plomberie",label:"Plomberie",icone:"🔧"},
+  {id:"electricite",label:"Électricité",icone:"💡"},
+  {id:"maconnerie",label:"Maçonnerie",icone:"🧱"},
+  {id:"menuiserie",label:"Menuiserie",icone:"🪚"},
+  {id:"peinture",label:"Peinture",icone:"🎨"},
+  {id:"couture",label:"Couture",icone:"🧵"},
+  {id:"coiffure",label:"Coiffure",icone:"💇"},
+  {id:"gaz",label:"Gaz à domicile",icone:"🔥"},
+  {id:"commerce",label:"Petit commerce",icone:"🛍️"},
 ];
 
 // ── LS helpers
@@ -723,6 +745,76 @@ function vTab(t){
   }
 
   if(t==="avis") c.innerHTML=renderAvis();
+
+  // ── SERVICES (petits métiers, base partagée Supabase)
+  if(t==="services") renderServices();
+}
+
+let servicesCatActive = "tous";
+
+async function renderServices(){
+  const c=document.getElementById("vendeurs-content");
+  c.innerHTML=`<div class="card">
+    <div style="font-weight:800;font-size:.9rem;color:#6A1B9A;margin-bottom:4px">🧰 S'inscrire comme prestataire</div>
+    <p style="font-size:.78rem;color:#888;margin-bottom:12px">Ménage, plomberie, couture, coiffure... Inscription gratuite. Un agent DJANVOUÊ valide ton profil par WhatsApp avant qu'il soit visible.</p>
+    <input id="svc-nom" class="inp" placeholder="Ton nom complet *"/>
+    <input id="svc-tel" class="inp" placeholder="Numéro WhatsApp (ex: 2250701234567) *" type="tel"/>
+    <select id="svc-cat" class="sel">
+      ${CATEGORIES_SERVICES.map(cat=>`<option value="${cat.id}">${cat.icone} ${cat.label}</option>`).join("")}
+    </select>
+    <input id="svc-zone" class="inp" placeholder="Ta zone (ex: Agnikro, Centre...)"/>
+    <button class="btn btn-full press" style="background:#6A1B9A;color:#fff" onclick="inscrireService()">🧰 Envoyer mon inscription</button>
+  </div>
+  <div id="svc-liste"><div style="text-align:center;padding:20px;color:#888;font-size:.82rem">⏳ Chargement des prestataires…</div></div>
+  <div class="infobox" style="margin-top:4px">🔒 Chaque prestataire est validé personnellement par DJANVOUÊ avant d'apparaître ici, pour la sécurité de tous.</div>`;
+
+  chargerServicesValides();
+}
+
+async function inscrireService(){
+  const nom=document.getElementById("svc-nom").value.trim();
+  const t=document.getElementById("svc-tel").value.trim();
+  const cat=document.getElementById("svc-cat").value;
+  const zone=document.getElementById("svc-zone").value.trim()||"Bongouanou";
+  if(!nom||!t){alert("Nom et téléphone obligatoires.");return;}
+  const {error}=await sb.from("prestataires").insert({
+    nom, telephone:t.replace(/\D/g,""), categorie:cat, zone, statut:"en_attente"
+  });
+  if(error){alert("Une erreur est survenue, réessaie.");return;}
+  const catInfo=CATEGORIES_SERVICES.find(c=>c.id===cat);
+  wa("2250703240589", `🆕 *NOUVELLE INSCRIPTION PRESTATAIRE*\n\n👤 Nom : ${nom}\n📞 Tél : ${t}\n🧰 Métier : ${catInfo?.label}\n📍 Zone : ${zone}\n\n_Merci de vérifier son profil dans l'espace Admin pour le valider._`);
+  alert("✅ Inscription envoyée ! Un agent DJANVOUÊ va te contacter sur WhatsApp pour valider ton profil.");
+  document.getElementById("svc-nom").value="";
+  document.getElementById("svc-tel").value="";
+  document.getElementById("svc-zone").value="";
+}
+
+async function chargerServicesValides(){
+  const el=document.getElementById("svc-liste"); if(!el) return;
+  const {data,error}=await sb.from("prestataires").select("*").eq("statut","valide").order("note_moyenne",{ascending:false});
+  if(error||!data||!data.length){
+    el.innerHTML=`<div style="text-align:center;padding:20px;color:#888;font-size:.82rem">🔍 Aucun prestataire pour l'instant. Sois le premier à t'inscrire !</div>`;
+    return;
+  }
+  el.innerHTML=`<div style="font-weight:700;font-size:.8rem;color:#333;margin-bottom:8px">Prestataires disponibles (${data.length})</div>`+
+  data.map(p=>{
+    const catInfo=CATEGORIES_SERVICES.find(c=>c.id===p.categorie)||{icone:"🧰",label:p.categorie};
+    return `<div class="card card-flex">
+      <div class="avatar" style="overflow:hidden">${p.photo_url?`<img src="${p.photo_url}" style="width:100%;height:100%;object-fit:cover">`:catInfo.icone}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.nom} <span style="font-size:.6rem;color:#2E7D32;background:#e8f5e9;padding:1px 6px;border-radius:6px">✅ Vérifié</span></div>
+        <div style="font-size:.7rem;color:#6A1B9A;margin-top:1px">${catInfo.icone} ${catInfo.label} · ${p.zone}</div>
+        <div style="font-size:.65rem;color:#888;margin-top:1px">⭐ ${p.note_moyenne||0} (${p.nombre_avis||0} avis)</div>
+      </div>
+      <button class="btn btn-call press" onclick="tel('${p.telephone}')" style="width:36px;height:36px;padding:0;border-radius:10px;flex-shrink:0">📞</button>
+      <button class="btn btn-wa press" onclick="contacterService('${p.id}','${p.telephone}',\`${p.nom}\`,\`${catInfo.label}\`)" style="width:36px;height:36px;padding:0;border-radius:10px;flex-shrink:0">💬</button>
+    </div>`;
+  }).join("");
+}
+
+function contacterService(id, telephone, nom, categorieLabel){
+  wa(telephone, `Bonjour ${nom}, je vous contacte via *DJANVOUÊ* ⚡ pour un service de ${categorieLabel}.`);
+  sb.rpc("incrementer_contact", { p_id: id });
 }
 
 function inscrireTaxi(){
@@ -1140,6 +1232,12 @@ function renderAdminDash(){
     <button class="btn btn-bleu btn-full press" onclick="savePubPrincipale()" style="border-radius:10px;padding:11px;font-weight:700">Enregistrer la pub</button>
   </div>
 
+  <!-- SERVICES (petits métiers) -->
+  <div class="card">
+    <div style="font-weight:800;font-size:.9rem;color:#6A1B9A;margin-bottom:10px">🧰 Inscriptions Services en attente</div>
+    <div id="admin-services-attente">⏳ Chargement…</div>
+  </div>
+
   <!-- MOTOS -->
   <div id="admin-motos"></div>
 
@@ -1148,6 +1246,35 @@ function renderAdminDash(){
   renderPrestListe();
   renderAnListe();
   renderAdminMotos();
+  renderAdminServices();
+}
+
+async function renderAdminServices(){
+  const el=document.getElementById("admin-services-attente"); if(!el) return;
+  const {data,error}=await sb.from("prestataires").select("*").eq("statut","en_attente").order("cree_le",{ascending:false});
+  if(error){el.innerHTML=`<div style="color:#c62828;font-size:.8rem">Erreur de connexion à la base.</div>`;return;}
+  if(!data||!data.length){el.innerHTML=`<div style="color:#888;font-size:.8rem">Aucune inscription en attente.</div>`;return;}
+  el.innerHTML=data.map(p=>{
+    const catInfo=CATEGORIES_SERVICES.find(c=>c.id===p.categorie)||{icone:"🧰",label:p.categorie};
+    return `<div style="background:#fafafa;border-radius:10px;padding:10px 12px;margin-bottom:8px">
+      <div style="font-weight:700;font-size:.85rem">${p.nom}</div>
+      <div style="font-size:.7rem;color:#888;margin-bottom:8px">${catInfo.icone} ${catInfo.label} · ${p.zone} · 📞 ${p.telephone}</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-wa press" style="flex:1;font-size:.72rem" onclick="wa('${p.telephone}','Bonjour ${p.nom}, ici DJANVOUÊ. Pouvez-vous m\\'envoyer une photo de vous/votre travail et une photo de votre pièce d\\'identité pour valider votre inscription ?')">💬 Contacter</button>
+        <button class="btn btn-bleu press" style="flex:1;font-size:.72rem" onclick="validerService('${p.id}')">✓ Valider</button>
+        <button class="btn press" style="background:#ffebee;color:#c62828;font-size:.72rem" onclick="refuserService('${p.id}')">✕</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+async function validerService(id){
+  await sb.from("prestataires").update({statut:"valide",valide_le:new Date().toISOString()}).eq("id",id);
+  renderAdminServices();
+}
+async function refuserService(id){
+  await sb.from("prestataires").update({statut:"bloque"}).eq("id",id);
+  renderAdminServices();
 }
 
 // ── Prestataires
