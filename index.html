@@ -1,1435 +1,246 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-  <meta name="theme-color" content="#1565C0"/>
-  <title>DJANVOUÊ ⚡ Flash Express Moronou</title>
-  <link rel="manifest" href="manifest.json"/>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-    body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;max-width:480px;margin:0 auto;min-height:100vh}
-    button{font-family:'Segoe UI',sans-serif;cursor:pointer}
-    input,textarea,select{font-family:'Segoe UI',sans-serif;box-sizing:border-box}
-    textarea{resize:vertical}
-    .press:active{transform:scale(.95)}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-    .fu{animation:fadeUp .3s both}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-    /* PAGES */
-    .page{display:none;padding:14px 14px 80px}
-    .page.active{display:block}
-    /* NAV */
-    #nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:2px solid #FFD600;display:flex;z-index:100}
-    #nav button{flex:1;padding:10px 4px;border:none;background:none;font-size:.6rem;font-weight:700;color:#777;border-top:3px solid transparent;display:flex;flex-direction:column;align-items:center;gap:2px}
-    #nav button.active{color:#1565C0;border-top:3px solid #1565C0}
-    #nav button span.ic{font-size:1.15rem}
-    /* CARDS */
-    .card{background:#fff;border-radius:12px;padding:13px 14px;margin-bottom:9px;box-shadow:0 2px 6px rgba(0,0,0,.07)}
-    .card-flex{display:flex;align-items:center;gap:12px}
-    .avatar{width:46px;height:46px;border-radius:50%;background:#f0f4f8;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
-    .btn{border:none;border-radius:10px;font-weight:800;cursor:pointer;padding:9px 14px;font-size:.82rem;transition:.15s}
-    .btn:active{transform:scale(.95)}
-    .btn-wa{background:#25D366;color:#fff}
-    .btn-call{background:#f0f4f8;color:#333}
-    .btn-bleu{background:#1565C0;color:#fff}
-    .btn-vert{background:#2E7D32;color:#fff}
-    .btn-orange{background:#E65100;color:#fff}
-    .btn-rouge{background:#c62828;color:#fff}
-    .btn-full{width:100%;padding:13px;border-radius:12px;font-size:.95rem}
-    /* BANDEAU */
-    .bandeau{border-radius:14px;padding:18px 16px;margin-bottom:14px;text-align:center;color:#fff}
-    /* INPUT */
-    .inp{width:100%;padding:11px;border:2px solid #eee;border-radius:10px;font-size:.85rem;outline:none;margin-bottom:9px}
-    .inp:focus{border-color:#1565C0}
-    .sel{width:100%;padding:10px;border:1.5px solid #ddd;border-radius:8px;font-size:.88rem;outline:none;margin-bottom:12px}
-    /* BOX INFO */
-    .infobox{background:#f0f4f8;border:1px solid #1565C0;border-radius:10px;padding:12px;font-size:.8rem;color:#1a1f2e;margin-bottom:12px}
-    /* POINTS */
-    .pts-box{background:linear-gradient(135deg,#fff9e6,#fff);border:2px solid #FFD600;border-radius:12px;padding:14px;text-align:center}
-    /* AWALE */
-    .trou{background:#f5e8c7;border:3px solid #5D4037;border-radius:14px;padding:8px;min-height:65px;display:flex;flex-wrap:wrap;gap:3px;justify-content:center;align-items:center;cursor:pointer;transition:.2s}
-    .trou.inactive{opacity:.7;cursor:default;background:#e8d9b5;border-color:#8D6E63}
-    .graine{width:11px;height:11px;background:radial-gradient(circle,#3E2723,#1B0000);border-radius:50%;box-shadow:1px 1px 2px rgba(0,0,0,.5)}
-    /* ONBOARDING */
-    #onboarding{position:fixed;inset:0;background:#f0f4f8;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
-    /* MODAL */
-    #modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:flex-end;justify-content:center}
-    #modal-overlay.show{display:flex}
-    #modal-box{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:20px;max-height:85vh;overflow-y:auto}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1565C0">
+<title>DJANVOUÊ – Livraison, taxi et services à Bongouanou</title>
+<link rel="icon" href="logo.png">
+<!--
+MODE D'EMPLOI
+1. Mets logo.png et mascotte.png à côté de ce fichier.
+2. Les demandes arrivent par SMS sur ton numéro (ou par WhatsApp quand tu renseignes C.WHATSAPP).
+3. Pour publier un prestataire : après l'avoir validé par téléphone, ajoute une ligne dans PRESTATAIRES
+   (voir l'exemple plus bas), puis redéploie le fichier.
+4. Pour gagner un peu d'argent sans gêner personne : vedette:true (prestataire mis en avant) ou une ligne dans PUBS.
+-->
+<style>
+:root{--b:#1565C0;--bd:#0D47A1;--y:#FFD600;--g:#2E7D32;--o:#E65100;--bg:#F4F7FB;--t:#1B1B1B;--l:#cfd8e3}
+*{box-sizing:border-box;margin:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--t);font-size:16px;line-height:1.45;padding-bottom:84px}
+header{background:var(--b);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:5}
+header strong{font-size:19px}
+.logo{width:38px;height:38px;border-radius:50%;background:var(--y);color:var(--bd);font-weight:800;display:grid;place-items:center;overflow:hidden;flex:none}
+.logo img{width:100%;height:100%;object-fit:cover}
+.wrap{max-width:560px;margin:0 auto;padding:16px}
+.page{display:none}.page.on{display:block}
+h2{font-size:22px;margin-bottom:4px}
+.sub{color:#4a5a6b;margin-bottom:14px}
+.hero{background:linear-gradient(160deg,var(--b),var(--bd));color:#fff;border-radius:22px;padding:18px;display:flex;gap:14px;align-items:center}
+.hero img{width:100px;height:auto;flex:none}
+.hero h1{font-size:23px;line-height:1.2;margin-bottom:8px}
+.pill{display:inline-block;background:var(--y);color:var(--t);font-weight:700;font-size:13px;padding:4px 12px;border-radius:99px}
+.acts{display:grid;gap:12px;margin:18px 0}
+.act{display:flex;align-items:center;gap:14px;border:0;border-radius:18px;padding:18px;font:inherit;text-align:left;cursor:pointer;width:100%}
+.act b{display:block;font-size:20px}.act span{font-size:14px}.act i{font-style:normal;font-size:34px}
+.a1{background:var(--y)}.a2{background:var(--g);color:#fff}.a3{background:#fff;border:2px solid var(--b)}
+.btn{display:block;width:100%;padding:14px;border:0;border-radius:12px;background:var(--b);color:#fff;font:inherit;font-weight:700;text-align:center;text-decoration:none;cursor:pointer;margin-top:10px}
+.btn.g{background:var(--g)}.btn.y{background:var(--y);color:var(--t)}.btn.line{background:#fff;color:var(--b);border:2px solid var(--b)}
+label{display:block;font-weight:600;font-size:14px;margin-top:12px}
+input,select,textarea{width:100%;padding:12px;border:1.5px solid var(--l);border-radius:10px;font:inherit;background:#fff;margin-top:5px}
+textarea{min-height:76px;resize:vertical}
+:focus-visible{outline:3px solid var(--o);outline-offset:2px}
+.done{margin-top:14px;padding:14px;border-radius:12px;background:#E8F5E9;border:1.5px solid var(--g)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:10px}
+.chip{flex:none;padding:8px 14px;border-radius:99px;border:1.5px solid var(--b);background:#fff;color:var(--b);font:inherit;font-weight:600;cursor:pointer}
+.chip.on{background:var(--b);color:#fff}
+.pro{display:flex;gap:12px;align-items:center;background:#fff;border-radius:14px;padding:12px;margin-bottom:10px;border:1px solid var(--l)}
+.pro.v{border:2px solid var(--y)}
+.av{width:52px;height:52px;border-radius:50%;background:var(--b);color:#fff;font-weight:700;display:grid;place-items:center;flex:none}
+.pro .in{flex:1;min-width:0}.pro small{color:#4a5a6b;display:block}
+.pro a{background:var(--g);color:#fff;text-decoration:none;border-radius:10px;padding:10px 12px;font-weight:700}
+.star{background:var(--y);border-radius:6px;padding:1px 6px;font-size:12px;font-weight:700;margin-left:6px}
+.empty{background:#fff;border:2px dashed var(--l);border-radius:14px;padding:20px;text-align:center}
+.pub{background:#fff;border:1.5px dashed var(--o);border-radius:14px;padding:12px;margin-bottom:14px}
+.pub small{color:#777}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--l);display:flex;z-index:5;padding-bottom:env(safe-area-inset-bottom,0)}
+nav button{flex:1;border:0;background:none;padding:9px 2px 8px;font:inherit;font-size:12px;color:#5b6b7c;cursor:pointer}
+nav button i{display:block;font-style:normal;font-size:22px}
+nav button.on{color:var(--b);font-weight:700}
+.foot{text-align:center;color:#5b6b7c;font-size:13px;margin-top:22px}
+</style>
 </head>
 <body>
+<header><div class="logo"><img src="logo.png" alt="" onerror="this.remove()">D</div><strong>DJANVOUÊ</strong></header>
 
-<!-- ══════════════════════════════════════════
-     ONBOARDING
-══════════════════════════════════════════ -->
-<div id="onboarding">
-  <div style="width:80px;height:80px;border-radius:50%;background:#1565C0;display:flex;align-items:center;justify-content:center;margin-bottom:14px;border:4px solid #FFD600">
-    <span style="font-size:2.5rem;font-weight:900;color:#FFD600">D</span>
+<main class="wrap">
+
+<section class="page on" id="p-home">
+  <div id="pub"></div>
+  <div class="hero">
+    <img src="mascotte.png" alt="Mascotte DJANVOUÊ" onerror="this.remove()">
+    <div><h1>Livraison, taxi et services près de chez vous</h1><span class="pill">Gratuit pendant le lancement</span></div>
   </div>
-  <h1 style="font-size:1.8rem;font-weight:900;color:#1565C0;letter-spacing:4px;margin-bottom:4px">DJANVOUÊ</h1>
-  <p style="color:#777;font-size:.8rem;margin-bottom:20px">Flash Express Moronou · Bongouanou</p>
-  <div style="width:100%;max-width:400px;height:5px;background:#e0e0e0;border-radius:4px;margin-bottom:20px">
-    <div id="prog-bar" style="height:100%;background:#1565C0;border-radius:4px;width:0%;transition:width .3s"></div>
+  <div class="acts">
+    <button class="act a1" onclick="order('livraison')"><i>📦</i><div><b>Me faire livrer</b><span>Repas, courses, colis, pharmacie</span></div></button>
+    <button class="act a2" onclick="order('taxi')"><i>🚕</i><div><b>Commander un taxi</b><span>Où que vous soyez à Bongouanou</span></div></button>
+    <button class="act a3" onclick="go('services')"><i>🛠️</i><div><b>Trouver un professionnel</b><span>Coiffure, couture, mécanique…</span></div></button>
   </div>
-  <div style="width:100%;max-width:400px;background:#fff;border-radius:20px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.1)">
+  <a class="btn line" data-call></a>
+  <p class="foot">Bongouanou · Région du Moronou</p>
+</section>
 
-    <!-- Étape 1 : Nom -->
-    <div id="ob-1">
-      <div style="text-align:center">
-        <div style="font-size:3rem;margin-bottom:10px">👋</div>
-        <h2 style="font-size:1.2rem;font-weight:800;margin-bottom:6px;color:#333">Bienvenue !</h2>
-        <p style="color:#777;font-size:.83rem;margin-bottom:16px">Comment t'appelles-tu ?</p>
-        <input id="ob-nom" class="inp" placeholder="Ton prénom ici…" style="text-align:center;font-size:1rem"/>
-        <button class="btn btn-bleu btn-full" onclick="obEtape(2)">Continuer →</button>
-      </div>
-    </div>
+<section class="page" id="p-order">
+  <h2 id="o-title"></h2>
+  <p class="sub">Remplissez, puis envoyez le message préparé. Nous vous rappelons.</p>
+  <form id="f-order" autocomplete="on">
+    <label>Votre nom<input name="nom" required maxlength="60"></label>
+    <label>Votre téléphone<input name="tel" type="tel" inputmode="tel" required placeholder="07 00 00 00 00"></label>
+    <label>Votre quartier<select name="quartier" id="s-qrt" required></select></label>
+    <label>Repère visuel (obligatoire)<input name="repere" required maxlength="120" placeholder="Ex : en face de la pharmacie"></label>
+    <label id="l-cat">Type de commande<select name="categorie" id="s-cat" required></select></label>
+    <label id="l-det">Détails<textarea name="details" id="t-det" required maxlength="300"></textarea></label>
+    <label>Code agent (facultatif)<input name="code" maxlength="12" autocapitalize="characters" placeholder="Ex : DJ-KOU123"></label>
+    <button type="button" class="btn line" id="b-pos">📍 Ajouter ma position</button>
+    <button class="btn g" type="submit">Préparer mon message</button>
+  </form>
+  <div id="o-done"></div>
+</section>
 
-    <!-- Étape 2 : Téléphone -->
-    <div id="ob-2" style="display:none;text-align:center">
-      <div style="font-size:3rem;margin-bottom:10px">📞</div>
-      <h2 style="font-size:1.2rem;font-weight:800;margin-bottom:6px;color:#333">Ton numéro WhatsApp</h2>
-      <p style="color:#777;font-size:.83rem;margin-bottom:16px">Pour que les prestataires puissent te rappeler</p>
-      <input id="ob-tel" class="inp" placeholder="Ex: 0701234567" type="tel" style="text-align:center;font-size:1rem"/>
-      <button class="btn btn-bleu btn-full" style="margin-bottom:8px" onclick="obEtape(3)">Continuer →</button>
-      <button onclick="obEtape(3)" style="color:#aaa;background:none;border:none;width:100%;font-size:.8rem">Passer cette étape</button>
-    </div>
+<section class="page" id="p-services">
+  <h2>Professionnels près de vous</h2>
+  <p class="sub">Appelez directement le prestataire de votre choix.</p>
+  <div class="chips" id="chips"></div>
+  <div id="list"></div>
+</section>
 
-    <!-- Étape 3 : Service -->
-    <div id="ob-3" style="display:none">
-      <h2 style="font-size:1.1rem;font-weight:800;text-align:center;margin-bottom:6px;color:#333">Qu'est-ce que tu cherches ?</h2>
-      <p style="color:#777;font-size:.82rem;text-align:center;margin-bottom:14px">Choisis ton besoin principal</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-        <button class="btn" style="padding:16px 8px;border:2px solid #eee;border-radius:12px;background:#fff;font-weight:700" onclick="obSvc('🛵 Livraison')">🛵 Livraison</button>
-        <button class="btn" style="padding:16px 8px;border:2px solid #eee;border-radius:12px;background:#fff;font-weight:700" onclick="obSvc('🚕 Taxi')">🚕 Taxi</button>
-        <button class="btn" style="padding:16px 8px;border:2px solid #eee;border-radius:12px;background:#fff;font-weight:700" onclick="obSvc('🛒 Achats')">🛒 Achats</button>
-        <button class="btn" style="padding:16px 8px;border:2px solid #eee;border-radius:12px;background:#fff;font-weight:700" onclick="obSvc('✨ Autre')">✨ Autre</button>
-      </div>
-      <button onclick="obEtape(2)" style="color:#aaa;background:none;border:none;width:100%;font-size:.8rem">← Retour</button>
-    </div>
+<section class="page" id="p-join">
+  <h2>Devenir prestataire</h2>
+  <p class="sub">Inscription gratuite. Nous vous appelons pour valider votre profil avant de le publier.</p>
+  <form id="f-join" autocomplete="on">
+    <label>Nom complet<input name="nom" required maxlength="60"></label>
+    <label>Téléphone<input name="tel" type="tel" inputmode="tel" required placeholder="07 00 00 00 00"></label>
+    <label>Métier<select name="metier" id="s-metier" required></select></label>
+    <label>Quartier ou village<input name="quartier" required maxlength="60"></label>
+    <label>Décrivez votre travail<textarea name="description" maxlength="300"></textarea></label>
+    <label>Code agent (facultatif)<input name="code" maxlength="12" autocapitalize="characters" placeholder="Ex : DJ-KOU123"></label>
+    <button class="btn g" type="submit">Préparer mon inscription</button>
+  </form>
+  <div id="j-done"></div>
+</section>
 
-    <!-- Étape 4 : Fin -->
-    <div id="ob-4" style="display:none;text-align:center">
-      <div style="font-size:3.5rem;margin-bottom:10px">🎉</div>
-      <h2 style="font-size:1.2rem;font-weight:800;margin-bottom:6px;color:#333">Parfait <span id="ob-nom-fin"></span> !</h2>
-      <p style="color:#777;font-size:.83rem;margin-bottom:16px">Tu es prêt pour <strong>DJANVOUÊ</strong></p>
-      <div style="background:#e8f5e9;border-radius:12px;padding:12px;margin-bottom:16px;font-size:.8rem;color:#2E7D32;text-align:left">
-        ✅ Livraison rapide<br>✅ Taxi disponible 24h/24<br>✅ Paiement Wave sécurisé<br>✅ Contact WhatsApp direct
-      </div>
-      <button class="btn btn-vert btn-full" onclick="obFin()">🚀 Entrer dans DJANVOUÊ</button>
-    </div>
-  </div>
-</div>
+<section class="page" id="p-contact">
+  <h2>Nous contacter</h2>
+  <p class="sub">Une question, une commande, un partenariat : appelez-nous.</p>
+  <a class="btn g" data-call></a>
+  <a class="btn y" id="wa" hidden target="_blank" rel="noopener">💬 Écrire sur WhatsApp</a>
+  <div class="empty" style="margin-top:18px"><p><b>Vous avez un commerce ou un métier ?</b></p><p class="sub">Une place « en vedette » dans la liste ou une publicité sur l'accueil est possible. Appelez-nous.</p></div>
+  <p class="foot">DJANVOUÊ · Bongouanou, Moronou</p>
+</section>
 
-<!-- ══════════════════════════════════════════
-     APP PRINCIPALE
-══════════════════════════════════════════ -->
-<div id="app" style="display:none">
+</main>
 
-  <!-- HEADER -->
-  <div style="background:#1565C0;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.2)">
-    <div style="display:flex;align-items:center;gap:10px">
-      <div style="width:38px;height:38px;border-radius:50%;background:#FFD600;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;color:#1565C0">D</div>
-      <div>
-        <div style="color:#fff;font-weight:900;font-size:1rem;letter-spacing:2px">DJANVOUÊ</div>
-        <div style="color:#FFD600;font-size:.62rem">Bonjour <span id="hdr-nom"></span> 👋</div>
-      </div>
-    </div>
-    <div style="background:#FFD600;color:#333;padding:3px 9px;border-radius:20px;font-size:.7rem;font-weight:700">⚡ En ligne</div>
-  </div>
-
-  <!-- PAGES -->
-
-  <!-- ── ACCUEIL ── -->
-  <div id="page-accueil" class="page active fu">
-
-    <!-- Pub rotative -->
-    <div id="pub-banner" onclick="pubClick()" style="border-radius:14px;margin-bottom:14px;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,.15);background:linear-gradient(135deg,#1565C0,#0d47a1);padding:22px 16px 20px">
-      <div style="position:absolute;top:10px;right:10px;background:#FFD600;color:#333;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:800">Sponsorisé</div>
-      <div id="pub-img-wrap" style="display:none;width:100%;background:#111;text-align:center">
-        <img id="pub-img" src="" alt="" style="max-width:100%;max-height:220px;object-fit:contain;display:block;margin:0 auto"/>
-      </div>
-      <div id="pub-texte">
-        <div id="pub-titre" style="color:#fff;font-weight:900;font-size:1rem;margin-bottom:4px">⚡ Flash Express Moronou</div>
-        <div id="pub-desc" style="color:rgba(255,255,255,.85);font-size:.78rem">Livraison rapide partout à Bongouanou</div>
-      </div>
-      <div id="pub-dots" style="display:flex;gap:5px;margin-top:10px"></div>
-    </div>
-
-    <!-- Contacts directs -->
-    <div style="font-weight:800;font-size:.88rem;color:#333;margin-bottom:10px">📞 Contacter directement</div>
-    <div id="liste-contacts"></div>
-
-    <!-- CARTE GOOGLE MAPS -->
-    <div class="card" style="padding:14px;margin-bottom:12px">
-      <div style="font-weight:800;font-size:.88rem;color:#333;margin-bottom:10px">🗺️ Prestataires autour de vous</div>
-      <div id="map" style="height:220px;border-radius:12px;overflow:hidden;background:#e8eaf6;display:flex;align-items:center;justify-content:center;margin-bottom:10px">
-        <div id="map-placeholder" style="text-align:center;color:#888">
-          <div style="font-size:2.5rem;margin-bottom:6px">🗺️</div>
-          <div style="font-size:.8rem">Appuie sur le bouton pour te localiser</div>
-        </div>
-      </div>
-      <button class="btn btn-bleu btn-full press" onclick="getMyLocation()" id="btn-map" style="border-radius:10px;padding:11px;font-weight:800;font-size:.88rem">📍 Voir ma position & prestataires proches</button>
-      <div id="map-distance" style="margin-top:10px"></div>
-    </div>
-
-    <!-- COMMANDE VOCALE -->
-    <div class="card" style="text-align:center;margin-bottom:12px">
-      <div style="font-weight:800;font-size:.88rem;color:#333;margin-bottom:6px">🎤 Commande par la Voix</div>
-      <p style="color:#777;font-size:.78rem;margin-bottom:14px">Parle naturellement : "Je veux un garba avec poulet"</p>
-      <button onclick="toggleVoix()" id="voice-btn"
-        style="width:80px;height:80px;border-radius:50%;background:#f44336;color:#fff;border:none;font-size:2.2rem;cursor:pointer;box-shadow:0 6px 20px rgba(244,67,54,.4);transition:all .25s">🎤</button>
-      <div id="voice-status" style="margin-top:10px;font-weight:700;font-size:.8rem;color:#888;min-height:20px"></div>
-      <div id="voice-text" style="display:none;background:#f0f4f8;border-radius:10px;padding:11px;margin:10px 0;font-size:.85rem;color:#333;text-align:left"></div>
-      <button id="voice-send" onclick="envoyerVocal()" style="display:none;width:100%;padding:12px;background:#25D366;color:#fff;border:none;border-radius:10px;font-weight:800;font-size:.88rem;cursor:pointer">💬 Envoyer via WhatsApp</button>
-    </div>
-
-    <!-- Commandes rapides -->
-    <div style="font-weight:800;font-size:.88rem;color:#333;margin-bottom:10px">⚡ Commandes Express</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-      <button class="btn press" style="padding:16px 10px;background:#E65100;color:#fff;border-radius:14px;font-weight:800;font-size:.88rem;box-shadow:0 4px 12px rgba(230,81,0,.3)" onclick="cmdRapide('Livraison','2250703240589','J\u2019ai besoin d\u2019une livraison express')">🛵<br><span style="font-size:.75rem">Livraison</span></button>
-      <button class="btn press" style="padding:16px 10px;background:#1565C0;color:#fff;border-radius:14px;font-weight:800;font-size:.88rem;box-shadow:0 4px 12px rgba(21,101,192,.3)" onclick="cmdRapide('Taxi','2250788369888','J\u2019ai besoin d\u2019un taxi maintenant')">🚕<br><span style="font-size:.75rem">Taxi</span></button>
-      <button class="btn press" style="padding:16px 10px;background:#2E7D32;color:#fff;border-radius:14px;font-weight:800;font-size:.88rem;box-shadow:0 4px 12px rgba(46,125,50,.3)" onclick="cmdRapide('Nourriture','2250778780268','Je veux commander \u00e0 manger')">🍽️<br><span style="font-size:.75rem">Nourriture</span></button>
-      <button class="btn press" style="padding:16px 10px;background:#7B1FA2;color:#fff;border-radius:14px;font-weight:800;font-size:.88rem;box-shadow:0 4px 12px rgba(123,31,162,.3)" onclick="cmdRapide('Pharmacie','2250779036594','J\u2019ai besoin d\u2019un m\u00e9dicament')">💊<br><span style="font-size:.75rem">Pharmacie</span></button>
-      <button class="btn press" style="padding:16px 10px;background:#37474F;color:#fff;border-radius:14px;font-weight:800;font-size:.88rem;box-shadow:0 4px 12px rgba(55,71,79,.3)" onclick="cmdRapide('H\u00e9bergement','2250758243334','Je cherche un h\u00e9bergement')">🏨<br><span style="font-size:.75rem">Résidence</span></button>
-      <button class="btn press" style="padding:16px 10px;background:#c62828;color:#fff;border-radius:14px;font-weight:800;font-size:.88rem;box-shadow:0 4px 12px rgba(198,40,40,.3)" onclick="cmdRapide('Moto-Taxi','2250703240589','J\u2019ai besoin d\u2019un moto-taxi')">🛵<br><span style="font-size:.75rem">Moto-Taxi</span></button>
-    </div>
-
-    <!-- Points fidélité -->
-    <div class="pts-box">
-      <div id="pts-val" style="font-size:1.6rem;font-weight:900;color:#1565C0">0 pts</div>
-      <div id="pts-fcfa" style="font-size:.8rem;color:#555;margin-top:2px">= 0 FCFA de réduction</div>
-      <div style="font-size:.72rem;color:#aaa;margin-top:4px">1 point = 5 FCFA · Gagnez des points à chaque commande</div>
-    </div>
-  </div>
-
-  <!-- ── COMMANDER ── -->
-  <div id="page-commander" class="page">
-    <div class="bandeau" style="background:linear-gradient(135deg,#1565C0,#0d47a1)">
-      <div style="font-size:2.5rem;margin-bottom:6px">🛒</div>
-      <h2 style="font-weight:900;font-size:1.1rem;letter-spacing:2px">COMMANDER</h2>
-      <p style="font-size:.8rem;opacity:.85;margin-top:4px">3 étapes rapides</p>
-      <div id="cmd-prog" style="display:flex;gap:6px;justify-content:center;margin-top:10px">
-        <div id="cp1" style="width:24px;height:6px;border-radius:4px;background:#FFD600;transition:width .3s"></div>
-        <div id="cp2" style="width:10px;height:6px;border-radius:4px;background:rgba(255,255,255,.3);transition:width .3s"></div>
-        <div id="cp3" style="width:10px;height:6px;border-radius:4px;background:rgba(255,255,255,.3);transition:width .3s"></div>
-      </div>
-    </div>
-    <div id="cmd-content"></div>
-  </div>
-
-  <!-- ── VENDEURS ── -->
-  <div id="page-vendeurs" class="page">
-    <div class="bandeau" style="background:linear-gradient(135deg,#2E7D32,#1B5E20)">
-      <div style="font-size:2.5rem;margin-bottom:6px">🏪</div>
-      <h2 style="font-weight:900;font-size:1rem">Prestataires & Vendeurs</h2>
-      <p style="font-size:.78rem;opacity:.9;margin-top:4px">Annuaire complet Bongouanou</p>
-    </div>
-    <div style="display:flex;background:#fff;border-radius:12px;padding:4px;margin-bottom:14px;box-shadow:0 2px 6px rgba(0,0,0,.07);flex-wrap:wrap;gap:3px">
-      <button id="vtab-annuaire" onclick="vTab('annuaire')" style="flex:1;padding:8px 4px;border:none;border-radius:10px;background:#1565C0;color:#fff;font-weight:700;font-size:.68rem;min-width:60px">📋 Annuaire</button>
-      <button id="vtab-taxi"     onclick="vTab('taxi')"     style="flex:1;padding:8px 4px;border:none;background:none;color:#777;font-weight:700;font-size:.68rem;min-width:60px">🚕 Taxi</button>
-      <button id="vtab-moto"     onclick="vTab('moto')"     style="flex:1;padding:8px 4px;border:none;background:none;color:#777;font-weight:700;font-size:.68rem;min-width:60px">🛵 Moto</button>
-      <button id="vtab-avis"     onclick="vTab('avis')"     style="flex:1;padding:8px 4px;border:none;background:none;color:#777;font-weight:700;font-size:.68rem;min-width:60px">⭐ Avis</button>
-      <button id="vtab-services" onclick="vTab('services')" style="flex:1;padding:8px 4px;border:none;background:none;color:#777;font-weight:700;font-size:.68rem;min-width:60px">🧰 Services</button>
-    </div>
-    <div id="vendeurs-content"></div>
-  </div>
-
-  <!-- ── JEUX ── -->
-  <div id="page-jeux" class="page">
-    <div id="jeux-content"></div>
-  </div>
-
-  <!-- ── ADMIN ── -->
-  <div id="page-admin" class="page">
-    <div id="admin-content"></div>
-  </div>
-
-  <!-- NAV -->
-  <nav id="nav">
-    <button onclick="goPage('accueil')" class="active" id="nav-accueil"><span class="ic">🏠</span>Accueil</button>
-    <button onclick="goPage('commander')" id="nav-commander"><span class="ic">🛒</span>Commander</button>
-    <button onclick="goPage('vendeurs')" id="nav-vendeurs"><span class="ic">🏪</span>Vendeurs</button>
-    <button onclick="goPage('jeux')" id="nav-jeux"><span class="ic">🎮</span>Jeux</button>
-    <button onclick="goPage('admin')" id="nav-admin"><span class="ic">🔑</span>Admin</button>
-  </nav>
-</div>
-
-<!-- MODAL -->
-<div id="modal-overlay" onclick="closeModal()">
-  <div id="modal-box" onclick="event.stopPropagation()">
-    <div id="modal-body"></div>
-  </div>
-</div>
+<nav>
+  <button data-p="home" class="on"><i>🏠</i>Accueil</button>
+  <button data-p="services"><i>🛠️</i>Services</button>
+  <button data-p="join"><i>➕</i>S'inscrire</button>
+  <button data-p="contact"><i>📞</i>Contact</button>
+</nav>
 
 <script>
-// ═══════════════════════════════════════════════════
-// DONNÉES
-// ═══════════════════════════════════════════════════
-const MDP = "DDR2024";
+/* ===== RÉGLAGES ===== */
+const C = { PHONE:"0171266191", PHONE_TXT:"01 71 26 61 91", WHATSAPP:"" }; /* WHATSAPP ex : "2250171266191" */
+const QUARTIERS=["Kangandy","Agnikro","28 Janvier","Dioulakro","Habitat","Autre"];
+const CATS=["Repas","Courses","Colis","Pharmacie","Boissons","Autre"];
+const METIERS=["Coiffure","Couture","Mécanique","Maçonnerie","Électricité","Plomberie","Menuiserie","Peinture","Livreur moto","Chauffeur taxi","Autre"];
 
-const FIXES = [
-  {id:1, nom:"Didireverb",            type:"⚡ Flash Express", tel:"2250703240589", icone:"⚡", zone:"Tout Bongouanou", cat:"livraison"},
-  {id:2, nom:"Taxi Bongouanou 1",     type:"🚕 Taxi",          tel:"2250788369888", icone:"🚕", zone:"Bongouanou",      cat:"taxi"},
-  {id:3, nom:"Taxi Bongouanou 2",     type:"🚕 Taxi",          tel:"2250769326304", icone:"🚕", zone:"Bongouanou",      cat:"taxi"},
-  {id:4, nom:"Taxi Bongouanou 3",     type:"🚕 Taxi",          tel:"2250747026947", icone:"🚕", zone:"Bongouanou",      cat:"taxi"},
-  {id:5, nom:"Restaurant Le Drapeau", type:"🍽️ Restauration",  tel:"2250778780268", icone:"🍽️",zone:"Bongouanou",      cat:"resto"},
-  {id:6, nom:"Pharmacie Sion",        type:"💊 Pharmacie",     tel:"2250779036594", icone:"💊", zone:"Bongouanou",      cat:"pharmacie"},
-  {id:7, nom:"Résidence Bongouanou",  type:"🏨 Hébergement",   tel:"2250758243334", icone:"🏨", zone:"Bongouanou",      cat:"hotel"},
+/* Prestataires validés. Ajoute une ligne par personne (vedette:true = mis en avant). */
+const PRESTATAIRES=[
+  /* {nom:"Awa Couture", metier:"Couture", quartier:"Kangandy", tel:"0700000000", description:"Robes et pagnes sur mesure", vedette:false}, */
+];
+/* Publicités de l'accueil (facultatif). */
+const PUBS=[
+  /* {titre:"Maquis Le Baron", texte:"Poulet braisé tous les soirs", tel:"0700000000"}, */
 ];
 
-// ── Supabase (base réelle et partagée, module Services)
-const sb = window.supabase.createClient(
-  "https://bqmhkkygequdukxzjwbw.supabase.co",
-  "sb_publishable_TrVZ1RA7LsxvfW42w5BWsw_OmRbCUcg"
-);
+/* ===== OUTILS ===== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const opts=l=>'<option value="">Choisir…</option>'+l.map(m=>"<option>"+m+"</option>").join("");
+const telOk=t=>/^[+\d][\d\s.-]{7,15}$/.test(t.trim());
+const digits=t=>String(t||"").replace(/[^\d+]/g,"");
+const code=f=>(f.code||"").trim().toUpperCase().slice(0,12);
+const link=t=>C.WHATSAPP?"https://wa.me/"+C.WHATSAPP+"?text="+encodeURIComponent(t):"sms:"+C.PHONE+"?body="+encodeURIComponent(t);
 
-const CATEGORIES_SERVICES = [
-  {id:"menage",label:"Ménage",icone:"🧹"},
-  {id:"jardinage",label:"Jardinage",icone:"🌿"},
-  {id:"plomberie",label:"Plomberie",icone:"🔧"},
-  {id:"electricite",label:"Électricité",icone:"💡"},
-  {id:"maconnerie",label:"Maçonnerie",icone:"🧱"},
-  {id:"menuiserie",label:"Menuiserie",icone:"🪚"},
-  {id:"peinture",label:"Peinture",icone:"🎨"},
-  {id:"couture",label:"Couture",icone:"🧵"},
-  {id:"coiffure",label:"Coiffure",icone:"💇"},
-  {id:"gaz",label:"Gaz à domicile",icone:"🔥"},
-  {id:"commerce",label:"Petit commerce",icone:"🛍️"},
-];
+function go(p){
+  document.querySelectorAll(".page").forEach(e=>e.classList.toggle("on",e.id==="p-"+p));
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.p===p));
+  scrollTo(0,0);
+  if(p==="services")renderServices();
+}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.p));
+document.querySelectorAll("[data-call]").forEach(a=>{a.href="tel:"+C.PHONE;a.textContent="📞 Appeler le "+C.PHONE_TXT;});
+if(C.WHATSAPP){$("#wa").hidden=false;$("#wa").href="https://wa.me/"+C.WHATSAPP;}
 
-// ── LS helpers
-const LS = {
-  get:(k,d)=>{ try{return JSON.parse(localStorage.getItem(k))||d}catch{return d} },
-  set:(k,v)=>localStorage.setItem(k,JSON.stringify(v)),
-  str:(k,d="")=>localStorage.getItem(k)||d,
-  sstr:(k,v)=>localStorage.setItem(k,v),
+/* Envoi : SMS (marche sans internet ni WhatsApp) ou WhatsApp */
+function envoyer(texte,box){
+  const u=link(texte), via=C.WHATSAPP?"WhatsApp":"votre messagerie";
+  box.innerHTML='<div class="done"><p><b>Dernière étape :</b> votre message est prêt. Appuyez sur « Envoyer » dans '+via+'.</p><a class="btn g" id="go-msg">✉️ Ouvrir mon message</a><a class="btn y" data-call></a></div>';
+  const a=box.querySelector("#go-msg");a.href=u;if(C.WHATSAPP)a.target="_blank";
+  const c=box.querySelector("[data-call]");c.href="tel:"+C.PHONE;c.textContent="📞 Ou appeler le "+C.PHONE_TXT;
+  location.href=u;
+}
+
+/* ===== COMMANDE ===== */
+let cur="livraison",pos="",last=0;
+$("#s-qrt").innerHTML=opts(QUARTIERS);$("#s-cat").innerHTML=opts(CATS);$("#s-metier").innerHTML=opts(METIERS);
+function order(type){
+  cur=type;const taxi=type==="taxi";
+  $("#o-title").textContent=taxi?"Commander un taxi":"Me faire livrer";
+  $("#l-det").firstChild.textContent=taxi?"Où allez-vous ?":"Que faut-il livrer, et où ?";
+  $("#t-det").placeholder=taxi?"Ex : au marché, à l'hôpital…":"Ex : 2 garba et 1 poulet chez Maquis Le Baron";
+  $("#l-cat").style.display=taxi?"none":"block";$("#s-cat").disabled=taxi;
+  $("#o-done").innerHTML="";go("order");
+}
+$("#b-pos").onclick=()=>{
+  if(!navigator.geolocation){alert("Position indisponible sur cet appareil.");return;}
+  navigator.geolocation.getCurrentPosition(p=>{
+    pos="https://maps.google.com/?q="+p.coords.latitude+","+p.coords.longitude;
+    $("#b-pos").textContent="✅ Position ajoutée";
+  },()=>alert("Activez la localisation pour ajouter votre position."),{enableHighAccuracy:true,timeout:10000});
+};
+$("#f-order").onsubmit=e=>{
+  e.preventDefault();
+  const f=Object.fromEntries(new FormData(e.target));
+  if(!telOk(f.tel)){alert("Entrez un numéro de téléphone valide.");return;}
+  const w=60000-(Date.now()-last);
+  if(w>0){alert("Patientez "+Math.ceil(w/1000)+" secondes avant une nouvelle demande.");return;}
+  last=Date.now();
+  const t=(cur==="taxi"?"TAXI":"LIVRAISON ("+f.categorie+")")+"\nNom : "+f.nom+"\nTél : "+f.tel+"\nQuartier : "+f.quartier+"\nRepère : "+f.repere+"\n"+(cur==="taxi"?"Destination : ":"Commande : ")+f.details+(pos?"\nPosition : "+pos:"")+(code(f)?"\nCode agent : "+code(f):"");
+  envoyer(t,$("#o-done"));
+  e.target.reset();pos="";$("#b-pos").textContent="📍 Ajouter ma position";
 };
 
-const getTous = () => {
-  const motos  = LS.get("dj_motos",[]).map((m,i)=>({...m,id:100+i,type:"🛵 Moto-Taxi",icone:"🛵",cat:"moto",inscrit:true}));
-  const taxis  = LS.get("dj_taxis",[]).map((t,i)=>({...t,id:150+i,type:"🚕 Taxi",icone:"🚕",cat:"taxi",inscrit:true}));
-  const ajouts = LS.get("dj_prestataires",[]).map((p,i)=>({...p,id:200+i,inscrit:true}));
-  return [...FIXES,...ajouts,...taxis,...motos];
-};
-
-const getPts  = ()  => parseInt(localStorage.getItem("dj_pts")||"0");
-const addPts  = (n) => localStorage.setItem("dj_pts", getPts()+n);
-const getNom  = ()  => LS.str("dj_nom","Client");
-const getTel  = ()  => LS.str("dj_tel","");
-
-// ── WA & Appel
-const wa  = (tel,msg) => window.open(`https://wa.me/${tel.replace(/\D/g,"")}?text=${encodeURIComponent(msg)}`,"_blank");
-const tel = (num)     => window.open(`tel:+${num.replace(/\D/g,"")}`);
-
-// ═══════════════════════════════════════════════════
-// ONBOARDING
-// ═══════════════════════════════════════════════════
-function obEtape(n){
-  [1,2,3,4].forEach(i=>{ document.getElementById("ob-"+i).style.display = i===n?"block":"none"; });
-  document.getElementById("prog-bar").style.width = ((n-1)/3*100)+"%";
-  if(n===4) document.getElementById("ob-nom-fin").textContent = document.getElementById("ob-nom").value;
-}
-
-function obSvc(s){
-  LS.sstr("dj_svc",s);
-  obEtape(4);
-}
-
-function obFin(){
-  const nom = document.getElementById("ob-nom").value.trim();
-  if(!nom){obEtape(1);return;}
-  LS.sstr("dj_nom",nom);
-  LS.sstr("dj_tel",document.getElementById("ob-tel").value.trim());
-  document.getElementById("onboarding").style.display="none";
-  document.getElementById("app").style.display="block";
-  initApp();
-}
-
-// ═══════════════════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════════════════
-let pageCourante = "accueil";
-
-function goPage(id){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.querySelectorAll("#nav button").forEach(b=>b.classList.remove("active"));
-  document.getElementById("page-"+id).classList.add("active");
-  document.getElementById("page-"+id).classList.add("fu");
-  document.getElementById("nav-"+id).classList.add("active");
-  pageCourante = id;
-  if(id==="accueil") renderAccueil();
-  if(id==="commander") renderCommander(1);
-  if(id==="vendeurs") vTab("annuaire");
-  if(id==="jeux") renderJeuxMenu();
-  if(id==="admin") renderAdmin();
-  window.scrollTo(0,0);
-}
-
-// ═══════════════════════════════════════════════════
-// INIT APP
-// ═══════════════════════════════════════════════════
-function initApp(){
-  document.getElementById("hdr-nom").textContent = getNom();
-  renderAccueil();
-  initPub();
-}
-
-// ═══════════════════════════════════════════════════
-// PUB ROTATIVE
-// ═══════════════════════════════════════════════════
-let pubIdx=0, pubInterval=null;
-let pubsPub = [];
-
-function initPub(){
-  const annonces = LS.get("dj_annonces",[]);
-  pubsPub = [
-    {titre:"⚡ Flash Express Moronou",desc:"Livraison rapide partout à Bongouanou",tel:"2250703240589",img:null,bg:"linear-gradient(135deg,#1565C0,#0d47a1)"},
-    {titre:"🚕 Taxis Bongouanou",desc:"3 chauffeurs disponibles 24h/24",tel:"2250788369888",img:null,bg:"linear-gradient(135deg,#37474F,#263238)"},
-    {titre:"🍽️ Restaurant Le Drapeau",desc:"Cuisine locale · Livraison rapide",tel:"2250778780268",img:null,bg:"linear-gradient(135deg,#2E7D32,#1B5E20)"},
-    ...annonces.map(a=>({titre:a.titre,desc:a.desc,tel:a.tel,img:a.img||null,bg:"#222"}))
-  ];
-  pubIdx=0; renderPub();
-  if(pubInterval) clearInterval(pubInterval);
-  pubInterval = setInterval(()=>{ pubIdx=(pubIdx+1)%pubsPub.length; renderPub(); },4500);
-}
-
-function renderPub(){
-  const p = pubsPub[pubIdx]||pubsPub[0];
-  const banner = document.getElementById("pub-banner");
-  const imgWrap = document.getElementById("pub-img-wrap");
-  const texte   = document.getElementById("pub-texte");
-  banner.style.background = p.bg||"#222";
-  banner.style.padding = p.img ? "0" : "22px 16px 20px";
-  if(p.img){
-    document.getElementById("pub-img").src = p.img;
-    imgWrap.style.display="block"; texte.style.padding="12px 12px 8px";
-    texte.style.background="linear-gradient(transparent,rgba(0,0,0,.75))";
-  } else {
-    imgWrap.style.display="none"; texte.style.padding=""; texte.style.background="";
-  }
-  document.getElementById("pub-titre").textContent = p.titre;
-  document.getElementById("pub-desc").textContent  = p.desc;
-  const dots = document.getElementById("pub-dots");
-  dots.innerHTML = pubsPub.map((_,i)=>`<span style="height:4px;width:${i===pubIdx?20:8}px;border-radius:4px;background:${i===pubIdx?"#fff":"rgba(255,255,255,.35)"};display:inline-block;transition:width .3s"></span>`).join("");
-}
-
-function pubClick(){ const p=pubsPub[pubIdx]; if(p) wa(p.tel,`Bonjour, je vous contacte via *DJANVOUÊ* ⚡`); }
-
-// ═══════════════════════════════════════════════════
-// CARTE PRESTATAIRE
-// ═══════════════════════════════════════════════════
-function carteP(p){
-  return `<div class="card card-flex">
-    <div class="avatar">${p.icone}</div>
-    <div style="flex:1;min-width:0">
-      <div style="font-weight:700;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.nom}</div>
-      <div style="font-size:.7rem;color:#888;margin-top:1px">${p.type} · ${p.zone}</div>
-      ${p.inscrit?'<div style="font-size:.62rem;color:#2E7D32;font-weight:700;margin-top:1px">✅ Inscrit sur DJANVOUÊ</div>':""}
-    </div>
-    <button class="btn btn-call press" onclick="tel('${p.tel}')" style="width:36px;height:36px;padding:0;border-radius:10px;flex-shrink:0">📞</button>
-    <button class="btn btn-wa press" onclick="wa('${p.tel}',\`Bonjour ${p.nom}, je vous contacte via *DJANVOUÊ* ⚡\`)" style="width:36px;height:36px;padding:0;border-radius:10px;flex-shrink:0">💬</button>
-  </div>`;
-}
-
-// ═══════════════════════════════════════════════════
-// ACCUEIL
-// ═══════════════════════════════════════════════════
-function renderAccueil(){
-  const tous = getTous();
-  document.getElementById("liste-contacts").innerHTML = tous.map(carteP).join("");
-  const pts = getPts();
-  document.getElementById("pts-val").textContent  = pts+" pts";
-  document.getElementById("pts-fcfa").textContent = "= "+(pts*5)+" FCFA de réduction";
-}
-
-function cmdRapide(label,numTel,msg){
-  const m = `⚡ *COMMANDE RAPIDE DJANVOUÊ*\n👤 ${getNom()}${getTel()?"\n📞 "+getTel():""}\n📦 ${msg}\nMerci de me contacter !`;
-  wa(numTel,m);
-}
-
-// ═══════════════════════════════════════════════════
-// CARTE OPENSTREETMAP — prestataires proches
-// ═══════════════════════════════════════════════════
-const PRESTS_GEO = [
-  {nom:"Didireverb ⚡",     tel:"2250703240589", lat:6.4512, lng:-4.3502, icone:"⚡"},
-  {nom:"Taxi 1",            tel:"2250788369888", lat:6.4520, lng:-4.3488, icone:"🚕"},
-  {nom:"Taxi 2",            tel:"2250769326304", lat:6.4508, lng:-4.3510, icone:"🚕"},
-  {nom:"Taxi 3",            tel:"2250747026947", lat:6.4495, lng:-4.3522, icone:"🚕"},
-  {nom:"Le Drapeau",        tel:"2250778780268", lat:6.4530, lng:-4.3475, icone:"🍽️"},
-  {nom:"Pharmacie Sion",    tel:"2250779036594", lat:6.4503, lng:-4.3534, icone:"💊"},
-  {nom:"Résidence Bongouanou",tel:"2250758243334",lat:6.4518, lng:-4.3460, icone:"🏨"},
-];
-
-function haversine(lat1,lon1,lat2,lon2){
-  const R=6371000,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;
-  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-}
-
-function getMyLocation(){
-  const btn=document.getElementById("btn-map");
-  btn.textContent="⏳ Localisation en cours…"; btn.disabled=true;
-  if(!navigator.geolocation){btn.textContent="❌ Non supporté";btn.disabled=false;return;}
-  navigator.geolocation.getCurrentPosition(pos=>{
-    const lat=pos.coords.latitude, lng=pos.coords.longitude;
-    // Carte OpenStreetMap sans clé API
-    const mapDiv=document.getElementById("map");
-    const bbox=(lng-0.008)+"%2C"+(lat-0.006)+"%2C"+(lng+0.008)+"%2C"+(lat+0.006);
-    mapDiv.innerHTML=`<iframe src="https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat}%2C${lng}" style="width:100%;height:100%;border:none" loading="lazy"></iframe>`;
-    // Distances
-    const avecDist=PRESTS_GEO.map(p=>({...p,dist:Math.round(haversine(lat,lng,p.lat,p.lng))})).sort((a,b)=>a.dist-b.dist);
-    const distEl=document.getElementById("map-distance");
-    distEl.innerHTML=`<div style="font-weight:800;font-size:.82rem;color:#333;margin-bottom:8px">📍 Les plus proches de toi</div>`+
-      avecDist.slice(0,4).map(p=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f0f0">
-        <span style="font-size:1.3rem">${p.icone}</span>
-        <div style="flex:1"><div style="font-weight:700;font-size:.82rem">${p.nom}</div>
-        <div style="font-size:.7rem;color:#888">~${p.dist<1000?p.dist+"m":(p.dist/1000).toFixed(1)+"km"}</div></div>
-        <button class="btn btn-wa press" onclick="wa('${p.tel}',\`Bonjour, je suis proche et je vous contacte via DJANVOUÊ ⚡\`)" style="width:36px;height:36px;padding:0;border-radius:10px">💬</button>
-        <button class="btn btn-call press" onclick="tel('${p.tel}')" style="width:36px;height:36px;padding:0;border-radius:10px">📞</button>
-      </div>`).join("");
-    btn.textContent="🔄 Actualiser ma position"; btn.disabled=false;
-  },()=>{btn.textContent="❌ Refusée — Réessayer";btn.disabled=false;alert("Active la géolocalisation.");});
-}
-
-// ═══════════════════════════════════════════════════
-// COMMANDE VOCALE
-// ═══════════════════════════════════════════════════
-let voixActif=false, voixReco=null, voixTexte="";
-
-function toggleVoix(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){alert("Commande vocale non supportée sur ce navigateur.");return;}
-  if(voixActif){voixReco&&voixReco.stop();setVoixEtat(false);return;}
-  voixReco=new SR(); voixReco.lang="fr-FR"; voixReco.maxAlternatives=1;
-  voixReco.onresult=e=>{
-    voixTexte=e.results[0][0].transcript;
-    const vt=document.getElementById("voice-text");
-    vt.textContent="\""+voixTexte+"\""; vt.style.display="block";
-    document.getElementById("voice-send").style.display="block";
-    document.getElementById("voice-status").textContent="✅ Compris ! Vérifie et envoie.";
-    setVoixEtat(false);
-  };
-  voixReco.onerror=()=>{document.getElementById("voice-status").textContent="❌ Erreur — Réessaie";setVoixEtat(false);};
-  voixReco.onend=()=>setVoixEtat(false);
-  voixReco.start(); setVoixEtat(true);
-}
-
-function setVoixEtat(actif){
-  voixActif=actif;
-  const btn=document.getElementById("voice-btn");
-  const st=document.getElementById("voice-status");
-  btn.style.background=actif?"#4CAF50":"#f44336";
-  btn.style.boxShadow=actif?"0 0 0 10px rgba(76,175,80,.2)":"0 6px 20px rgba(244,67,54,.4)";
-  st.textContent=actif?"🔴 J\'écoute… parle maintenant":"";
-}
-
-function envoyerVocal(){
-  if(!voixTexte)return;
-  const m="🎤 *COMMANDE VOCALE DJANVOUÊ*\n👤 "+getNom()+(getTel()?"\n📞 "+getTel():"")+"\n🎤 \""+voixTexte+"\"\nMerci de me contacter !";
-  wa("2250703240589",m);
-  voixTexte="";
-  document.getElementById("voice-text").style.display="none";
-  document.getElementById("voice-send").style.display="none";
-  document.getElementById("voice-status").textContent="";
-}
-
-
-// ═══════════════════════════════════════════════════
-// COMMANDER — 3 étapes
-// ═══════════════════════════════════════════════════
-let cmdEtape=1, cmdBesoin="", cmdPrest=null, cmdCoords=null;
-
-function setCmdProg(n){
-  [1,2,3].forEach(i=>{
-    const el=document.getElementById("cp"+i);
-    el.style.width = i<=n?"24px":"10px";
-    el.style.background = i<=n?"#FFD600":"rgba(255,255,255,.3)";
-  });
-}
-
-function renderCommander(etape){
-  cmdEtape=etape; setCmdProg(etape);
-  const c = document.getElementById("cmd-content");
-
-  if(etape===1){
-    const besoins=[
-      {e:"🛵",l:"Livraison",h:"colis, courses…"},
-      {e:"🚕",l:"Taxi",h:"course, transfert"},
-      {e:"🛵",l:"Moto-Taxi",h:"course rapide"},
-      {e:"🍽️",l:"Nourriture",h:"Garba, Poulet…"},
-      {e:"💊",l:"Pharmacie",h:"médicaments…"},
-      {e:"🏨",l:"Hébergement",h:"chambre, résidence"},
-      {e:"✍️",l:"Autre",h:"précise ci-dessous"},
-    ];
-    c.innerHTML = `<div class="fu">
-      <div style="font-weight:800;font-size:.88rem;color:#333;margin-bottom:12px">1. Quel est ton besoin ?</div>
-      ${besoins.map(b=>`<button class="press" onclick="cmdChoisirBesoin('${b.l}')" style="width:100%;padding:14px 16px;margin-bottom:9px;background:#fff;border:2px solid #eee;border-radius:12px;display:flex;align-items:center;gap:12px;cursor:pointer;text-align:left;box-shadow:0 2px 6px rgba(0,0,0,.06)">
-        <span style="font-size:1.6rem">${b.e}</span>
-        <div><div style="font-weight:800;font-size:.9rem;color:#333">${b.l}</div><div style="font-size:.72rem;color:#888">${b.h}</div></div>
-        <span style="margin-left:auto;color:#bbb;font-size:1.1rem">›</span>
-      </button>`).join("")}
-    </div>`;
-  }
-
-  if(etape===2){
-    const tous = getTous();
-    c.innerHTML = `<div class="fu">
-      <div style="font-weight:800;font-size:.88rem;color:#333;margin-bottom:12px">2. Choisir le prestataire <span style="color:#888;font-weight:400">(${cmdBesoin})</span></div>
-      ${tous.map(p=>`<div onclick="cmdChoisirPrest(${p.id})" style="background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:9px;cursor:pointer;border:2px solid ${cmdPrest&&cmdPrest.id===p.id?"#1565C0":"#eee"};box-shadow:0 2px 6px rgba(0,0,0,.06);display:flex;align-items:center;gap:12px;transition:.2s">
-        <div style="width:44px;height:44px;border-radius:50%;background:#f0f4f8;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0">${p.icone}</div>
-        <div style="flex:1;min-width:0">
-          <div style="font-weight:700;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.nom}</div>
-          <div style="font-size:.7rem;color:#888">${p.type} · ${p.zone}</div>
-        </div>
-        <button onclick="event.stopPropagation();tel('${p.tel}')" class="btn btn-call press" style="width:33px;height:33px;padding:0;border-radius:8px;flex-shrink:0">📞</button>
-        <button onclick="event.stopPropagation();wa('${p.tel}',\`Bonjour ${p.nom}, je vous contacte via *DJANVOUÊ* ⚡\`)" class="btn btn-wa press" style="width:33px;height:33px;padding:0;border-radius:8px;flex-shrink:0">💬</button>
-      </div>`).join("")}
-      <div style="display:flex;gap:9px;margin-top:4px">
-        <button class="btn press" onclick="renderCommander(1)" style="flex:1;padding:11px;background:none;border:1.5px solid #ddd;border-radius:10px;font-weight:700;color:#888">← Retour</button>
-        <button class="btn btn-bleu press" onclick="if(cmdPrest)renderCommander(3)" style="flex:2;padding:11px;border-radius:10px;opacity:${cmdPrest?1:.5}">Continuer →</button>
-      </div>
-    </div>`;
-  }
-
-  if(etape===3){
-    c.innerHTML = `<div class="fu">
-      <div style="font-weight:800;font-size:.88rem;color:#333;margin-bottom:12px">3. Où es-tu ? / Ta commande</div>
-      <div style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 6px rgba(0,0,0,.07);margin-bottom:12px">
-        <div style="background:#e3f2fd;border-radius:10px;padding:10px;margin-bottom:14px;font-size:.8rem">
-          <span style="font-weight:800;color:#1565C0">📦 ${cmdBesoin}</span>
-          <span style="color:#888"> → </span>
-          <span style="font-weight:700">${cmdPrest?cmdPrest.icone+" "+cmdPrest.nom:""}</span>
-        </div>
-        <textarea id="cmd-adresse" class="inp" placeholder="Décris ton adresse et ta commande…&#10;Ex: Quartier Agnikro près de l'école&#10;1 Garba + sauce graine + piment" style="min-height:100px"></textarea>
-        <button class="btn press" onclick="cmdGPS()" id="btn-gps" style="margin-top:4px;padding:8px 14px;background:#f0f4f8;border:1.5px solid #1565C0;color:#1565C0;border-radius:8px;font-weight:700;font-size:.78px">📍 Ajouter ma position GPS</button>
-      </div>
-      <div style="display:flex;gap:9px">
-        <button class="btn press" onclick="renderCommander(2)" style="flex:1;padding:11px;background:none;border:1.5px solid #ddd;border-radius:10px;font-weight:700;color:#888">← Retour</button>
-        <button class="btn btn-wa press" onclick="cmdEnvoyer()" style="flex:2;padding:13px;border-radius:10px;font-weight:900;font-size:.92rem">💬 Envoyer via WhatsApp</button>
-      </div>
-      <p style="text-align:center;font-size:.68rem;color:#888;margin-top:8px">+10 points à valider par le prestataire ⭐</p>
-    </div>`;
-  }
-
-  if(etape===4){
-    c.innerHTML = `<div class="fu" style="text-align:center;padding:30px 0">
-      <div style="font-size:3.5rem;margin-bottom:12px">📨</div>
-      <h2 style="font-weight:900;color:#1565C0;margin-bottom:6px">Commande envoyée !</h2>
-      <p style="color:#555;font-size:.83rem;margin-bottom:16px">Message envoyé à <strong>${cmdPrest?cmdPrest.nom:""}</strong>.<br>${getTel()?"Il peut te rappeler au <strong>"+getTel()+"</strong>.":"Attends sa réponse WhatsApp."}</p>
-      <div style="background:#e8f5e9;border-radius:14px;padding:16px;margin-bottom:14px;border:2px solid #2E7D32">
-        <div style="font-size:.85rem;color:#2E7D32;font-weight:800;margin-bottom:8px">✅ Le prestataire t'a confirmé ?</div>
-        <p style="font-size:.78rem;color:#555;margin-bottom:12px">Appuie ci-dessous pour valider et gagner tes points.</p>
-        <button class="btn btn-vert btn-full press" onclick="cmdConfirmer()">✅ Oui, commande confirmée !</button>
-      </div>
-      <div style="display:flex;gap:9px;margin-bottom:12px">
-        <button class="btn btn-call press" style="flex:1;padding:11px;border-radius:10px;font-weight:700;font-size:.82rem" onclick="tel('${cmdPrest?cmdPrest.tel:""}')">📞 Rappeler</button>
-        <button class="btn btn-wa press" style="flex:1;padding:11px;border-radius:10px;font-weight:700;font-size:.82rem" onclick="wa('${cmdPrest?cmdPrest.tel:""}',\`Bonjour ${cmdPrest?cmdPrest.nom:""}, tu as reçu ma commande DJANVOUÊ ? 📦\`)">💬 Relancer</button>
-      </div>
-      <button onclick="renderCommander(1);cmdPrest=null;cmdBesoin=''" style="color:#aaa;background:none;border:none;cursor:pointer;font-size:.8rem">Nouvelle commande →</button>
-    </div>`;
-  }
-
-  if(etape===5){
-    c.innerHTML = `<div class="fu" style="text-align:center;padding:30px 0">
-      <div style="font-size:3.5rem;margin-bottom:12px">🎉</div>
-      <h2 style="font-weight:900;color:#2E7D32;margin-bottom:6px">Commande confirmée !</h2>
-      <p style="color:#555;font-size:.83rem;margin-bottom:20px">+10 points ajoutés ⭐</p>
-      <div class="pts-box" style="margin-bottom:20px">
-        <div style="font-size:1.6rem;font-weight:900;color:#1565C0">${getPts()} pts</div>
-        <div style="font-size:.78rem;color:#555">= ${getPts()*5} FCFA de réduction</div>
-      </div>
-      <button class="btn btn-bleu btn-full press" onclick="renderCommander(1);cmdPrest=null;cmdBesoin=''">← Nouvelle commande</button>
-    </div>`;
-  }
-}
-
-function cmdChoisirBesoin(b){ cmdBesoin=b; renderCommander(2); }
-function cmdChoisirPrest(id){ cmdPrest=getTous().find(p=>p.id===id); renderCommander(2); }
-function cmdGPS(){
-  navigator.geolocation&&navigator.geolocation.getCurrentPosition(p=>{
-    cmdCoords={lat:p.coords.latitude,lng:p.coords.longitude};
-    document.getElementById("btn-gps").textContent=`✅ GPS obtenu (${p.coords.latitude.toFixed(3)}, ${p.coords.longitude.toFixed(3)})`;
-    document.getElementById("btn-gps").style.borderColor="#2E7D32";
-    document.getElementById("btn-gps").style.color="#2E7D32";
-  },()=>alert("Active la géolocalisation."));
-}
-function cmdEnvoyer(){
-  const adr = document.getElementById("cmd-adresse")&&document.getElementById("cmd-adresse").value.trim();
-  if(!adr){alert("Décris ton adresse ou ta commande.");return;}
-  if(!cmdPrest){alert("Choisis un prestataire.");return;}
-  const msg=`🛒 *COMMANDE DJANVOUÊ ⚡*\n\n👤 Client : ${getNom()}${getTel()?"\n📞 Rappeler : "+getTel():""}\n📦 Besoin : ${cmdBesoin}\n📍 Adresse : ${adr}${cmdCoords?"\n🗺️ GPS : https://maps.google.com/?q="+cmdCoords.lat.toFixed(5)+","+cmdCoords.lng.toFixed(5):""}\n\n⚠️ Merci de confirmer par WhatsApp ou appel.`;
-  wa(cmdPrest.tel,msg); addPts(10); renderCommander(4);
-}
-function cmdConfirmer(){ renderCommander(5); }
-
-// ═══════════════════════════════════════════════════
-// VENDEURS
-// ═══════════════════════════════════════════════════
-let vTabCourant="annuaire";
-function vTab(t){
-  vTabCourant=t;
-  ["annuaire","taxi","moto","avis"].forEach(k=>{
-    const btn=document.getElementById("vtab-"+k);
-    if(!btn) return;
-    btn.style.background = k===t?"#1565C0":"none";
-    btn.style.color = k===t?"#fff":"#777";
-    btn.style.borderRadius="10px";
-  });
-  const c=document.getElementById("vendeurs-content");
-
-  // ── ANNUAIRE
-  if(t==="annuaire"){
-    c.innerHTML=getTous().map(carteP).join("")+
-      `<div class="infobox" style="margin-top:4px">💡 Un clic = contact direct. Pas besoin d'enregistrer le numéro !</div>`;
-  }
-
-  // ── TAXI
-  if(t==="taxi"){
-    const taxis=LS.get("dj_taxis",[]);
-    c.innerHTML=`<div class="card">
-      <div style="font-weight:800;font-size:.9rem;color:#1565C0;margin-bottom:4px">🚕 S'inscrire comme Chauffeur Taxi</div>
-      <p style="font-size:.78rem;color:#888;margin-bottom:12px">Remplis le formulaire. Tu seras visible immédiatement dans l'annuaire des taxis de Bongouanou.</p>
-      <input id="taxi-nom"    class="inp" placeholder="Ton nom complet *"/>
-      <input id="taxi-tel"    class="inp" placeholder="Numéro WhatsApp (ex: 2250701234567) *" type="tel"/>
-      <input id="taxi-vehicule" class="inp" placeholder="Type de véhicule (ex: Toyota Corolla, Bache...)"/>
-      <input id="taxi-zone"   class="inp" placeholder="Zone principale (ex: Centre, Agnikro, Kangandy...)"/>
-      <select id="taxi-dispo" class="sel">
-        <option value="Jour">🌞 Disponible le jour (6h–18h)</option>
-        <option value="Nuit">🌙 Disponible la nuit (18h–6h)</option>
-        <option value="24h">⚡ Disponible 24h/24</option>
-      </select>
-      <button class="btn btn-bleu btn-full press" onclick="inscrireTaxi()">🚕 M'inscrire comme Taxi</button>
-    </div>
-    ${taxis.length?`<div class="card">
-      <div style="font-weight:800;font-size:.85rem;color:#333;margin-bottom:10px">🚕 Taxis inscrits (${taxis.length})</div>
-      ${taxis.map((tx,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:${i<taxis.length-1?"1px solid #f0f0f0":"none"}">
-        <div style="width:40px;height:40px;border-radius:50%;background:#e3f2fd;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🚕</div>
-        <div style="flex:1;min-width:0">
-          <div style="font-weight:700;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${tx.nom}</div>
-          <div style="font-size:.68rem;color:#888">📍 ${tx.zone||"—"} · ${tx.vehicule||""} · ${tx.dispo||""}</div>
-          <div style="font-size:.62rem;color:#2E7D32;font-weight:700">✅ Inscrit sur DJANVOUÊ</div>
-        </div>
-        <button class="btn btn-call press" onclick="tel('${tx.tel}')" style="width:33px;height:33px;padding:0;border-radius:8px">📞</button>
-        <button class="btn btn-wa press" onclick="wa('${tx.tel}','Bonjour ${tx.nom}, je vous contacte pour une course via *DJANVOUÊ* ⚡')" style="width:33px;height:33px;padding:0;border-radius:8px">💬</button>
-      </div>`).join("")}
-    </div>`:""}`;
-  }
-
-  // ── MOTO-TAXI
-  if(t==="moto"){
-    const motos=LS.get("dj_motos",[]);
-    c.innerHTML=`<div class="card">
-      <div style="font-weight:800;font-size:.9rem;color:#E65100;margin-bottom:4px">🛵 S'inscrire comme Moto-Taxi</div>
-      <p style="font-size:.78rem;color:#888;margin-bottom:12px">Ton numéro apparaît dans l'annuaire pour que les clients puissent te joindre directement.</p>
-      <input id="moto-nom"  class="inp" placeholder="Ton nom complet *"/>
-      <input id="moto-tel"  class="inp" placeholder="Numéro WhatsApp (ex: 2250701234567) *" type="tel"/>
-      <input id="moto-zone" class="inp" placeholder="Ta zone (ex: Agnikro, Centre...)"/>
-      <button class="btn btn-orange btn-full press" onclick="inscrireMoto()">🛵 S'inscrire maintenant</button>
-    </div>
-    ${motos.length?`<div class="card">
-      <div style="font-weight:800;font-size:.85rem;color:#333;margin-bottom:10px">Motos inscrits (${motos.length})</div>
-      ${motos.map((m,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:${i<motos.length-1?"1px solid #f0f0f0":"none"}">
-        <div style="width:40px;height:40px;border-radius:50%;background:#fff3e0;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🛵</div>
-        <div style="flex:1;min-width:0">
-          <div style="font-weight:700;font-size:.85rem">${m.nom}</div>
-          <div style="font-size:.68rem;color:#888">📍 ${m.zone||"—"} · ${m.date||""}</div>
-          <div style="font-size:.62rem;color:#2E7D32;font-weight:700">✅ Inscrit sur DJANVOUÊ</div>
-        </div>
-        <button class="btn btn-call press" onclick="tel('${m.tel}')" style="width:33px;height:33px;padding:0;border-radius:8px">📞</button>
-        <button class="btn btn-wa press" onclick="wa('${m.tel}','Bonjour, je vous contacte pour une course via DJANVOUÊ ⚡')" style="width:33px;height:33px;padding:0;border-radius:8px">💬</button>
-      </div>`).join("")}
-    </div>`:""}`;
-  }
-
-  if(t==="avis") c.innerHTML=renderAvis();
-
-  // ── SERVICES (petits métiers, base partagée Supabase)
-  if(t==="services") renderServices();
-}
-
-let servicesCatActive = "tous";
-
-async function renderServices(){
-  const c=document.getElementById("vendeurs-content");
-  c.innerHTML=`<div class="card">
-    <div style="font-weight:800;font-size:.9rem;color:#6A1B9A;margin-bottom:4px">🧰 S'inscrire comme prestataire</div>
-    <p style="font-size:.78rem;color:#888;margin-bottom:12px">Ménage, plomberie, couture, coiffure... Inscription gratuite. Un agent DJANVOUÊ valide ton profil par WhatsApp avant qu'il soit visible.</p>
-    <input id="svc-nom" class="inp" placeholder="Ton nom complet *"/>
-    <input id="svc-tel" class="inp" placeholder="Numéro WhatsApp (ex: 2250701234567) *" type="tel"/>
-    <select id="svc-cat" class="sel">
-      ${CATEGORIES_SERVICES.map(cat=>`<option value="${cat.id}">${cat.icone} ${cat.label}</option>`).join("")}
-    </select>
-    <input id="svc-zone" class="inp" placeholder="Ta zone (ex: Agnikro, Centre...)"/>
-    <button class="btn btn-full press" style="background:#6A1B9A;color:#fff" onclick="inscrireService()">🧰 Envoyer mon inscription</button>
-  </div>
-  <div id="svc-liste"><div style="text-align:center;padding:20px;color:#888;font-size:.82rem">⏳ Chargement des prestataires…</div></div>
-  <div class="infobox" style="margin-top:4px">🔒 Chaque prestataire est validé personnellement par DJANVOUÊ avant d'apparaître ici, pour la sécurité de tous.</div>`;
-
-  chargerServicesValides();
-}
-
-async function inscrireService(){
-  const nom=document.getElementById("svc-nom").value.trim();
-  const t=document.getElementById("svc-tel").value.trim();
-  const cat=document.getElementById("svc-cat").value;
-  const zone=document.getElementById("svc-zone").value.trim()||"Bongouanou";
-  if(!nom||!t){alert("Nom et téléphone obligatoires.");return;}
-  const {error}=await sb.from("prestataires").insert({
-    nom, telephone:t.replace(/\D/g,""), categorie:cat, zone, statut:"en_attente"
-  });
-  if(error){alert("Une erreur est survenue, réessaie.");return;}
-  const catInfo=CATEGORIES_SERVICES.find(c=>c.id===cat);
-  wa("2250703240589", `🆕 *NOUVELLE INSCRIPTION PRESTATAIRE*\n\n👤 Nom : ${nom}\n📞 Tél : ${t}\n🧰 Métier : ${catInfo?.label}\n📍 Zone : ${zone}\n\n_Merci de vérifier son profil dans l'espace Admin pour le valider._`);
-  alert("✅ Inscription envoyée ! Un agent DJANVOUÊ va te contacter sur WhatsApp pour valider ton profil.");
-  document.getElementById("svc-nom").value="";
-  document.getElementById("svc-tel").value="";
-  document.getElementById("svc-zone").value="";
-}
-
-async function chargerServicesValides(){
-  const el=document.getElementById("svc-liste"); if(!el) return;
-  const {data,error}=await sb.from("prestataires").select("*").eq("statut","valide").order("note_moyenne",{ascending:false});
-  if(error||!data||!data.length){
-    el.innerHTML=`<div style="text-align:center;padding:20px;color:#888;font-size:.82rem">🔍 Aucun prestataire pour l'instant. Sois le premier à t'inscrire !</div>`;
+/* ===== SERVICES ===== */
+let filt="Tous";
+function renderServices(){
+  const pres=[...new Set(PRESTATAIRES.map(p=>p.metier))];
+  $("#chips").style.display=pres.length?"flex":"none";
+  $("#chips").innerHTML=["Tous",...pres].map(m=>'<button class="chip'+(m===filt?" on":"")+'" data-m="'+esc(m)+'">'+esc(m)+"</button>").join("");
+  document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{filt=c.dataset.m;renderServices();});
+  const l=PRESTATAIRES.filter(p=>filt==="Tous"||p.metier===filt).sort((a,b)=>(b.vedette?1:0)-(a.vedette?1:0));
+  if(!l.length){
+    $("#list").innerHTML='<div class="empty"><p><b>Les premiers professionnels arrivent.</b></p><p class="sub">Vous exercez un métier ? Inscrivez-vous, c\'est gratuit.</p><button class="btn" onclick="go(\'join\')">Devenir prestataire</button></div>';
     return;
   }
-  el.innerHTML=`<div style="font-weight:700;font-size:.8rem;color:#333;margin-bottom:8px">Prestataires disponibles (${data.length})</div>`+
-  data.map(p=>{
-    const catInfo=CATEGORIES_SERVICES.find(c=>c.id===p.categorie)||{icone:"🧰",label:p.categorie};
-    return `<div class="card card-flex">
-      <div class="avatar" style="overflow:hidden">${p.photo_url?`<img src="${p.photo_url}" style="width:100%;height:100%;object-fit:cover">`:catInfo.icone}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-weight:700;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.nom} <span style="font-size:.6rem;color:#2E7D32;background:#e8f5e9;padding:1px 6px;border-radius:6px">✅ Vérifié</span></div>
-        <div style="font-size:.7rem;color:#6A1B9A;margin-top:1px">${catInfo.icone} ${catInfo.label} · ${p.zone}</div>
-        <div style="font-size:.65rem;color:#888;margin-top:1px">⭐ ${p.note_moyenne||0} (${p.nombre_avis||0} avis)</div>
-      </div>
-      <button class="btn btn-call press" onclick="tel('${p.telephone}')" style="width:36px;height:36px;padding:0;border-radius:10px;flex-shrink:0">📞</button>
-      <button class="btn btn-wa press" onclick="contacterService('${p.id}','${p.telephone}',\`${p.nom}\`,\`${catInfo.label}\`)" style="width:36px;height:36px;padding:0;border-radius:10px;flex-shrink:0">💬</button>
-    </div>`;
-  }).join("");
+  $("#list").innerHTML=l.map(p=>'<div class="pro'+(p.vedette?" v":"")+'"><div class="av">'+esc((p.nom||"?").trim().slice(0,1).toUpperCase())+'</div><div class="in"><b>'+esc(p.nom)+"</b>"+(p.vedette?'<span class="star">⭐ En vedette</span>':"")+"<small>"+esc(p.metier)+" · "+esc(p.quartier)+"</small><small>"+esc(p.description)+'</small></div><a href="tel:'+esc(digits(p.tel))+'" aria-label="Appeler '+esc(p.nom)+'">📞</a></div>').join("");
 }
 
-function contacterService(id, telephone, nom, categorieLabel){
-  wa(telephone, `Bonjour ${nom}, je vous contacte via *DJANVOUÊ* ⚡ pour un service de ${categorieLabel}.`);
-  sb.rpc("incrementer_contact", { p_id: id });
-}
-
-function inscrireTaxi(){
-  const nom=document.getElementById("taxi-nom").value.trim();
-  const t=document.getElementById("taxi-tel").value.trim();
-  const vehicule=document.getElementById("taxi-vehicule").value.trim();
-  const zone=document.getElementById("taxi-zone").value.trim();
-  const dispo=document.getElementById("taxi-dispo").value;
-  if(!nom||!t){alert("Nom et téléphone obligatoires.");return;}
-  const taxis=LS.get("dj_taxis",[]);
-  taxis.push({nom,tel:t.replace(/\D/g,""),vehicule,zone,dispo,date:new Date().toLocaleDateString("fr")});
-  LS.set("dj_taxis",taxis);
-  wa("2250703240589",`🚕 *INSCRIPTION TAXI DJANVOUÊ*\n👤 ${nom}\n📞 +${t}\n🚗 ${vehicule||"—"}\n📍 Zone : ${zone||"—"}\n🕐 ${dispo}`);
-  alert("✅ Inscription envoyée ! Tu apparais maintenant dans l'annuaire des taxis.");
-  vTab("taxi");
-}
-
-function inscrireMoto(){
-  const nom=document.getElementById("moto-nom").value.trim();
-  const t=document.getElementById("moto-tel").value.trim();
-  const zone=document.getElementById("moto-zone").value.trim();
-  if(!nom||!t){alert("Remplis nom et téléphone.");return;}
-  const motos=LS.get("dj_motos",[]);
-  motos.push({nom,tel:t.replace(/\D/g,""),zone,date:new Date().toLocaleDateString("fr")});
-  LS.set("dj_motos",motos);
-  wa("2250703240589",`🛵 *INSCRIPTION MOTO-TAXI DJANVOUÊ*\n👤 ${nom}\n📞 +${t}\n📍 Zone : ${zone||"Non précisée"}`);
-  alert("✅ Inscription envoyée ! Tu apparais maintenant dans l'annuaire.");
-  vTab("moto");
-}
-
-// ═══════════════════════════════════════════════════
-// AVIS
-// ═══════════════════════════════════════════════════
-function renderAvis(){
-  const tous=getTous();
-  return `<div class="card">
-    <label style="font-size:.8rem;color:#555;display:block;margin-bottom:6px">Pour quel prestataire ?</label>
-    <select id="avis-prest" class="sel">
-      <option value="">-- Choisir --</option>
-      ${tous.map(p=>`<option value="${p.nom}">${p.icone} ${p.nom}</option>`).join("")}
-    </select>
-    <div style="text-align:center;margin-bottom:14px;font-weight:800;font-size:.85rem;color:#333">Ton expérience ?</div>
-    <div style="display:flex;justify-content:space-around;margin-bottom:16px">
-      ${[{v:1,i:"😠",l:"Mauvais",c:"#c62828"},{v:2,i:"😐",l:"Moyen",c:"#E65100"},{v:3,i:"🙂",l:"Bien",c:"#1565C0"},{v:4,i:"🤩",l:"Excellent",c:"#2E7D32"}].map(e=>`
-      <button onclick="avisNote(${e.v},'${e.c}')" id="avis-btn-${e.v}" style="display:flex;flex-direction:column;align-items:center;padding:10px 8px;border-radius:12px;border:2px solid #eee;background:#fff;cursor:pointer;transition:.2s;min-width:60px">
-        <span style="font-size:2.2rem">${e.i}</span>
-        <span style="font-size:.7rem;margin-top:4px;font-weight:700;color:#aaa">${e.l}</span>
-      </button>`).join("")}
-    </div>
-    <div id="avis-suite" style="display:none">
-      <textarea id="avis-comment" class="inp" placeholder="Ex: Livraison rapide, très sympa…" style="min-height:70px"></textarea>
-      <button class="btn btn-orange btn-full press" onclick="avisEnvoyer()">Envoyer mon avis ✈️</button>
-    </div>
-  </div>`;
-}
-
-let avisNoteVal=0;
-function avisNote(n,c){
-  avisNoteVal=n;
-  [1,2,3,4].forEach(i=>{
-    const b=document.getElementById("avis-btn-"+i);
-    if(b){b.style.border=i===n?`2px solid ${c}`:"2px solid #eee";b.style.background=i===n?"#f5f5f5":"#fff";b.style.transform=i===n?"scale(1.1)":"scale(1)";}
-  });
-  document.getElementById("avis-suite").style.display="block";
-}
-function avisEnvoyer(){
-  const prest=document.getElementById("avis-prest")&&document.getElementById("avis-prest").value;
-  const comment=document.getElementById("avis-comment")&&document.getElementById("avis-comment").value;
-  if(!prest){alert("Choisis un prestataire.");return;}
-  const em=[null,"😠 Mauvais","😐 Moyen","🙂 Bien","🤩 Excellent"][avisNoteVal];
-  wa("2250703240589",`⭐ AVIS DJANVOUÊ\n👤 ${prest}\n${em} (${avisNoteVal}/4)\n💬 ${comment||"—"}`);
-  document.getElementById("vendeurs-content").innerHTML=`<div style="text-align:center;padding:20px"><div style="font-size:3rem;margin-bottom:10px">🧡</div><h3 style="font-weight:800;color:#2E7D32;margin-bottom:8px">Merci pour ton avis !</h3><button class="btn btn-vert press" onclick="vTab('avis')">← Autre avis</button></div>`;
-}
-
-// ═══════════════════════════════════════════════════
-// JEUX
-// ═══════════════════════════════════════════════════
-function renderJeuxMenu(){
-  document.getElementById("jeux-content").innerHTML=`
-    <div class="bandeau" style="background:linear-gradient(135deg,#E65100,#bf360c)">
-      <div style="font-size:2.5rem;margin-bottom:6px">🎮</div>
-      <h2 style="font-weight:900;font-size:1rem">Jeux & Défis</h2>
-      <p style="font-size:.78rem;opacity:.9;margin-top:4px">Gagne des points et des réductions !</p>
-    </div>
-
-    <div class="card" style="margin-bottom:12px">
-      <div style="font-weight:800;font-size:.88rem;color:#333;margin-bottom:10px">🏺 Awalé Traditionnel</div>
-      <p style="font-size:.78rem;color:#888;margin-bottom:12px">Le jeu traditionnel Akan de Bongouanou. Joue contre l'ordinateur !</p>
-      <button class="btn btn-full press" onclick="renderAwale()" style="background:#8D5524;color:#fff;border-radius:10px;font-weight:800;font-size:.9rem">🏺 Jouer à l'Awalé</button>
-    </div>
-
-    <div class="card" style="margin-bottom:12px">
-      <div style="font-weight:800;font-size:.88rem;color:#333;margin-bottom:10px">🧠 Quiz Culture Moronou</div>
-      <button class="btn btn-full press" onclick="startQuiz(1)" style="background:#2E7D32;color:#fff;border-radius:10px;margin-bottom:8px;padding:12px;font-weight:700">🟢 Facile — 5 pts / bonne réponse</button>
-      <button class="btn btn-full press" onclick="startQuiz(2)" style="background:#F57F17;color:#fff;border-radius:10px;margin-bottom:8px;padding:12px;font-weight:700">🟡 Moyen — 10 pts / bonne réponse</button>
-      <button class="btn btn-full press" onclick="startQuiz(3)" style="background:#c62828;color:#fff;border-radius:10px;padding:12px;font-weight:700">🔴 Difficile — 20 pts / bonne réponse</button>
-    </div>
-
-    <div class="card" style="margin-bottom:12px">
-      <div style="font-weight:800;font-size:.88rem;color:#333;margin-bottom:10px">📸 Défis Photo CDM 2026</div>
-      ${[{t:"📸 Maillot de foot",pts:30},{t:"⚽ Photo avec un ballon",pts:25},{t:"🎉 Soirée match",pts:20},{t:"🇨🇮 Couleurs CIV",pts:35}].map((d,i,arr)=>`
-      <div onclick="wa('2250703240589',\`🏆 DÉFI DJANVOUÊ\n📸 ${d.t}\n🎯 ${d.pts} pts\n[Joins ta photo pour valider !]\`)" style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:${i<arr.length-1?"1px solid #f0f0f0":"none"};cursor:pointer">
-        <span style="font-weight:700;font-size:.85rem">${d.t}</span>
-        <span style="background:#FFD600;color:#333;padding:4px 10px;border-radius:20px;font-weight:900;font-size:.75rem">+${d.pts} pts</span>
-      </div>`).join("")}
-      <div style="font-size:.72rem;color:#888;margin-top:8px">💡 Clique → envoie ta photo via WhatsApp</div>
-    </div>
-
-    <div class="card" style="margin-bottom:12px">
-      <div style="font-weight:800;font-size:.88rem;color:#333;margin-bottom:10px">🏆 Pronostic CDM 2026</div>
-      <input id="prono-nom" class="inp" placeholder="Ton nom"/>
-      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;margin-bottom:8px;align-items:center">
-        <input id="prono-eq1" class="inp" style="margin:0" placeholder="Équipe 1"/>
-        <span style="font-weight:900;color:#888;text-align:center">vs</span>
-        <input id="prono-eq2" class="inp" style="margin:0" placeholder="Équipe 2"/>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;margin-bottom:10px;align-items:center">
-        <input id="prono-s1" class="inp" style="margin:0;text-align:center" placeholder="0" type="number"/>
-        <span style="font-weight:900;color:#888;text-align:center">–</span>
-        <input id="prono-s2" class="inp" style="margin:0;text-align:center" placeholder="0" type="number"/>
-      </div>
-      <button class="btn btn-bleu btn-full press" onclick="ajouterProno()" style="border-radius:10px;padding:11px;font-weight:700">⚽ Soumettre (+15 pts)</button>
-      <div id="prono-liste"></div>
-    </div>`;
-  renderPronoListe();
-}
-
-function ajouterProno(){
-  const nom=document.getElementById("prono-nom").value.trim();
-  const eq1=document.getElementById("prono-eq1").value.trim();
-  const eq2=document.getElementById("prono-eq2").value.trim();
-  const s1=document.getElementById("prono-s1").value||"?";
-  const s2=document.getElementById("prono-s2").value||"?";
-  if(!nom||!eq1||!eq2){alert("Remplis tous les champs.");return;}
-  const pronos=LS.get("dj_prono",[]);
-  pronos.push({nom,eq1,eq2,s1,s2,date:new Date().toLocaleDateString("fr")});
-  LS.set("dj_prono",pronos); addPts(15);
-  document.getElementById("prono-nom").value="";
-  document.getElementById("prono-eq1").value="";
-  document.getElementById("prono-eq2").value="";
-  document.getElementById("prono-s1").value="";
-  document.getElementById("prono-s2").value="";
-  alert("✅ Pronostic ajouté ! +15 pts"); renderPronoListe();
-}
-
-function renderPronoListe(){
-  const el=document.getElementById("prono-liste"); if(!el)return;
-  const pronos=LS.get("dj_prono",[]);
-  if(!pronos.length){el.innerHTML="";return;}
-  el.innerHTML=`<div style="margin-top:12px;font-weight:700;font-size:.78rem;color:#333;margin-bottom:6px">🏆 Classement (${pronos.length})</div>`+
-  pronos.slice(-5).reverse().map(p=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f0f0f0;font-size:.78rem"><span style="font-weight:700">${p.nom}</span><span style="color:#1565C0">${p.eq1} ${p.s1}–${p.s2} ${p.eq2}</span></div>`).join("");
-}
-
-// ═══════════════════════════════════════════════════
-// QUIZ
-// ═══════════════════════════════════════════════════
-const QUIZ={
-  1:[
-    {q:"Quelle est la capitale de la Côte d'Ivoire ?",r:["Yamoussoukro","Abidjan","Bouaké","Man"],ok:0},
-    {q:"Quel peuple Akan vit à Bongouanou ?",r:["Baoulé","Agni","Attié","Abron"],ok:1},
-    {q:"Le Garba est fait avec quelle base ?",r:["Riz","Igname","Attiéké","Plantain"],ok:2},
-  ],
-  2:[
-    {q:"Bongouanou est dans quelle région ?",r:["Moronou","Iffou","N'Zi","Bélier"],ok:0},
-    {q:"Combien de régions en Côte d'Ivoire ?",r:["14","31","12","20"],ok:0},
-    {q:"Quelle langue parle le peuple Agni ?",r:["Baoulé","Dioula","Agni","Bété"],ok:2},
-  ],
-  3:[
-    {q:"L'Awalé est originaire de ?",r:["Afrique de l'Ouest","Asie","Égypte","Europe"],ok:0},
-    {q:"Flash Express Moronou est basé à ?",r:["Abidjan","Bongouanou","Bouaké","Daoukro"],ok:1},
-    {q:"Que signifie 'Djanvouê' ?",r:["Bonne livraison","Vite chez toi","Service rapide","Aide-moi"],ok:1},
-  ]
+/* ===== INSCRIPTION PRESTATAIRE ===== */
+$("#f-join").onsubmit=e=>{
+  e.preventDefault();
+  const f=Object.fromEntries(new FormData(e.target));
+  if(!telOk(f.tel)){alert("Entrez un numéro de téléphone valide.");return;}
+  const t="INSCRIPTION PRESTATAIRE\nNom : "+f.nom+"\nTél : "+f.tel+"\nMétier : "+f.metier+"\nQuartier : "+f.quartier+(f.description?"\nDescription : "+f.description:"")+(code(f)?"\nCode agent : "+code(f):"");
+  envoyer(t,$("#j-done"));
+  e.target.reset();
 };
-let quizNiv=1,quizIdx=0,quizScore=0,quizRep=null;
 
-function startQuiz(n){
-  quizNiv=n; quizIdx=0; quizScore=0; quizRep=null;
-  renderQuiz();
+/* ===== PUBLICITÉ (accueil) ===== */
+if(PUBS.length){
+  const p=PUBS[Math.floor(Math.random()*PUBS.length)];
+  $("#pub").innerHTML='<div class="pub"><small>Publicité</small><br><b>'+esc(p.titre)+"</b> · "+esc(p.texte)+(p.tel?' <a href="tel:'+esc(digits(p.tel))+'">📞</a>':"")+"</div>";
 }
-
-function renderQuiz(){
-  const qs=QUIZ[quizNiv]; const q=qs[quizIdx];
-  document.getElementById("jeux-content").innerHTML=`
-    <div class="bandeau" style="background:linear-gradient(135deg,#E65100,#bf360c)">
-      <div style="font-size:.75rem;opacity:.8">Question ${quizIdx+1}/${qs.length}</div>
-      <div style="font-weight:800;font-size:.95rem;margin-top:6px">${q.q}</div>
-    </div>
-    ${q.r.map((r,i)=>`<button class="btn btn-full press" id="qbtn-${i}" onclick="quizRepondre(${i})"
-      style="margin-bottom:9px;border:2px solid #eee;background:#fff;border-radius:12px;padding:13px;font-weight:700;font-size:.88rem;color:#333;text-align:left">
-      ${r}
-    </button>`).join("")}
-    <button onclick="renderJeuxMenu()" style="color:#aaa;background:none;border:none;width:100%;cursor:pointer;font-size:.78rem;margin-top:4px">← Retour aux jeux</button>`;
-}
-
-function quizRepondre(idx){
-  if(quizRep!==null)return;
-  quizRep=idx;
-  const qs=QUIZ[quizNiv]; const q=qs[quizIdx];
-  [0,1,2,3].forEach(i=>{
-    const b=document.getElementById("qbtn-"+i); if(!b)return;
-    b.style.border=i===q.ok?"2px solid #2E7D32":i===idx?"2px solid #c62828":"2px solid #eee";
-    b.style.background=i===q.ok?"#e8f5e9":i===idx?"#ffebee":"#fff";
-  });
-  if(idx===q.ok){addPts(quizNiv*5);quizScore++;}
-  setTimeout(()=>{
-    quizRep=null;
-    if(quizIdx+1<qs.length){quizIdx++;renderQuiz();}
-    else{
-      document.getElementById("jeux-content").innerHTML=`<div class="fu" style="text-align:center;padding:30px 0">
-        <div style="font-size:3.5rem;margin-bottom:12px">🏆</div>
-        <h2 style="font-weight:900;color:#1565C0;margin-bottom:8px">Quiz terminé !</h2>
-        <p style="color:#555;font-size:.85rem;margin-bottom:6px">${quizScore}/${qs.length} bonnes réponses</p>
-        <p style="color:#2E7D32;font-weight:700;margin-bottom:20px">+${quizScore*quizNiv*5} pts · Total : ${getPts()} pts = ${getPts()*5} FCFA</p>
-        <button class="btn btn-bleu btn-full press" onclick="renderJeuxMenu()">← Retour aux jeux</button>
-      </div>`;
-    }
-  },900);
-}
-
-// ═══════════════════════════════════════════════════
-// AWALÉ
-// ═══════════════════════════════════════════════════
-let board,awTour,awScoreJ,awScoreIA;
-
-function renderAwale(){
-  board=[4,4,4,4,4,4,4,4,4,4,4,4]; awTour=true; awScoreJ=0; awScoreIA=0;
-  afficherAwale("À toi de jouer !");
-}
-
-function afficherAwale(msg){
-  const c=document.getElementById("jeux-content");
-  const trou=(seeds,idx,actif)=>{
-    const graines=Array.from({length:Math.min(seeds,16)},()=>`<div class="graine"></div>`).join("");
-    const plus=seeds>16?`<span style="font-size:.65rem;font-weight:900;color:#5D4037">+${seeds}</span>`:"";
-    const vide=seeds===0?`<span style="font-size:.7rem;color:#bcaaa4">—</span>`:"";
-    return `<button class="${actif&&seeds>0?"trou press":"trou inactive"}" onclick="${actif&&seeds>0?`awJouer(${idx})`:""}">
-      ${graines}${plus}${vide}
-    </button>`;
-  };
-  c.innerHTML=`
-    <div class="bandeau fu" style="background:linear-gradient(135deg,#5D4037,#3E2723)">
-      <div style="font-size:2rem;margin-bottom:4px">🏺</div>
-      <h2 style="font-weight:900;font-size:1rem;margin-bottom:2px">Awalé Traditionnel</h2>
-      <p style="font-size:.75rem;opacity:.85">Joueur (bas) vs Ordinateur (haut)</p>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-      <div style="background:#1565C0;border-radius:10px;padding:10px;text-align:center;color:#fff">
-        <div style="font-size:1.4rem;font-weight:900">${awScoreJ}</div>
-        <div style="font-size:.68rem">👤 Toi</div>
-      </div>
-      <div style="background:#37474F;border-radius:10px;padding:10px;text-align:center;color:#fff">
-        <div style="font-size:1.4rem;font-weight:900">${awScoreIA}</div>
-        <div style="font-size:.68rem">🤖 Ordinateur</div>
-      </div>
-    </div>
-    <div style="background:#fff3e0;border-radius:10px;padding:9px 14px;margin-bottom:12px;text-align:center;font-size:.82rem;font-weight:700;color:#5D4037">${msg}</div>
-    <div style="background:#8D5524;padding:14px;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,0,.3);margin-bottom:12px">
-      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:10px">
-        ${[11,10,9,8,7,6].map(i=>trou(board[i],i,false)).join("")}
-      </div>
-      <div style="height:2px;background:rgba(255,255,255,.2);margin-bottom:10px"></div>
-      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px">
-        ${[0,1,2,3,4,5].map(i=>trou(board[i],i,awTour)).join("")}
-      </div>
-    </div>
-    <div style="display:flex;gap:9px">
-      <button class="btn press" onclick="renderJeuxMenu()" style="flex:1;padding:11px;background:none;border:1.5px solid #ddd;border-radius:10px;font-weight:700;color:#888">← Retour</button>
-      <button class="btn press" onclick="renderAwale()" style="flex:2;padding:11px;background:#8D5524;color:#fff;border:none;border-radius:10px;font-weight:800">🔄 Nouvelle partie</button>
-    </div>`;
-}
-
-function awJouer(pos){
-  if(!awTour||pos>5||board[pos]===0)return;
-  let g=board[pos]; board[pos]=0; let cur=pos; let cap=0;
-  while(g>0){cur=(cur+1)%12;if(cur!==pos){board[cur]++;g--;}}
-  let cp=cur;
-  while(cp>5&&(board[cp]===2||board[cp]===3)){cap+=board[cp];board[cp]=0;cp--;}
-  awScoreJ+=cap; awTour=false;
-  const fin=board.slice(0,6).every(x=>x===0)||board.slice(6).every(x=>x===0);
-  if(fin){afficherAwale(awScoreJ>awScoreIA?"🎉 Tu as gagné !":awScoreJ<awScoreIA?"😔 L'ordinateur gagne":"🤝 Égalité !");return;}
-  afficherAwale("L'ordinateur réfléchit…");
-  setTimeout(awIA,700);
-}
-
-function awIA(){
-  const possibles=[];
-  for(let i=6;i<12;i++)if(board[i]>0)possibles.push(i);
-  if(!possibles.length){afficherAwale("Fin de partie !");return;}
-  let best=possibles[0],bestV=0;
-  possibles.forEach(pos=>{
-    const tmp=[...board];let g=tmp[pos];tmp[pos]=0;let c=pos;let cap=0;
-    while(g>0){c=(c+1)%12;if(c!==pos){tmp[c]++;g--;}}
-    if(c<6&&(tmp[c]===2||tmp[c]===3))cap+=tmp[c];
-    if(cap>bestV){bestV=cap;best=pos;}
-  });
-  let g=board[best];board[best]=0;let cur=best;let cap=0;
-  while(g>0){cur=(cur+1)%12;if(cur!==best){board[cur]++;g--;}}
-  let cp=cur;
-  while(cp<6&&(board[cp]===2||board[cp]===3)){cap+=board[cp];board[cp]=0;cp--;}
-  awScoreIA+=cap; awTour=true;
-  const fin=board.slice(0,6).every(x=>x===0)||board.slice(6).every(x=>x===0);
-  afficherAwale(fin?(awScoreJ>awScoreIA?"🎉 Tu as gagné !":awScoreJ<awScoreIA?"😔 L'ordinateur gagne":"🤝 Égalité !"):"À toi de jouer !");
-}
-
-// ═══════════════════════════════════════════════════
-// ADMIN
-// ═══════════════════════════════════════════════════
-let adminAuth=false, editPrestIdx=null;
-
-function renderAdmin(){
-  const c=document.getElementById("admin-content");
-  if(!adminAuth){
-    c.innerHTML=`<div class="fu" style="text-align:center;padding:40px 0">
-      <div style="font-size:3rem;margin-bottom:14px">🔑</div>
-      <h2 style="font-weight:900;color:#333;margin-bottom:16px">Espace Admin</h2>
-      <input id="admin-mdp" type="password" class="inp" placeholder="Mot de passe admin" style="text-align:center;font-size:1rem"/>
-      <button class="btn btn-bleu btn-full press" onclick="adminLogin()">Accéder →</button>
-    </div>`;
-    return;
-  }
-  renderAdminDash();
-}
-
-function adminLogin(){
-  const v=document.getElementById("admin-mdp").value;
-  if(v===MDP){adminAuth=true;renderAdminDash();}
-  else alert("Mot de passe incorrect");
-}
-
-function renderAdminDash(){
-  const motos=LS.get("dj_motos",[]);
-  const annonces=LS.get("dj_annonces",[]);
-  const pronos=LS.get("dj_prono",[]);
-  const prests=LS.get("dj_prestataires",[]);
-  const c=document.getElementById("admin-content");
-
-  c.innerHTML=`
-  <div class="bandeau fu" style="background:linear-gradient(135deg,#263238,#37474F)">
-    <div style="font-size:2.5rem;margin-bottom:6px">🔑</div>
-    <h2 style="font-weight:900;font-size:1rem">Administration — DDR2024</h2>
-    <p style="font-size:.78rem;opacity:.9;margin-top:4px">Tableau de bord DJANVOUÊ</p>
-  </div>
-
-  <!-- Stats -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-    ${[{l:"Points en circulation",v:getPts()+" pts",c:"#1565C0"},{l:"Motos inscrits",v:motos.length,c:"#E65100"},{l:"Annonces actives",v:annonces.length,c:"#2E7D32"},{l:"Prestataires ajoutés",v:prests.length,c:"#7B1FA2"}].map(s=>`
-    <div class="card" style="text-align:center;padding:14px">
-      <div style="font-size:1.5rem;font-weight:900;color:${s.c}">${s.v}</div>
-      <div style="font-size:.68rem;color:#888;margin-top:2px">${s.l}</div>
-    </div>`).join("")}
-  </div>
-
-  <!-- GÉRER PRESTATAIRES -->
-  <div class="card" style="margin-bottom:12px">
-    <div style="font-weight:800;font-size:.88rem;color:#333;margin-bottom:4px">👥 Gérer les Prestataires</div>
-    <div style="font-size:.72rem;color:#888;margin-bottom:12px">Ajoute ou modifie un prestataire visible dans l'annuaire et les commandes.</div>
-
-    <!-- Formulaire -->
-    <div style="background:#f0f4f8;border-radius:10px;padding:12px;margin-bottom:12px">
-      <div id="prest-form-titre" style="font-weight:700;font-size:.8rem;color:#1565C0;margin-bottom:8px">➕ Ajouter un prestataire</div>
-      <input id="pf-nom" class="inp" placeholder="Nom complet *"/>
-      <input id="pf-tel" class="inp" placeholder="Numéro WhatsApp (ex: 2250701234567) *" type="tel"/>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-        <select id="pf-icone" class="sel" style="margin:0">
-          ${["⚡","🛵","🚕","🍽️","💊","🏨","🛒","🔧","💈","🏪","📦","🎵","🌿","🍺","🎓"].map(ic=>`<option value="${ic}">${ic}</option>`).join("")}
-        </select>
-        <select id="pf-cat" class="sel" style="margin:0">
-          ${[["livraison","Livraison"],["taxi","Taxi"],["moto","Moto-Taxi"],["resto","Restauration"],["pharmacie","Pharmacie"],["hotel","Hébergement"],["autre","Autre"]].map(([v,l])=>`<option value="${v}">${l}</option>`).join("")}
-        </select>
-      </div>
-      <input id="pf-type" class="inp" placeholder="Description (ex: 🍽️ Restauration)"/>
-      <input id="pf-zone" class="inp" placeholder="Quartier / Zone (ex: Agnikro)" value="Bongouanou"/>
-      <div style="display:flex;gap:8px">
-        <button class="btn btn-bleu press" onclick="savePrest()" style="flex:2;padding:11px;border-radius:10px;font-weight:800;font-size:.85rem" id="pf-btn">➕ Ajouter</button>
-        <button id="pf-cancel" class="btn press" onclick="cancelEditPrest()" style="display:none;flex:1;padding:11px;background:none;border:1.5px solid #ddd;border-radius:10px;font-weight:700;color:#888;font-size:.82rem">Annuler</button>
-      </div>
-    </div>
-
-    <!-- Liste prestataires ajoutés -->
-    <div id="prest-liste"></div>
-
-    <!-- Prestataires fixes -->
-    <div style="margin-top:10px">
-      <div style="font-weight:700;font-size:.8rem;color:#333;margin-bottom:8px">Prestataires fixes (${FIXES.length}) — lecture seule</div>
-      ${FIXES.map(p=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f0f0f0">
-        <span>${p.icone}</span>
-        <div style="flex:1"><span style="font-weight:700;font-size:.82rem">${p.nom}</span>
-        <span style="font-size:.68rem;color:#888;margin-left:6px">${p.zone}</span></div>
-        <span style="font-size:.65rem;background:#e8f5e9;color:#2E7D32;padding:2px 8px;border-radius:20px;font-weight:700">Fixe</span>
-      </div>`).join("")}
-    </div>
-  </div>
-
-  <!-- ANNONCES -->
-  <div class="card" style="margin-bottom:12px">
-    <div style="font-weight:800;font-size:.88rem;color:#333;margin-bottom:4px">📢 Publier une annonce (500 FCFA/semaine)</div>
-    <div style="font-size:.72rem;color:#888;margin-bottom:12px">La photo s'affiche entière dans le carrousel de l'accueil.</div>
-    <input id="an-titre" class="inp" placeholder="Titre de l'annonce *"/>
-    <input id="an-desc" class="inp" placeholder="Description courte"/>
-    <input id="an-tel" class="inp" placeholder="Numéro WhatsApp client *" type="tel"/>
-    <label style="display:block;border:2px dashed #ddd;border-radius:10px;padding:16px;text-align:center;cursor:pointer;margin-bottom:10px;background:#fafafa" id="an-img-label">
-      <div id="an-img-preview"><div style="font-size:2rem;margin-bottom:4px">📷</div><div style="font-size:.78rem;color:#888">Ajouter une photo (optionnel)</div></div>
-      <input type="file" accept="image/*" style="display:none" onchange="anLoadImg(this)"/>
-    </label>
-    <button class="btn btn-full press" onclick="publierAnnonce()" style="background:#FFD600;color:#333;border-radius:10px;padding:11px;font-weight:800">✅ Publier l'annonce</button>
-    <div id="an-liste" style="margin-top:10px"></div>
-  </div>
-
-  <!-- PUB PRINCIPALE -->
-  <div class="card" style="margin-bottom:12px">
-    <div style="font-weight:800;font-size:.88rem;color:#333;margin-bottom:10px">📢 Pub principale (bandeau accueil)</div>
-    <input id="pub-p-titre" class="inp" placeholder="Titre"/>
-    <input id="pub-p-desc" class="inp" placeholder="Description"/>
-    <input id="pub-p-tel" class="inp" placeholder="Numéro WhatsApp sponsor" type="tel"/>
-    <button class="btn btn-bleu btn-full press" onclick="savePubPrincipale()" style="border-radius:10px;padding:11px;font-weight:700">Enregistrer la pub</button>
-  </div>
-
-  <!-- SERVICES (petits métiers) -->
-  <div class="card">
-    <div style="font-weight:800;font-size:.9rem;color:#6A1B9A;margin-bottom:10px">🧰 Inscriptions Services en attente</div>
-    <div id="admin-services-attente">⏳ Chargement…</div>
-  </div>
-
-  <!-- MOTOS -->
-  <div id="admin-motos"></div>
-
-  <button class="btn btn-rouge btn-full press" onclick="adminAuth=false;renderAdmin()" style="background:none;border:1.5px solid #c62828;color:#c62828;border-radius:12px;padding:11px;font-weight:700;font-size:.85rem;margin-bottom:20px">🔒 Se déconnecter</button>`;
-
-  renderPrestListe();
-  renderAnListe();
-  renderAdminMotos();
-  renderAdminServices();
-}
-
-async function renderAdminServices(){
-  const el=document.getElementById("admin-services-attente"); if(!el) return;
-  const {data,error}=await sb.from("prestataires").select("*").eq("statut","en_attente").order("cree_le",{ascending:false});
-  if(error){el.innerHTML=`<div style="color:#c62828;font-size:.8rem">Erreur de connexion à la base.</div>`;return;}
-  if(!data||!data.length){el.innerHTML=`<div style="color:#888;font-size:.8rem">Aucune inscription en attente.</div>`;return;}
-  el.innerHTML=data.map(p=>{
-    const catInfo=CATEGORIES_SERVICES.find(c=>c.id===p.categorie)||{icone:"🧰",label:p.categorie};
-    return `<div style="background:#fafafa;border-radius:10px;padding:10px 12px;margin-bottom:8px">
-      <div style="font-weight:700;font-size:.85rem">${p.nom}</div>
-      <div style="font-size:.7rem;color:#888;margin-bottom:8px">${catInfo.icone} ${catInfo.label} · ${p.zone} · 📞 ${p.telephone}</div>
-      <div style="display:flex;gap:8px">
-        <button class="btn btn-wa press" style="flex:1;font-size:.72rem" onclick="wa('${p.telephone}','Bonjour ${p.nom}, ici DJANVOUÊ. Pouvez-vous m\\'envoyer une photo de vous/votre travail et une photo de votre pièce d\\'identité pour valider votre inscription ?')">💬 Contacter</button>
-        <button class="btn btn-bleu press" style="flex:1;font-size:.72rem" onclick="validerService('${p.id}')">✓ Valider</button>
-        <button class="btn press" style="background:#ffebee;color:#c62828;font-size:.72rem" onclick="refuserService('${p.id}')">✕</button>
-      </div>
-    </div>`;
-  }).join("");
-}
-
-async function validerService(id){
-  await sb.from("prestataires").update({statut:"valide",valide_le:new Date().toISOString()}).eq("id",id);
-  renderAdminServices();
-}
-async function refuserService(id){
-  await sb.from("prestataires").update({statut:"bloque"}).eq("id",id);
-  renderAdminServices();
-}
-
-// ── Prestataires
-function savePrest(){
-  const nom=document.getElementById("pf-nom").value.trim();
-  const t=document.getElementById("pf-tel").value.trim();
-  if(!nom||!t){alert("Nom et téléphone obligatoires.");return;}
-  const icone=document.getElementById("pf-icone").value;
-  const cat=document.getElementById("pf-cat").value;
-  const type=document.getElementById("pf-type").value||icone+" Service";
-  const zone=document.getElementById("pf-zone").value||"Bongouanou";
-  const entry={nom,tel:t.replace(/\D/g,""),icone,cat,type,zone};
-  const prests=LS.get("dj_prestataires",[]);
-  if(editPrestIdx!==null){prests[editPrestIdx]=entry;editPrestIdx=null;}
-  else prests.push(entry);
-  LS.set("dj_prestataires",prests);
-  clearPrestForm();
-  renderPrestListe();
-  renderAccueil();
-  alert("✅ Prestataire sauvegardé ! Visible immédiatement dans l'annuaire.");
-}
-
-function clearPrestForm(){
-  ["pf-nom","pf-tel","pf-type"].forEach(id=>document.getElementById(id).value="");
-  document.getElementById("pf-zone").value="Bongouanou";
-  document.getElementById("pf-form-titre").textContent="➕ Ajouter un prestataire";
-  document.getElementById("pf-btn").textContent="➕ Ajouter";
-  document.getElementById("pf-cancel").style.display="none";
-  editPrestIdx=null;
-}
-
-function cancelEditPrest(){clearPrestForm();}
-
-function editPrest(i){
-  const prests=LS.get("dj_prestataires",[]);
-  const p=prests[i]; editPrestIdx=i;
-  document.getElementById("pf-nom").value=p.nom;
-  document.getElementById("pf-tel").value=p.tel;
-  document.getElementById("pf-icone").value=p.icone;
-  document.getElementById("pf-cat").value=p.cat||"autre";
-  document.getElementById("pf-type").value=p.type;
-  document.getElementById("pf-zone").value=p.zone;
-  document.getElementById("pf-form-titre").textContent="✏️ Modifier le prestataire";
-  document.getElementById("pf-btn").textContent="✏️ Enregistrer";
-  document.getElementById("pf-cancel").style.display="block";
-  document.getElementById("pf-nom").scrollIntoView({behavior:"smooth"});
-}
-
-function suppPrest(i){
-  if(!confirm("Supprimer ce prestataire ?"))return;
-  const prests=LS.get("dj_prestataires",[]);
-  prests.splice(i,1); LS.set("dj_prestataires",prests);
-  renderPrestListe(); renderAccueil();
-}
-
-function renderPrestListe(){
-  const el=document.getElementById("prest-liste"); if(!el)return;
-  const prests=LS.get("dj_prestataires",[]);
-  if(!prests.length){el.innerHTML="";return;}
-  el.innerHTML=`<div style="font-weight:700;font-size:.8rem;color:#333;margin-bottom:8px">Prestataires ajoutés (${prests.length})</div>`+
-  prests.map((p,i)=>`<div style="background:#fafafa;border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
-    <span style="font-size:1.4rem">${p.icone}</span>
-    <div style="flex:1;min-width:0">
-      <div style="font-weight:700;font-size:.83rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.nom}</div>
-      <div style="font-size:.68rem;color:#888">${p.type} · ${p.zone}</div>
-    </div>
-    <button class="btn btn-call press" onclick="tel('${p.tel}')" style="width:32px;height:32px;padding:0;border-radius:8px">📞</button>
-    <button class="btn press" onclick="editPrest(${i})" style="width:32px;height:32px;padding:0;border-radius:8px;background:#e3f2fd;border:none">✏️</button>
-    <button class="btn press" onclick="suppPrest(${i})" style="width:32px;height:32px;padding:0;border-radius:8px;background:#ffebee;color:#c62828;border:none">🗑️</button>
-  </div>`).join("");
-}
-
-// ── Annonces
-let anImgData="";
-function anLoadImg(input){
-  const file=input.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    anImgData=ev.target.result;
-    document.getElementById("an-img-preview").innerHTML=`<img src="${anImgData}" style="max-width:100%;max-height:120px;object-fit:contain;border-radius:8px;margin-bottom:6px"><div style="font-size:.72rem;color:#2E7D32;font-weight:700">✅ Photo chargée</div>`;
-    document.getElementById("an-img-label").style.borderColor="#2E7D32";
-  };
-  reader.readAsDataURL(file);
-}
-
-function publierAnnonce(){
-  const titre=document.getElementById("an-titre").value.trim();
-  const t=document.getElementById("an-tel").value.trim();
-  if(!titre||!t){alert("Titre et téléphone obligatoires.");return;}
-  const desc=document.getElementById("an-desc").value.trim();
-  const annonces=LS.get("dj_annonces",[]);
-  annonces.push({titre,desc,tel:t.replace(/\D/g,""),img:anImgData||null,date:new Date().toLocaleDateString("fr")});
-  LS.set("dj_annonces",annonces);
-  document.getElementById("an-titre").value="";
-  document.getElementById("an-desc").value="";
-  document.getElementById("an-tel").value="";
-  anImgData="";
-  document.getElementById("an-img-preview").innerHTML=`<div style="font-size:2rem;margin-bottom:4px">📷</div><div style="font-size:.78rem;color:#888">Ajouter une photo (optionnel)</div>`;
-  renderAnListe(); initPub();
-  alert("✅ Annonce publiée ! Visible dans le carrousel.");
-}
-
-function suppAnnonce(i){
-  const annonces=LS.get("dj_annonces",[]);
-  annonces.splice(i,1); LS.set("dj_annonces",annonces);
-  renderAnListe(); initPub();
-}
-
-function renderAnListe(){
-  const el=document.getElementById("an-liste"); if(!el)return;
-  const annonces=LS.get("dj_annonces",[]);
-  if(!annonces.length){el.innerHTML="";return;}
-  el.innerHTML=annonces.map((a,i)=>`<div style="background:#fafafa;border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:8px">
-    ${a.img?`<img src="${a.img}" style="width:48px;height:48px;object-fit:contain;border-radius:6px;flex-shrink:0">`:""}
-    <div style="flex:1;min-width:0">
-      <div style="font-weight:700;font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.titre}</div>
-      <div style="font-size:.68rem;color:#888">${a.desc||""} · ${a.date}</div>
-    </div>
-    <button class="btn btn-wa press" onclick="wa('${a.tel}',\`Annonce DJANVOUÊ : ${a.titre}\`)" style="width:33px;height:33px;padding:0;border-radius:8px">💬</button>
-    <button class="btn press" onclick="suppAnnonce(${i})" style="width:33px;height:33px;padding:0;border-radius:8px;background:#ffebee;color:#c62828;border:none">🗑️</button>
-  </div>`).join("");
-}
-
-function savePubPrincipale(){
-  const pub={titre:document.getElementById("pub-p-titre").value,desc:document.getElementById("pub-p-desc").value,tel:document.getElementById("pub-p-tel").value};
-  LS.set("dj_pub",pub); initPub();
-  alert("✅ Pub mise à jour !");
-}
-
-function renderAdminMotos(){
-  const el=document.getElementById("admin-motos"); if(!el)return;
-  const motos=LS.get("dj_motos",[]);
-  if(!motos.length){el.innerHTML="";return;}
-  el.innerHTML=`<div class="card" style="margin-bottom:12px">
-    <div style="font-weight:800;font-size:.88rem;color:#333;margin-bottom:10px">🛵 Moto-taxis inscrits (${motos.length})</div>
-    ${motos.map((m,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:${i<motos.length-1?"1px solid #f0f0f0":"none"}">
-      <div><div style="font-weight:700;font-size:.83rem">${m.nom}</div><div style="font-size:.68rem;color:#888">📍 ${m.zone||"—"} · ${m.date||""}</div></div>
-      <div style="display:flex;gap:6px">
-        <button class="btn btn-call press" onclick="tel('${m.tel}')" style="width:33px;height:33px;padding:0;border-radius:8px">📞</button>
-        <button class="btn btn-wa press" onclick="wa('${m.tel}','Bonjour, je suis l\'admin DJANVOUÊ.')" style="width:33px;height:33px;padding:0;border-radius:8px">💬</button>
-      </div>
-    </div>`).join("")}
-  </div>`;
-}
-
-// ═══════════════════════════════════════════════════
-// DÉMARRAGE
-// ═══════════════════════════════════════════════════
-window.addEventListener("DOMContentLoaded",()=>{
-  if(localStorage.getItem("dj_nom")){
-    document.getElementById("onboarding").style.display="none";
-    document.getElementById("app").style.display="block";
-    initApp();
-  }
-});
 </script>
 </body>
 </html>
